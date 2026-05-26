@@ -1,7 +1,7 @@
-#include "n_corpi.hpp"
+//#include "n_corpi.hpp"
 
-#ifndef PF_N_CORPI_HPP. // provvisorio
-#define PF_N_CORPI_HPP
+//#ifndef PF_N_CORPI_HPP. // provvisorio
+//#define PF_N_CORPI_HPP
 
 struct Vettore
 {
@@ -52,4 +52,4 @@ public:
 
 };
 
-#endif
+//#endif

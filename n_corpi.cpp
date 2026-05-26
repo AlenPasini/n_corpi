@@ -32,14 +32,24 @@ bool operator==(Vettore const& v1, Vettore const& v2)
 class Corpo
 {
 private:
-  Posizione r_;
-  Velocità v_;
-  Accelerazione a_;
-
+  Vettore r_;
+  Vettore v_;
+  Vettore a_{0.,0.};
+  double dt{0.005};
 public:
-  Corpo(Posizione r, Velocità v) : r_{r}, v_{v} {}
-  Posizione get_r() { return r_; }
-  Velocità get_v() { return v_; }
+  Corpo(Vettore r, Vettore v) : r_{r}, v_{v} {}
+  Vettore get_r() { return r_; }
+  Vettore get_v() { return v_; }
+  Vettore get_a() { return a_; }
+  double  get_dt() { return dt; }
+  void r_t(){
+        r_.x += v_.x * dt + 0.5 * a_.x * dt * dt;
+        r_.y += v_.y * dt + 0.5 * a_.y * dt * dt;
+  }
+
+
+
+
 };
 
 #endif

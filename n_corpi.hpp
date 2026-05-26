@@ -3,29 +3,21 @@ struct Posizione {
   double y;
 };
 
-struct Velocità {
-  double x;
-  double y;
-};
 
-struct Accelerazione {
-  double x;
-  double y;
-};
-
-double operator+=(Posizione r1 , Posizione r2);
-
-double operator+=(Velocità v1 , Velocità v2);
-
-double operator+=(Accelerazione a1 , Accelerazione a2);
+bool operator==(Vettore const& v1, Vettore const& v2);
 
 class Corpo {
  private:
-  Posizione r_;
-  Velocità v_;
-  Accelerazione a_;
+  Vettore r_;
+  Vettore v_;
+  Vettore a_;
  public:
-  Corpo(Posizione r, Velocità v) : r_{r}, v_{v} {}
-  Posizione get_r();
-  Velocità get_v();
+  Corpo(Vettore r, Vettore v) : r_{r}, v_{v} {}
+  Vettore get_r();
+  Vettore get_v();
+
+  Vettore &operator+=(Vettore const &v);
+
 };
+
+Vettore operator+(Vettore const &v1, Vettore const &v2);

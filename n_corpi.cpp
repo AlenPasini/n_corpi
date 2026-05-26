@@ -42,11 +42,17 @@ public:
   Vettore get_v() { return v_; }
   Vettore get_a() { return a_; }
   double  get_dt() { return dt; }
+
   void r_t(){
         r_.x += v_.x * dt + 0.5 * a_.x * dt * dt;
         r_.y += v_.y * dt + 0.5 * a_.y * dt * dt;
   }
 
+  void a_t(){
+
+  }
+
+  //class universe( da fare )
 
 
 

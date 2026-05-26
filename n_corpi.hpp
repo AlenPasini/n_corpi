@@ -1,4 +1,4 @@
-struct Posizione {
+struct Vettore {
   double x;
   double y;
 };

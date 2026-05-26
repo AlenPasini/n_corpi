@@ -1,23 +1,23 @@
-struct Vettore {
+struct Vector {
   double x;
   double y;
 };
 
 
-bool operator==(Vettore const& v1, Vettore const& v2);
+bool operator==(Vector const& v1, Vector const& v2);
 
-class Corpo {
+class Body {
  private:
-  Vettore r_;
-  Vettore v_;
-  Vettore a_;
+  Vector r_;
+  Vector v_;
+  Vector a_;
  public:
-  Corpo(Vettore r, Vettore v) : r_{r}, v_{v} {}
-  Vettore get_r();
-  Vettore get_v();
+  Body(Vector r, Vector v) : r_{r}, v_{v} {}
+  Vector get_r();
+  Vector get_v();
 
-  Vettore &operator+=(Vettore const &v);
+  Vector &operator+=(Vector const &v);
 
 };
 
-Vettore operator+(Vettore const &v1, Vettore const &v2);
+Vector operator+(Vector const &v1, Vector const &v2);

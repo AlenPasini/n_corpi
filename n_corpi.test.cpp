@@ -5,13 +5,15 @@
 
 TEST_CASE("Testing dell'incremento della posizione") {
   {
-    Vettore r{0.0, 0.0};
-    Vettore v{3.0, 4.0};
+    Vector r{0.0, 0.0};
+    Vector v{3.0, 4.0};
 
-    Corpo c(r, v);
+    Body c(r, v);
 
     c.r_t();
 
-    CHECK(c.get_r() == Vettore{0.015, 0.020});
+    CHECK(c.get_r() == Vector{0.015, 0.020});
   }
 }
+
+TEST_CASE("Testing dell'incremento della velocità")

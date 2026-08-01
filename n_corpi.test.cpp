@@ -3,17 +3,47 @@
 
 #include "doctest.h"
 
-TEST_CASE("Testing dell'incremento della posizione") {
+TEST_CASE("Testing position increment") {
   {
     Vector r{0.0, 0.0};
     Vector v{3.0, 4.0};
 
-    Body c(r, v);
+    Body b(r, v);
 
-    c.r_t();
+    b.r_t();
 
-    CHECK(c.get_r() == Vector{0.015, 0.020});
+    CHECK(b.get_r() == Vector{0.015, 0.020});
   }
 }
 
-TEST_CASE("Testing dell'incremento della velocità")
+TEST_CASE("Testing the Universe class") {
+  {
+    Universe u{};
+
+    Body b1({0.0, 0.0}, {3.0, 4.0});
+    u.add(b1);
+
+    Body b2({0.1, 0.2}, {2.0, 3.0});
+    u.add(b2);
+
+    Body b3({-1.5, 2.3}, {0.2, -4.2});
+    u.add(b3);
+
+    CHECK(u.size() == 3);
+  }
+
+  {
+    Universe u{};
+
+    Body b1({0.0, 0.0}, {3.0, 4.0});
+    u.add(b1);
+
+    Body b2({0.1, 0.2}, {2.0, 3.0});
+    u.add(b2);
+
+    Body b3({-1.5, 2.3}, {0.2, -4.2});
+    u.add(b3);
+
+    //CHECK(u.get_body(1).get_r()
+  }
+}

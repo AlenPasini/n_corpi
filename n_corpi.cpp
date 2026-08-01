@@ -32,6 +32,7 @@ class Body {
   Vector v_;
   Vector a_{0., 0.};
   Vector a_fut_{0., 0.};
+  int pos_{7};
   double dt{0.005};
   double G{6.67 * pow(10., -11.)};
   double eps{pow(10., -12.)};
@@ -41,6 +42,7 @@ class Body {
   Vector get_r() { return r_; }
   Vector get_v() { return v_; }
   Vector get_a() { return a_; }
+  int get_pos() { return pos_; }
   double get_dt() { return dt; }
 
   void r_t() {
@@ -52,6 +54,8 @@ class Body {
     v_.x += 0.5 * (a_.x + a_fut_.x) * dt;
     v_.y += 0.5 * (a_.y + a_fut_.y) * dt;
   }
+
+  void add_pos(int pos) { pos_ = pos; }
 };
 
 class Universe {
@@ -59,10 +63,19 @@ class Universe {
   std::vector<Body> u_{};
 
  public:
-  void add(Body const &b) { u_.push_back(b); }
+  std::vector<Body> get_u() { return u_; }
+  Body get_body(int p) {return u_[p];}
+  int size() { return u_.size(); }
+
+  void add(Body b) {
+    u_.push_back(b);
+    b.add_pos(u_.size());
+  }
 
   void a_t(...) {
-    //La formula
+    // usa il vettore posizione aggiornato. Non penso che influisca in qualche
+    // modo sulla scrittura della funzione, ma è FONDAMENTALE che venga chiamato
+    // prima l'aggiornaemnto della posizione e poi quello dell'accelerazione
 
     // deve prendere l'accelerazione del Body (Body in input?) e poi fare la
     // turbo sommatoria. Deve quindi poter accedere anche a tutti gli altri Body
@@ -76,6 +89,5 @@ class Universe {
     // dovrebbe semplicemente essere un mega ciclo di lunghezza len(u_) che fa n
     // volte a_t
   }
-
-}
+};
 // #endif

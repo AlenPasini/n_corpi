@@ -34,7 +34,7 @@ class Body {
   Vector a_fut_{0., 0.};
   double dt{0.005};
   double G{6.67 * pow(10., -11.)};
-  double eps { pow(10., -12.) };
+  double eps{pow(10., -12.)};
 
  public:
   Body(Vector r, Vector v) : r_{r}, v_{v} {}
@@ -62,6 +62,8 @@ class Universe {
   void add(Body const &b) { u_.push_back(b); }
 
   void a_t(...) {
+    //La formula
+
     // deve prendere l'accelerazione del Body (Body in input?) e poi fare la
     // turbo sommatoria. Deve quindi poter accedere anche a tutti gli altri Body
     // e in particolare alla loro posizione all'interno del mega vector. Deve

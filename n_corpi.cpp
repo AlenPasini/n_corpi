@@ -32,7 +32,7 @@ class Body {
   Vector v_;
   Vector a_{0., 0.};
   Vector a_fut_{0., 0.};
-  int pos_{7};
+  int pos_{-1};
   double dt{0.005};
   double G{6.67 * pow(10., -11.)};
   double eps{pow(10., -12.)};
@@ -63,14 +63,19 @@ class Universe {
   std::vector<Body> u_{};
 
  public:
-  std::vector<Body> get_u() { return u_; }
-  Body get_body(int p) {return u_[p];}
   int size() { return u_.size(); }
 
-  void add(Body b) {
+  void add(Body &b) {  // il body deve essere preso per referenza, altrimenti
+                       // non vengono modificati i valori!!
+
     u_.push_back(b);
     b.add_pos(u_.size());
   }
+
+  // al momento ogni body prende una posizione identificativa quando viene
+  // inserito dentro a Universe. Non ha quindi senso avere un body al di fuori
+  // di Universe. Ogni body al di fuori di Universe ha pos = -1, che non ha
+  // senso. Bisogna inserire un "require qualcosa??" Non lo so fare
 
   void a_t(...) {
     // usa il vettore posizione aggiornato. Non penso che influisca in qualche

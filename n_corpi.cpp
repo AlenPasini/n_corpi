@@ -4,6 +4,7 @@
 // #define PF_N_CORPI_HPP
 
 #include <cmath>
+#include <iostream>
 #include <vector>
 
 struct Vector {
@@ -32,7 +33,7 @@ class Body {
   Vector v_;
   Vector a_{0., 0.};
   Vector a_fut_{0., 0.};
-  int pos_{-1};
+  int id_{-1};
   double dt{0.005};
   double G{6.67 * pow(10., -11.)};
   double eps{pow(10., -12.)};
@@ -42,7 +43,9 @@ class Body {
   Vector get_r() { return r_; }
   Vector get_v() { return v_; }
   Vector get_a() { return a_; }
-  int get_pos() { return pos_; }
+  int get_id() const { return id_; }
+  // deve essere const perché altrimenti non me la fa paragonare
+  // nell'operatore ==
   double get_dt() { return dt; }
 
   void r_t() {
@@ -55,8 +58,12 @@ class Body {
     v_.y += 0.5 * (a_.y + a_fut_.y) * dt;
   }
 
-  void add_pos(int pos) { pos_ = pos; }
+  void add_id(int id) { id_ = id; }
 };
+
+bool operator==(Body const &b1, Body const &b2) {
+  return b1.get_id() == b2.get_id();
+}
 
 class Universe {
  private:
@@ -65,17 +72,18 @@ class Universe {
  public:
   int size() { return u_.size(); }
 
-  void add(Body &b) {  // il body deve essere preso per referenza, altrimenti
-                       // non vengono modificati i valori!!
-
+  void add(Body &b) {
     u_.push_back(b);
-    b.add_pos(u_.size());
+    u_.back().add_id(u_.size());
   }
 
-  // al momento ogni body prende una posizione identificativa quando viene
+  Body get_body(int id) { return u_[id]; }
+
+  // al momento ogni body prende un id identificativa quando viene
   // inserito dentro a Universe. Non ha quindi senso avere un body al di fuori
-  // di Universe. Ogni body al di fuori di Universe ha pos = -1, che non ha
-  // senso. Bisogna inserire un "require qualcosa??" Non lo so fare
+  // di Universe. Ogni body al di fuori di Universe ha id = -1, che non ha
+  // senso.
+  // Bisogna inserire un "require qualcosa??" Non lo so fare
 
   void a_t(...) {
     // usa il vettore posizione aggiornato. Non penso che influisca in qualche

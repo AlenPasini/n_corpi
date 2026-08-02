@@ -19,13 +19,13 @@ TEST_CASE("Testing position increment") {
 TEST_CASE("Testing the addition of the position to a body") {
   {
     Body b1({0.0, 0.0}, {3.0, 4.0});
-    CHECK(b1.get_pos() == -1);
+    CHECK(b1.get_id() == -1);
   }
 
   {
     Body b1({0.0, 0.0}, {3.0, 4.0});
-    b1.add_pos(2);
-    CHECK(b1.get_pos() == 2);
+    b1.add_id(2);
+    CHECK(b1.get_id() == 2);
   }
 }
 
@@ -44,7 +44,7 @@ TEST_CASE("Testing the Universe class") {
 
     CHECK(u.size() == 3);
   }
-  
+
   {
     Universe u{};
 
@@ -54,6 +54,8 @@ TEST_CASE("Testing the Universe class") {
     Body b2({0.1, 0.2}, {2.0, 3.0});
     u.add(b2);
 
-    CHECK(b2.get_pos() == 2);
+    CHECK(u.get_body(1).get_v() == Vector{2.0, 3.0});
+    CHECK(u.get_body(1).get_r() == Vector{0.1, 0.2});
+    CHECK(u.get_body(1).get_id() == 2);
   }
 }

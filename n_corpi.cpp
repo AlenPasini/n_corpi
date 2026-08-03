@@ -86,7 +86,7 @@ class Universe {
 
   void add(Body &b) {
     u_.push_back(b);
-    u_.back().add_id(u_.size()-1);
+    u_.back().add_id(u_.size() - 1);
   }
 
   Body get_body(int id) { return u_[id]; }
@@ -129,17 +129,18 @@ class Universe {
     b.a_t(a_t_x, a_t_y);
   }
 
-  double u_a_t_2(Body &b) {
-    double r_diff_square = 0.;
+  /*
+    double u_a_t_2(Body &b) {
+      double r_diff_square = 0.;
 
-    for (size_t j{0}; j < u_.size()-1; ++j) {
-      if (b.get_id() != u_[j].get_id()) {
-        r_diff_square = u_[j].get_r().get_x();
+      for (size_t j{0}; j < u_.size()-1; ++j) {
+        if (b.get_id() != u_[j].get_id()) {
+          r_diff_square = u_[j].get_r().get_x();
+        }
       }
+      return r_diff_square;
     }
-    return r_diff_square;
-  }
-
+  */
   // usa il vettore posizione aggiornato. Non penso che influisca in qualche
   // modo sulla scrittura della funzione, ma è FONDAMENTALE che venga chiamato
   // prima l'aggiornaemnto della posizione e poi quello dell'accelerazione
@@ -149,11 +150,22 @@ class Universe {
   // e in particolare alla loro posizione all'interno del mega vector. Deve
   // infatti saltare lo step della sommatoria del Body in questione.
 
-  void a_t_complete(...) {
-    // deve fare a_t su tutti i componenti del mega vector.
-    // probabilmente non necessita nessun input...
-    // dovrebbe semplicemente essere un mega ciclo di lunghezza len(u_) che fa n
-    // volte a_t
+  void u_a_t_complete() {
+    for (size_t i{0}; i < u_.size(); ++i) {
+      u_a_t(u_[i]);
+    }
   }
+
+  void r_t_complete() {
+    for (size_t i{0}; i < u_.size(); ++1) {
+      u_[i].r_t();
+    }
+  }
+
+  // deve fare a_t su tutti i componenti del mega vector.
+  // probabilmente non necessita nessun input...
+  // dovrebbe semplicemente essere un mega ciclo di lunghezza len(u_) che fa n
+  // volte a_t
+  
 };
 // #endif

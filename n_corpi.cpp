@@ -86,7 +86,7 @@ class Universe {
 
   void add(Body &b) {
     u_.push_back(b);
-    u_.back().add_id(u_.size());
+    u_.back().add_id(u_.size()-1);
   }
 
   Body get_body(int id) { return u_[id]; }
@@ -100,27 +100,26 @@ class Universe {
   // senso.
   // Bisogna inserire un "require qualcosa??" Non lo so fare
 
-  void a_t(Body &b) {
-    double a_t_x = 0.;
-    double a_t_y = 0.;
+  void u_a_t(Body &b) {
+    double a_t_x = 0.0;
+    double a_t_y = 0.0;
 
     for (size_t j{0}; j < u_.size(); ++j) {
       if (b == u_[j]) {
-        // do nothing
       } else {
         double denom_x{pow(pow(u_[j].get_r().get_x() - b.get_r().get_x(), 2) +
                                get_eps() * get_eps(),
-                           3 / 2)};
+                           1.5)};
 
         double num_x{get_G() * u_[j].get_m() *
-                     (u_[j].get_r().get_x() - b.get_r().get_x())};
+                     (b.get_r().get_x() - u_[j].get_r().get_x())};
 
         double denom_y{pow(pow(u_[j].get_r().get_y() - b.get_r().get_y(), 2) +
                                get_eps() * get_eps(),
-                           3 / 2)};
+                           1.5)};
 
         double num_y{get_G() * u_[j].get_m() *
-                     (u_[j].get_r().get_y() - b.get_r().get_y())};
+                     (b.get_r().get_y() - u_[j].get_r().get_y())};
 
         a_t_x -= num_x / denom_x;
         a_t_y -= num_y / denom_y;
@@ -128,16 +127,27 @@ class Universe {
     }
 
     b.a_t(a_t_x, a_t_y);
-
-    // usa il vettore posizione aggiornato. Non penso che influisca in qualche
-    // modo sulla scrittura della funzione, ma è FONDAMENTALE che venga chiamato
-    // prima l'aggiornaemnto della posizione e poi quello dell'accelerazione
-
-    // deve prendere l'accelerazione del Body (Body in input?) e poi fare la
-    // turbo sommatoria. Deve quindi poter accedere anche a tutti gli altri Body
-    // e in particolare alla loro posizione all'interno del mega vector. Deve
-    // infatti saltare lo step della sommatoria del Body in questione.
   }
+
+  double u_a_t_2(Body &b) {
+    double r_diff_square = 0.;
+
+    for (size_t j{0}; j < u_.size()-1; ++j) {
+      if (b.get_id() != u_[j].get_id()) {
+        r_diff_square = u_[j].get_r().get_x();
+      }
+    }
+    return r_diff_square;
+  }
+
+  // usa il vettore posizione aggiornato. Non penso che influisca in qualche
+  // modo sulla scrittura della funzione, ma è FONDAMENTALE che venga chiamato
+  // prima l'aggiornaemnto della posizione e poi quello dell'accelerazione
+
+  // deve prendere l'accelerazione del Body (Body in input?) e poi fare la
+  // turbo sommatoria. Deve quindi poter accedere anche a tutti gli altri Body
+  // e in particolare alla loro posizione all'interno del mega vector. Deve
+  // infatti saltare lo step della sommatoria del Body in questione.
 
   void a_t_complete(...) {
     // deve fare a_t su tutti i componenti del mega vector.

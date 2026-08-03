@@ -16,6 +16,9 @@ struct Vector {
     y += v.y;
     return *this;
   }
+
+  double get_x() { return x; }
+  double get_y() { return y; }
 };
 
 Vector operator+(Vector const &v1, Vector const &v2) {
@@ -33,16 +36,19 @@ class Body {
   Vector v_;
   Vector a_{0., 0.};
   Vector a_fut_{0., 0.};
+  double m_;
   int id_{-1};
   double dt{0.005};
   double G{6.67 * pow(10., -11.)};
   double eps{pow(10., -12.)};
 
  public:
-  Body(Vector r, Vector v) : r_{r}, v_{v} {}
+  Body(Vector r, Vector v, double m) : r_{r}, v_{v}, m_{m} {}
   Vector get_r() { return r_; }
   Vector get_v() { return v_; }
   Vector get_a() { return a_; }
+  Vector get_a_fut() { return a_fut_; }
+  double get_m() { return m_; }
   int get_id() const { return id_; }
   // deve essere const perché altrimenti non me la fa paragonare
   // nell'operatore ==
@@ -59,6 +65,8 @@ class Body {
   }
 
   void add_id(int id) { id_ = id; }
+
+  void a_t(double a_t_x, double a_t_y) { a_fut_ = {a_t_x, a_t_y}; }
 };
 
 bool operator==(Body const &b1, Body const &b2) {
@@ -68,6 +76,10 @@ bool operator==(Body const &b1, Body const &b2) {
 class Universe {
  private:
   std::vector<Body> u_{};
+
+  double dt{0.005};
+  double G{6.67 * pow(10., -11.)};
+  double eps{pow(10., -12.)};
 
  public:
   int size() { return u_.size(); }
@@ -79,13 +91,44 @@ class Universe {
 
   Body get_body(int id) { return u_[id]; }
 
+  double get_eps() { return eps; }
+  double get_G() { return G; }
+
   // al momento ogni body prende un id identificativa quando viene
   // inserito dentro a Universe. Non ha quindi senso avere un body al di fuori
   // di Universe. Ogni body al di fuori di Universe ha id = -1, che non ha
   // senso.
   // Bisogna inserire un "require qualcosa??" Non lo so fare
 
-  void a_t(...) {
+  void a_t(Body &b) {
+    double a_t_x = 0.;
+    double a_t_y = 0.;
+
+    for (size_t j{0}; j < u_.size(); ++j) {
+      if (b == u_[j]) {
+        // do nothing
+      } else {
+        double denom_x{pow(pow(u_[j].get_r().get_x() - b.get_r().get_x(), 2) +
+                               get_eps() * get_eps(),
+                           3 / 2)};
+
+        double num_x{get_G() * u_[j].get_m() *
+                     (u_[j].get_r().get_x() - b.get_r().get_x())};
+
+        double denom_y{pow(pow(u_[j].get_r().get_y() - b.get_r().get_y(), 2) +
+                               get_eps() * get_eps(),
+                           3 / 2)};
+
+        double num_y{get_G() * u_[j].get_m() *
+                     (u_[j].get_r().get_y() - b.get_r().get_y())};
+
+        a_t_x -= num_x / denom_x;
+        a_t_y -= num_y / denom_y;
+      }
+    }
+
+    b.a_t(a_t_x, a_t_y);
+
     // usa il vettore posizione aggiornato. Non penso che influisca in qualche
     // modo sulla scrittura della funzione, ma è FONDAMENTALE che venga chiamato
     // prima l'aggiornaemnto della posizione e poi quello dell'accelerazione

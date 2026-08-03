@@ -8,7 +8,7 @@ TEST_CASE("Testing position increment") {
     Vector r{0.0, 0.0};
     Vector v{3.0, 4.0};
 
-    Body b(r, v);
+    Body b(r, v, 1.);
 
     b.r_t();
 
@@ -18,12 +18,12 @@ TEST_CASE("Testing position increment") {
 
 TEST_CASE("Testing the addition of the position to a body") {
   {
-    Body b1({0.0, 0.0}, {3.0, 4.0});
+    Body b1({0.0, 0.0}, {3.0, 4.0}, 1.);
     CHECK(b1.get_id() == -1);
   }
 
   {
-    Body b1({0.0, 0.0}, {3.0, 4.0});
+    Body b1({0.0, 0.0}, {3.0, 4.0}, 1.);
     b1.add_id(2);
     CHECK(b1.get_id() == 2);
   }
@@ -33,13 +33,13 @@ TEST_CASE("Testing the Universe class") {
   {
     Universe u{};
 
-    Body b1({0.0, 0.0}, {3.0, 4.0});
+    Body b1({0.0, 0.0}, {3.0, 4.0}, 1.);
     u.add(b1);
 
-    Body b2({0.1, 0.2}, {2.0, 3.0});
+    Body b2({0.1, 0.2}, {2.0, 3.0}, 1.);
     u.add(b2);
 
-    Body b3({-1.5, 2.3}, {0.2, -4.2});
+    Body b3({-1.5, 2.3}, {0.2, -4.2}, 1.);
     u.add(b3);
 
     CHECK(u.size() == 3);
@@ -48,10 +48,10 @@ TEST_CASE("Testing the Universe class") {
   {
     Universe u{};
 
-    Body b1({0.0, 0.0}, {3.0, 4.0});
+    Body b1({0.0, 0.0}, {3.0, 4.0}, 1.);
     u.add(b1);
 
-    Body b2({0.1, 0.2}, {2.0, 3.0});
+    Body b2({0.1, 0.2}, {2.0, 3.0}, 1.);
     u.add(b2);
 
     CHECK(u.get_body(1).get_v() == Vector{2.0, 3.0});

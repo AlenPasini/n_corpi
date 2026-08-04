@@ -67,6 +67,8 @@ class Body {
   void add_id(int id) { id_ = id; }
 
   void a_t(double a_t_x, double a_t_y) { a_fut_ = {a_t_x, a_t_y}; }
+
+  void set_a_(Vector a_t_fut) {a_ = a_t_fut;}
 };
 
 bool operator==(Body const &b1, Body const &b2) {
@@ -150,23 +152,34 @@ class Universe {
   // e in particolare alla loro posizione all'interno del mega vector. Deve
   // infatti saltare lo step della sommatoria del Body in questione.
 
+  void r_t_complete() {
+    for (size_t i{0}; i < u_.size(); ++i) {
+      u_[i].r_t();
+    }
+  }
+
   void u_a_t_complete() {
     for (size_t i{0}; i < u_.size(); ++i) {
       u_a_t(u_[i]);
     }
   }
 
-  void r_t_complete() {
-    
+  void u_a_v_complete() {
     for (size_t i{0}; i < u_.size(); ++i) {
-      u_[i].r_t();
+      u_[i].v_t();
     }
-    
   }
 
-  // deve fare a_t su tutti i componenti del mega vector.
-  // probabilmente non necessita nessun input...
-  // dovrebbe semplicemente essere un mega ciclo di lunghezza len(u_) che fa n
-  // volte a_t
+  void simulation(int steps) {
+    for (int i{0}; i < steps; ++i) {
+      this->r_t_complete();
+      this->u_a_t_complete();
+      this->u_a_v_complete();
+      for (size_t j{0}; j < u_.size(); ++j) {
+        u_[j].set_a_(u_[j].get_a_fut());
+      }
+    }
+  }
+  // non mi ricordo assolutamente se si fa così...
 };
 // #endif

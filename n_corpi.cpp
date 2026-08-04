@@ -157,15 +157,16 @@ class Universe {
   }
 
   void r_t_complete() {
-    for (size_t i{0}; i < u_.size(); ++1) {
+    
+    for (size_t i{0}; i < u_.size(); ++i) {
       u_[i].r_t();
     }
+    
   }
 
   // deve fare a_t su tutti i componenti del mega vector.
   // probabilmente non necessita nessun input...
   // dovrebbe semplicemente essere un mega ciclo di lunghezza len(u_) che fa n
   // volte a_t
-  
 };
 // #endif

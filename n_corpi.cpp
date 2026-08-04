@@ -17,6 +17,12 @@ struct Vector {
     return *this;
   }
 
+  Vector &operator-=(Vector const &v) {
+    x -= v.x;
+    y -= v.y;
+    return *this;
+  }
+
   double get_x() { return x; }
   double get_y() { return y; }
 };
@@ -24,6 +30,11 @@ struct Vector {
 Vector operator+(Vector const &v1, Vector const &v2) {
   auto result{v1};
   return result += v2;
+}
+
+Vector operator-(Vector const &v1, Vector const &v2) {
+  auto result{v1};
+  return result -= v2;
 }
 
 bool operator==(Vector const &v1, Vector const &v2) {
@@ -39,8 +50,6 @@ class Body {
   double m_;
   int id_{-1};
   double dt{0.005};
-  double G{6.67 * pow(10., -11.)};
-  double eps{pow(10., -12.)};
 
  public:
   Body(Vector r, Vector v, double m) : r_{r}, v_{v}, m_{m} {}
@@ -52,7 +61,6 @@ class Body {
   int get_id() const { return id_; }
   // deve essere const perché altrimenti non me la fa paragonare
   // nell'operatore ==
-  double get_dt() { return dt; }
 
   void r_t() {
     r_.x += v_.x * dt + 0.5 * a_.x * dt * dt;
@@ -68,7 +76,7 @@ class Body {
 
   void a_t(double a_t_x, double a_t_y) { a_fut_ = {a_t_x, a_t_y}; }
 
-  void set_a_(Vector a_t_fut) {a_ = a_t_fut;}
+  void set_a_(Vector a_t_fut) { a_ = a_t_fut; }
 };
 
 bool operator==(Body const &b1, Body const &b2) {
@@ -78,6 +86,14 @@ bool operator==(Body const &b1, Body const &b2) {
 class Universe {
  private:
   std::vector<Body> u_{};
+
+  double K_0{0.};
+  double U_0{0.};
+  double E_0{0.};
+
+  double K_;
+  double U_;
+  double E_;
 
   double dt{0.005};
   double G{6.67 * pow(10., -11.)};
@@ -89,12 +105,23 @@ class Universe {
   void add(Body &b) {
     u_.push_back(b);
     u_.back().add_id(u_.size() - 1);
+
+    K_0 += 0.5 * b.get_m() *
+           (pow(b.get_v().get_x(), 2) + pow(b.get_v().get_y(), 2));
   }
 
   Body get_body(int id) { return u_[id]; }
 
   double get_eps() { return eps; }
   double get_G() { return G; }
+
+  double get_K_0() { return K_0; }
+  double get_U_0() { return U_0; }
+  double get_E_0() { return E_0; }
+
+  double get_K_() { return K_; }
+  double get_U_() { return U_; }
+  double get_E_() { return E_; }
 
   // al momento ogni body prende un id identificativa quando viene
   // inserito dentro a Universe. Non ha quindi senso avere un body al di fuori
@@ -131,27 +158,6 @@ class Universe {
     b.a_t(a_t_x, a_t_y);
   }
 
-  /*
-    double u_a_t_2(Body &b) {
-      double r_diff_square = 0.;
-
-      for (size_t j{0}; j < u_.size()-1; ++j) {
-        if (b.get_id() != u_[j].get_id()) {
-          r_diff_square = u_[j].get_r().get_x();
-        }
-      }
-      return r_diff_square;
-    }
-  */
-  // usa il vettore posizione aggiornato. Non penso che influisca in qualche
-  // modo sulla scrittura della funzione, ma è FONDAMENTALE che venga chiamato
-  // prima l'aggiornaemnto della posizione e poi quello dell'accelerazione
-
-  // deve prendere l'accelerazione del Body (Body in input?) e poi fare la
-  // turbo sommatoria. Deve quindi poter accedere anche a tutti gli altri Body
-  // e in particolare alla loro posizione all'interno del mega vector. Deve
-  // infatti saltare lo step della sommatoria del Body in questione.
-
   void r_t_complete() {
     for (size_t i{0}; i < u_.size(); ++i) {
       u_[i].r_t();
@@ -170,16 +176,48 @@ class Universe {
     }
   }
 
+  void K_t() {
+    K_ = 0.;
+    for (size_t j{0}; j < u_.size(); ++j) {
+      K_ += 0.5 * u_[j].get_m() *
+            (pow(u_[j].get_v().get_x(), 2) + pow(u_[j].get_v().get_y(), 2));
+    }
+  }
+
+  double U_t() {
+    double U{};
+    for (size_t i{0}; i < u_.size() - 1; ++i) {
+      for (size_t j{i + 1}; j < u_.size(); ++j) {
+        double num = get_G() * u_[i].get_m() * u_[j].get_m();
+
+        double denom =
+            std::sqrt(pow(u_[i].get_r().get_x() - u_[j].get_r().get_x(), 2) +
+                      pow(u_[i].get_r().get_y() - u_[j].get_r().get_y(), 2));
+
+        U -= num / denom;
+      }
+    }
+
+    return U;
+  }
+
   void simulation(int steps) {
+
+    U_0 = this->U_t();
+    E_0 = K_0 + U_0;
+
     for (int i{0}; i < steps; ++i) {
-      this->r_t_complete();
+      this->r_t_complete();  // non mi ricordo assolutamente se si fa così...
       this->u_a_t_complete();
       this->u_a_v_complete();
+      this->K_t();
+      U_ = this->U_t();
+      E_ = K_ + U_;
+
       for (size_t j{0}; j < u_.size(); ++j) {
         u_[j].set_a_(u_[j].get_a_fut());
       }
     }
   }
-  // non mi ricordo assolutamente se si fa così...
 };
 // #endif

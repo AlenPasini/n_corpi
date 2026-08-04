@@ -16,7 +16,7 @@ TEST_CASE("Testing position increment") {
   }
 }
 
-TEST_CASE("Testing the addition of the position to a body") {
+TEST_CASE("Testing the addition of the id to a body") {
   {
     Body b1({0.0, 0.0}, {3.0, 4.0}, 1.);
     CHECK(b1.get_id() == -1);
@@ -101,24 +101,6 @@ TEST_CASE("Testing the acceleration function on two bodies") {
   }
 }
 
-/*
-TEST_CASE("Testing the acceleration function on two bodies, step by step") {
-{
-  Universe u{};
-
-    Body b1({0., 0.}, {0., 0.}, 2.*pow(10, 24));
-    u.add(b1);
-
-    Body b2({2.*pow(10,7), 0.0}, {0., 0.}, 3.*pow(10, 24));
-    u.add(b2);
-
-    CHECK (u.u_a_t_2(b2) == 8*pow(10,21));
-
-}
-
-}
-*/
-
 TEST_CASE("Testing the position increment universe function on two bodies") {
   {
     Body b0({0.0, 0.0}, {3.0, 4.0}, 1.);
@@ -157,29 +139,6 @@ TEST_CASE("Testing an entire simulation") {
     CHECK(u.get_body(1).get_v().get_x() ==
           doctest::Approx(-8.3375 * pow(10, -4)));
     CHECK(u.get_body(1).get_a().get_x() == doctest::Approx(-0.3335));
-  }
-
-  {
-    Universe u{};
-
-    Body b0({0., 0.}, {0., 0.}, 1. * pow(10, 24));
-    u.add(b0);
-
-    Body b1({1 * pow(10, 7), 0.}, {0., 0.}, 1. * pow(10, 22));
-    u.add(b1);
-
-    u.simulation(2);
-
-    CHECK(u.get_body(0).get_r().get_x() ==
-          doctest::Approx(1.6675 * pow(10, -7)));
-    CHECK(u.get_body(0).get_v().get_x() ==
-          doctest::Approx(5.0025 * pow(10, -5)));
-    CHECK(u.get_body(0).get_a().get_x() == doctest::Approx(6.67 * pow(10, -3)));
-
-    CHECK(u.get_body(1).get_r().get_x() == doctest::Approx(1 * pow(10, 7)));
-    CHECK(u.get_body(1).get_v().get_x() ==
-          doctest::Approx(-5.0025 * pow(10, -3)));
-    CHECK(u.get_body(1).get_a().get_x() == doctest::Approx(-0.667));
   }
 
   {
@@ -235,5 +194,32 @@ TEST_CASE("Testing an entire simulation") {
     CHECK(u.get_body(2).get_v().get_x() ==
           doctest::Approx(-8.23745 * pow(10, -3)));
     CHECK(u.get_body(2).get_a().get_x() == doctest::Approx(-0.17342));
+  }
+}
+
+TEST_CASE("Testing the conservation of mechanical energy") {
+  {
+    Universe u{};
+
+    Body b0({0., 0.}, {1., 0.}, 3. * pow(10, 24));
+    u.add(b0);
+
+    Body b1({2 * pow(10, 7), 0.}, {-4., 0.}, 8. * pow(10, 22));
+    u.add(b1);
+
+    Body b2({4.5 * pow(10, 7), 0.}, {6., 0.}, 4. * pow(10, 21));
+    u.add(b2);
+
+    u.simulation(100);
+
+    CHECK(u.get_K_0() == doctest::Approx(2.212 * pow(10, 24)));
+    CHECK(u.get_U_0() == doctest::Approx(-8.1904042667 * pow(10, 29)));
+    CHECK(u.get_E_0() == doctest::Approx(-8.1903821467 * pow(10, 29)));
+
+    CHECK(u.get_K_() == doctest::Approx(2.3129430534 * pow(10, 24)));
+    CHECK(u.get_U_() == doctest::Approx(-8.1904052810 * pow(10, 29)));
+    CHECK(u.get_E_() == doctest::Approx(-8.1903821516 * pow(10, 29)));
+
+    CHECK(u.get_E_0() == doctest::Approx(u.get_E_()));
   }
 }

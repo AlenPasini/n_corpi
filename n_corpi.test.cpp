@@ -81,7 +81,7 @@ TEST_CASE("Testing the acceleration function on two bodies") {
 
     CHECK(b1.get_a_fut().get_x() == -0.3335);
   }
-  /*
+  
     {
       Universe u{};
 
@@ -91,16 +91,15 @@ TEST_CASE("Testing the acceleration function on two bodies") {
       Body b1({2. * pow(10, 7), 0.0}, {0., 0.}, 3. * pow(10, 24));
       u.add(b1);
 
-      b0.r_t();
-      b1.r_t();
+      u.r_t_complete();
 
       u.u_a_t_complete();
 
-      CHECK(b0.get_a_fut().get_x() == 0.50025);
+      CHECK(u.get_body(0).get_a_fut().get_x() == 0.50025);
 
-      CHECK(b1.get_a_fut().get_x() == -0.3335);
+      CHECK(u.get_body(1).get_a_fut().get_x() == -0.3335);
     }
-  */
+  
 }
 
 /*

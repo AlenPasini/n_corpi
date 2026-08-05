@@ -201,11 +201,12 @@ class Universe {
     return U;
   }
 
-  void simulation(int steps) {
-
+  void set_U_0() {
     U_0 = this->U_t();
     E_0 = K_0 + U_0;
+  }
 
+  void simulation(int steps) {
     for (int i{0}; i < steps; ++i) {
       this->r_t_complete();  // non mi ricordo assolutamente se si fa così...
       this->u_a_t_complete();

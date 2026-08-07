@@ -9,8 +9,6 @@
 int main() {
   Universe u{};
 
-  double scale = 1.0e5;
-
   sf::RenderWindow window(sf::VideoMode(800, 600), "Universe");
 
   sf::View view(sf::Vector2f(0.f, 0.f), sf::Vector2f(800.f, 600.f));
@@ -38,20 +36,13 @@ int main() {
     Body b{r, v, m};
 
     u.add(b);
-
-    sf::CircleShape circle(10.f);
-    circle.setOrigin(10.f, 10.f);
-
-    circle.setPosition(r_x/scale, r_y/scale);
-
-    bodies.push_back(circle);
   }
 
   file.close();
 
   u.set_U_0();
 
-  int n_step{1000};
+  // int n_step{1000};
 
   while (window.isOpen()) {
     // float dt = clock.restart().asSeconds();
@@ -68,8 +59,8 @@ int main() {
     // DRAW
     window.clear();
 
-    for (size_t i{0}; i < bodies.size(); ++i) {
-      window.draw(bodies[i]);
+    for (int i{0}; i < u.size(); ++i) {
+      window.draw(u.get_circles()[i]);
     }
 
     window.display();

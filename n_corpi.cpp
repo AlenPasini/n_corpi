@@ -3,6 +3,7 @@
 // #ifndef PF_N_CORPI_HPP. // provvisorio
 // #define PF_N_CORPI_HPP
 
+#include <SFML/Graphics.hpp>
 #include <cmath>
 #include <iostream>
 #include <vector>
@@ -86,6 +87,7 @@ bool operator==(Body const &b1, Body const &b2) {
 class Universe {
  private:
   std::vector<Body> u_{};
+  std::vector<sf::CircleShape> circles_{};
 
   double K_0{0.};
   double U_0{0.};
@@ -98,17 +100,34 @@ class Universe {
   double dt{0.005};
   double G{6.67 * pow(10., -11.)};
   double eps{pow(10., -12.)};
+  double scale_{1e5};
 
  public:
   int size() { return u_.size(); }
 
-  void add(Body &b) {
+  void add_body(Body &b) {
     u_.push_back(b);
     u_.back().add_id(u_.size() - 1);
 
     K_0 += 0.5 * b.get_m() *
            (pow(b.get_v().get_x(), 2) + pow(b.get_v().get_y(), 2));
   }
+
+  void add_circle(Body &b) {
+    sf::CircleShape circle(10.);
+    circle.setOrigin(10., 10.);
+
+    circle.setPosition(b.get_r().get_x() / scale_, b.get_r().get_y() / scale_);
+
+    circles_.push_back(circle);
+  }
+
+  void add(Body &b) {
+    add_body(b);
+    add_circle(b);
+  }
+
+  std::vector<sf::CircleShape> get_circles() { return circles_; }
 
   Body get_body(int id) { return u_[id]; }
 

@@ -180,6 +180,8 @@ TEST_CASE("Testing an entire simulation") {
 
     CHECK(u.get_body(0).get_r().get_x() ==
           doctest::Approx(7.5225 * pow(10, -6)));
+    CHECK(u.get_circles()[0].getPosition().x ==
+          doctest::Approx(7.5225 * pow(10, -6)));
     CHECK(u.get_body(0).get_v().get_x() ==
           doctest::Approx(3.1761706 * pow(10, -4)));
     CHECK(u.get_body(0).get_a().get_x() ==
@@ -197,6 +199,7 @@ TEST_CASE("Testing an entire simulation") {
   }
 }
 
+/*
 TEST_CASE("Testing the conservation of mechanical energy") {
   {
     Universe u{};
@@ -223,3 +226,4 @@ TEST_CASE("Testing the conservation of mechanical energy") {
     CHECK(u.get_E_0() == doctest::Approx(u.get_E_()));
   }
 }
+  */

@@ -9,14 +9,17 @@
 int main() {
   Universe u{};
 
-  sf::RenderWindow window(sf::VideoMode(800, 600), "Universe");
+  sf::RenderWindow window(sf::VideoMode(1600, 800), "Universe");
 
-  sf::View view(sf::Vector2f(0.f, 0.f), sf::Vector2f(800.f, 600.f));
+  sf::View view(sf::Vector2f(0.f, 0.f), sf::Vector2f(1600.f, 800.f));
 
   window.setView(view);
 
+  sf::Clock clock;
+
   std::vector<sf::CircleShape> bodies;
 
+  /*
   std::ifstream file("configurations.txt");
 
   if (!file) {
@@ -39,13 +42,23 @@ int main() {
   }
 
   file.close();
+  */
+
+  Body b0({0., 0.}, {0., 0.}, 1. * pow(10, 10));
+  u.add(b0);
+
+  Body b1({4 * pow(10, 7), 5.*pow(10,6)}, {-1.*pow(10,6), 0.}, 1. * pow(10, 14));
+  u.add(b1);
+
+  Body b2({-4 * pow(10, 7), 0.}, {1.*pow(10,6), 0.}, 1. * pow(10, 10));
+  u.add(b2);
 
   u.set_U_0();
 
   // int n_step{1000};
 
   while (window.isOpen()) {
-    // float dt = clock.restart().asSeconds();
+    float dt = clock.restart().asSeconds();
 
     // EVENTS
     sf::Event event;
@@ -55,6 +68,8 @@ int main() {
     }
 
     // UPDATE
+
+    u.simulation_graphics(dt);
 
     // DRAW
     window.clear();

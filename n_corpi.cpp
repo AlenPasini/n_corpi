@@ -105,6 +105,8 @@ class Universe {
  public:
   int size() { return u_.size(); }
 
+  void set_dt(double dt_input) { dt = dt_input; }
+
   void add_body(Body &b) {
     u_.push_back(b);
     u_.back().add_id(u_.size() - 1);
@@ -127,7 +129,7 @@ class Universe {
     add_circle(b);
   }
 
-  std::vector<sf::CircleShape> get_circles() { return circles_; }
+  std::vector<sf::CircleShape> & get_circles() { return circles_; }
 
   Body get_body(int id) { return u_[id]; }
 
@@ -237,6 +239,22 @@ class Universe {
       for (size_t j{0}; j < u_.size(); ++j) {
         u_[j].set_a_(u_[j].get_a_fut());
       }
+    }
+  }
+
+  void simulation_graphics(double dt) {
+    set_dt(dt);
+    this->r_t_complete();  // non mi ricordo assolutamente se si fa così...
+    this->u_a_t_complete();
+    this->u_a_v_complete();
+    this->K_t();
+    U_ = this->U_t();
+    E_ = K_ + U_;
+
+    for (size_t j{0}; j < u_.size(); ++j) {
+
+      u_[j].set_a_(u_[j].get_a_fut());
+      circles_[j].setPosition(u_[j].get_r().get_x() / scale_, -u_[j].get_r().get_y() / scale_);
     }
   }
 };

@@ -1,7 +1,7 @@
 #include "n_corpi.cpp"
 
-#include "fstream"
-#include "iostream"
+#include <fstream>
+#include <iostream>
 
 int main() {
   Universe u{};

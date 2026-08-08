@@ -92,10 +92,14 @@ class Universe {
   double K_0{0.};
   double U_0{0.};
   double E_0{0.};
+  double P_0{0.};
+  double L_0{0.};
 
   double K_;
   double U_;
   double E_;
+  double P_;
+  double L_;
 
   double dt{0.005};
   double G{6.67 * pow(10., -11.)};
@@ -113,6 +117,11 @@ class Universe {
 
     K_0 += 0.5 * b.get_m() *
            (pow(b.get_v().get_x(), 2) + pow(b.get_v().get_y(), 2));
+
+    P_0 += b.get_m() * std::sqrt((pow(b.get_v().get_x(), 2) + pow(b.get_v().get_y(), 2)));
+
+    L_0 += b.get_m() *
+            (b.get_v().get_y() * b.get_r().get_x() - b.get_v().get_x() * b.get_r().get_y());
   }
 
   void add_circle(Body &b) {
@@ -203,6 +212,22 @@ class Universe {
     for (size_t j{0}; j < u_.size(); ++j) {
       K_ += 0.5 * u_[j].get_m() *
             (pow(u_[j].get_v().get_x(), 2) + pow(u_[j].get_v().get_y(), 2));
+    }
+  }
+
+  void P_t() {
+    P_ = 0.;
+    for (size_t j{0}; j < u_.size(); ++j) {
+      P_ += u_[j].get_m() *
+            std::sqrt((pow(u_[j].get_v().get_x(), 2) + pow(u_[j].get_v().get_y(), 2)));
+    }
+  }
+
+  void L_t() {
+    L_ = 0.;
+    for (size_t j{0}; j < u_.size(); ++j) {
+      L_ += u_[j].get_m() *
+            (u_[j].get_v().get_y() * u_[j].get_r().get_x() - u_[j].get_v().get_x() * u_[j].get_r().get_y());
     }
   }
 

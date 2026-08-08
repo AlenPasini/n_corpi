@@ -211,14 +211,16 @@ TEST_CASE ("Testin a simulation with many iterazrions") {
     Body b2({2 * pow(10, 7), 0.}, {0., 0.}, 1. * pow(10, 20));
     u.add(b2);
 
-    u.simulation(100);
+    u.simulation(1000);
 
     CHECK(u.get_body(0).get_r().get_x() ==
-          doctest::Approx(8.2747603354 * pow(10, -4)));
+          doctest::Approx(8.3499877425 * pow(10, -2)));
 
-    CHECK(u.get_body(1).get_r().get_x() == doctest::Approx(9.9999999175 * pow(10, 6)));
+    CHECK(u.get_circles()[0].getPosition().x ==  doctest::Approx(8.3499877425 * pow(10, -7)));
 
-    CHECK(u.get_body(2).get_r().get_x() == doctest::Approx(2 * pow(10, 7)));
+    CHECK(u.get_body(1).get_r().get_x() == doctest::Approx(9.9999916717 * pow(10, 6)));
+
+    CHECK(u.get_body(2).get_r().get_x() == doctest::Approx(1.9999997834 * pow(10, 7)));
   }
 }
 

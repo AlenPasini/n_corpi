@@ -129,12 +129,13 @@ class Universe {
     add_circle(b);
   }
 
-  std::vector<sf::CircleShape> & get_circles() { return circles_; }
+  std::vector<sf::CircleShape> &get_circles() { return circles_; }
 
   Body get_body(int id) { return u_[id]; }
 
   double get_eps() { return eps; }
   double get_G() { return G; }
+  double get_dt() { return dt; }
 
   double get_K_0() { return K_0; }
   double get_U_0() { return U_0; }
@@ -252,10 +253,29 @@ class Universe {
     E_ = K_ + U_;
 
     for (size_t j{0}; j < u_.size(); ++j) {
-
       u_[j].set_a_(u_[j].get_a_fut());
-      circles_[j].setPosition(u_[j].get_r().get_x() / scale_, -u_[j].get_r().get_y() / scale_);
+      circles_[j].setPosition(u_[j].get_r().get_x() / scale_,
+                              -u_[j].get_r().get_y() / scale_);
     }
+  }
+
+  void single_simulation() {
+    this->r_t_complete();  // non mi ricordo assolutamente se si fa così...
+    this->u_a_t_complete();
+    this->u_a_v_complete();
+    this->K_t();
+    U_ = this->U_t();
+    E_ = K_ + U_;
+
+    std::cout << "Position body: " << u_[0].get_r().get_x() << "    ";
+    
+
+    for (size_t j{0}; j < u_.size(); ++j) {
+      u_[j].set_a_(u_[j].get_a_fut());
+      circles_[j].setPosition(u_[j].get_r().get_x() / scale_,
+                              -u_[j].get_r().get_y() / scale_);
+    }
+    std::cout << "Position circle: " << circles_[0].getPosition().x << '\n';
   }
 };
 // #endif

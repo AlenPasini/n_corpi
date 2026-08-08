@@ -44,21 +44,29 @@ int main() {
   file.close();
   */
 
-  Body b0({0., 0.}, {0., 0.}, 1. * pow(10, 10));
+  Body b0({-2.*pow(10,7), 1*pow(10,6)}, {1.2566*pow(10,6), 0.}, 8.5231 * pow(10, 20));
   u.add(b0);
 
-  Body b1({4 * pow(10, 7), 5.*pow(10,6)}, {-1.*pow(10,6), 0.}, 1. * pow(10, 14));
+  Body b1({2.*pow(10,7), 0}, {-1.2566*pow(10,6), 0.}, 4.2615 * pow(10, 20));
   u.add(b1);
 
-  Body b2({-4 * pow(10, 7), 0.}, {1.*pow(10,6), 0.}, 1. * pow(10, 10));
+  Body b2({-4 * pow(10, 7), 0.}, {1.*pow(10,6), 0.}, 1. * pow(10, 20));
   u.add(b2);
 
   u.set_U_0();
 
-  // int n_step{1000};
+  double acc{0.};
+  //int n_step{1000};
 
   while (window.isOpen()) {
-    float dt = clock.restart().asSeconds();
+    double frame_dt = clock.restart().asSeconds();
+
+    acc+=frame_dt;
+
+    while (acc >= u.get_dt()) {
+      u.single_simulation();
+      acc-=u.get_dt();
+    }
 
     // EVENTS
     sf::Event event;
@@ -68,8 +76,6 @@ int main() {
     }
 
     // UPDATE
-
-    u.simulation_graphics(dt);
 
     // DRAW
     window.clear();

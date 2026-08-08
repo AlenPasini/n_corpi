@@ -195,40 +195,33 @@ TEST_CASE("Testing an entire simulation") {
           doctest::Approx(-8.23745 * pow(10, -3)));
     CHECK(u.get_body(2).get_a().get_x() == doctest::Approx(-0.17342));
   }
+}
+
+TEST_CASE ("Testin a simulation with many iterazrions") {
 
   {
     Universe u{};
 
-    Body b0({-2. * pow(10,7), 0.}, {0., 2.*pow(10,4)}, 5. * pow(10, 24));
+    Body b0({0., 0.}, {0., 0.}, 1. * pow(10, 24));
     u.add(b0);
 
-    Body b1({4. * pow(10, 7), 0.}, {0., -2.*pow(10,4)}, 5. * pow(10, 22));
+    Body b1({1 * pow(10, 7), 0.}, {0., 0.}, 1. * pow(10, 22));
     u.add(b1);
 
+    Body b2({2 * pow(10, 7), 0.}, {0., 0.}, 1. * pow(10, 20));
+    u.add(b2);
 
-    u.simulation(10);
+    u.simulation(100);
 
     CHECK(u.get_body(0).get_r().get_x() ==
-          doctest::Approx(7.5225 * pow(10, -6)));
-    CHECK(u.get_body(0).get_v().get_x() ==
-          doctest::Approx(3.1761706 * pow(10, -4)));
-    CHECK(u.get_body(0).get_a().get_x() ==
-          doctest::Approx(6.686675 * pow(10, -3)));
+          doctest::Approx(8.2747603354 * pow(10, -4)));
 
-    CHECK(u.get_body(1).get_r().get_x() == doctest::Approx(1 * pow(10, 7)));
-    CHECK(u.get_body(1).get_v().get_x() ==
-          doctest::Approx(-3.16793318 * pow(10, -2)));
-    CHECK(u.get_body(1).get_a().get_x() == doctest::Approx(-0.6669333));
+    CHECK(u.get_body(1).get_r().get_x() == doctest::Approx(9.9999999175 * pow(10, 6)));
 
     CHECK(u.get_body(2).get_r().get_x() == doctest::Approx(2 * pow(10, 7)));
-    CHECK(u.get_body(2).get_v().get_x() ==
-          doctest::Approx(-8.23745 * pow(10, -3)));
-    CHECK(u.get_body(2).get_a().get_x() == doctest::Approx(-0.17342));
   }
-
-
-
 }
+
 
 /*
 TEST_CASE("Testing the conservation of mechanical energy") {

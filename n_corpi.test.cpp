@@ -8,7 +8,7 @@ TEST_CASE("Testing position increment") {
     Vector r{0.0, 0.0};
     Vector v{3.0, 4.0};
 
-    Body b(r, v, 1.);
+    Body b(r, v, 1., 1.);
 
     b.r_t();
 
@@ -18,12 +18,12 @@ TEST_CASE("Testing position increment") {
 
 TEST_CASE("Testing the addition of the id to a body") {
   {
-    Body b1({0.0, 0.0}, {3.0, 4.0}, 1.);
+    Body b1({0.0, 0.0}, {3.0, 4.0}, 1., 1.);
     CHECK(b1.get_id() == -1);
   }
 
   {
-    Body b1({0.0, 0.0}, {3.0, 4.0}, 1.);
+    Body b1({0.0, 0.0}, {3.0, 4.0}, 1., 1.);
     b1.add_id(2);
     CHECK(b1.get_id() == 2);
   }
@@ -33,13 +33,13 @@ TEST_CASE("Testing the Universe class") {
   {
     Universe u{};
 
-    Body b1({0.0, 0.0}, {3.0, 4.0}, 1.);
+    Body b1({0.0, 0.0}, {3.0, 4.0}, 1., 1.);
     u.add(b1);
 
-    Body b2({0.1, 0.2}, {2.0, 3.0}, 1.);
+    Body b2({0.1, 0.2}, {2.0, 3.0}, 1., 1.);
     u.add(b2);
 
-    Body b3({-1.5, 2.3}, {0.2, -4.2}, 1.);
+    Body b3({-1.5, 2.3}, {0.2, -4.2}, 1., 1.);
     u.add(b3);
 
     CHECK(u.size() == 3);
@@ -48,10 +48,10 @@ TEST_CASE("Testing the Universe class") {
   {
     Universe u{};
 
-    Body b1({0.0, 0.0}, {3.0, 4.0}, 1.);
+    Body b1({0.0, 0.0}, {3.0, 4.0}, 1., 1.);
     u.add(b1);
 
-    Body b2({0.1, 0.2}, {2.0, 3.0}, 1.);
+    Body b2({0.1, 0.2}, {2.0, 3.0}, 1., 1.);
     u.add(b2);
 
     CHECK(u.get_body(1).get_v() == Vector{2.0, 3.0});
@@ -65,10 +65,10 @@ TEST_CASE("Testing the acceleration function on two bodies") {
   {
     Universe u{};
 
-    Body b0({0., 0.}, {0., 0.}, 2. * pow(10, 24));
+    Body b0({0., 0.}, {0., 0.}, 2. * pow(10, 24), 1.);
     u.add(b0);
 
-    Body b1({2. * pow(10, 7), 0.0}, {0., 0.}, 3. * pow(10, 24));
+    Body b1({2. * pow(10, 7), 0.0}, {0., 0.}, 3. * pow(10, 24), 1.);
     u.add(b1);
 
     b0.r_t();
@@ -85,10 +85,10 @@ TEST_CASE("Testing the acceleration function on two bodies") {
   {
     Universe u{};
 
-    Body b0({0., 0.}, {0., 0.}, 2. * pow(10, 24));
+    Body b0({0., 0.}, {0., 0.}, 2. * pow(10, 24), 1.);
     u.add(b0);
 
-    Body b1({2. * pow(10, 7), 0.0}, {0., 0.}, 3. * pow(10, 24));
+    Body b1({2. * pow(10, 7), 0.0}, {0., 0.}, 3. * pow(10, 24), 1.);
     u.add(b1);
 
     u.r_t_complete();
@@ -103,8 +103,8 @@ TEST_CASE("Testing the acceleration function on two bodies") {
 
 TEST_CASE("Testing the position increment universe function on two bodies") {
   {
-    Body b0({0.0, 0.0}, {3.0, 4.0}, 1.);
-    Body b1({1.0, -2.0}, {2.0, -1.0}, 1.);
+    Body b0({0.0, 0.0}, {3.0, 4.0}, 1., 1.);
+    Body b1({1.0, -2.0}, {2.0, -1.0}, 1., 1.);
 
     Universe u{};
 
@@ -122,10 +122,10 @@ TEST_CASE("Testing an entire simulation") {
   {
     Universe u{};
 
-    Body b0({0., 0.}, {0., 0.}, 2. * pow(10, 24));
+    Body b0({0., 0.}, {0., 0.}, 2. * pow(10, 24), 1.);
     u.add(b0);
 
-    Body b1({2. * pow(10, 7), 0.}, {0., 0.}, 3. * pow(10, 24));
+    Body b1({2. * pow(10, 7), 0.}, {0., 0.}, 3. * pow(10, 24), 1.);
     u.add(b1);
 
     u.simulation(1);
@@ -144,10 +144,10 @@ TEST_CASE("Testing an entire simulation") {
   {
     Universe u{};
 
-    Body b0({0., 0.}, {0., 0.}, 1. * pow(10, 24));
+    Body b0({0., 0.}, {0., 0.}, 1. * pow(10, 24), 1.);
     u.add(b0);
 
-    Body b1({1 * pow(10, 7), 0.}, {0., 0.}, 1. * pow(10, 22));
+    Body b1({1 * pow(10, 7), 0.}, {0., 0.}, 1. * pow(10, 22), 1.);
     u.add(b1);
 
     u.simulation(10);
@@ -167,13 +167,13 @@ TEST_CASE("Testing an entire simulation") {
   {
     Universe u{};
 
-    Body b0({0., 0.}, {0., 0.}, 1. * pow(10, 24));
+    Body b0({0., 0.}, {0., 0.}, 1. * pow(10, 24), 1.);
     u.add(b0);
 
-    Body b1({1 * pow(10, 7), 0.}, {0., 0.}, 1. * pow(10, 22));
+    Body b1({1 * pow(10, 7), 0.}, {0., 0.}, 1. * pow(10, 22), 1.);
     u.add(b1);
 
-    Body b2({2 * pow(10, 7), 0.}, {0., 0.}, 1. * pow(10, 20));
+    Body b2({2 * pow(10, 7), 0.}, {0., 0.}, 1. * pow(10, 20), 1.);
     u.add(b2);
 
     u.simulation(10);
@@ -201,13 +201,13 @@ TEST_CASE("Testin a simulation with many iterazrions") {
   {
     Universe u{};
 
-    Body b0({0., 0.}, {0., 0.}, 1. * pow(10, 24));
+    Body b0({0., 0.}, {0., 0.}, 1. * pow(10, 24), 1.);
     u.add(b0);
 
-    Body b1({1 * pow(10, 7), 0.}, {0., 0.}, 1. * pow(10, 22));
+    Body b1({1 * pow(10, 7), 0.}, {0., 0.}, 1. * pow(10, 22), 1.);
     u.add(b1);
 
-    Body b2({2 * pow(10, 7), 0.}, {0., 0.}, 1. * pow(10, 20));
+    Body b2({2 * pow(10, 7), 0.}, {0., 0.}, 1. * pow(10, 20), 1.);
     u.add(b2);
 
     u.simulation(1000);
@@ -278,10 +278,10 @@ TEST_CASE("Testing the y component") {
   {
     Universe u{};
 
-    Body b0({0., 0.}, {0., 0.}, 1. * pow(10, 24));
+    Body b0({0., 0.}, {0., 0.}, 1. * pow(10, 24), 1.);
     u.add(b0);
 
-    Body b1({0., 50000.}, {0., 0.}, 1. * pow(10, 22));
+    Body b1({0., 50000.}, {0., 0.}, 1. * pow(10, 22), 1.);
     u.add(b1);
 
     u.simulation(100);

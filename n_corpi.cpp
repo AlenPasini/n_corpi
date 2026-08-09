@@ -170,22 +170,18 @@ class Universe {
     for (size_t j{0}; j < u_.size(); ++j) {
       if (b == u_[j]) {
       } else {
-        double denom_x{pow(pow(u_[j].get_r().get_x() - b.get_r().get_x(), 2) +
-                               get_eps() * get_eps(),
-                           1.5)};
+        Vector distance{b.get_r() - u_[j].get_r()};
 
-        double num_x{get_G() * u_[j].get_m() *
-                     (b.get_r().get_x() - u_[j].get_r().get_x())};
+        double num_x{get_G() * u_[j].get_m() * distance.get_x()};
+        double num_y{get_G() * u_[j].get_m() * distance.get_y()};
 
-        double denom_y{pow(pow(u_[j].get_r().get_y() - b.get_r().get_y(), 2) +
-                               get_eps() * get_eps(),
-                           1.5)};
+        double d_norm{distance.get_x() * distance.get_x() +
+                      distance.get_y() * distance.get_y()};
 
-        double num_y{get_G() * u_[j].get_m() *
-                     (b.get_r().get_y() - u_[j].get_r().get_y())};
+        double denom{pow(d_norm + get_eps() * get_eps(), 1.5)};
 
-        a_t_x -= num_x / denom_x;
-        a_t_y -= num_y / denom_y;
+        a_t_x -= num_x / denom;
+        a_t_y -= num_y / denom;
       }
     }
 
@@ -250,51 +246,56 @@ class Universe {
 
     return U;
   }
-/*
-  void collision() {
-    Vector r_n;
-    Vector v_n;
-    double m_n{0};
-    int k = 1;
-    while (k != 0) {
-      k = 0;
-      for (size_t i{0}; i < u_.size() - 1; ++i) {
-        for (size_t j{i + 1}; j < u_.size(); ++j) {
-          if (std::abs(std::sqrt(pow(u_[i].get_r().get_x(), 2) +
-                                 pow(u_[i].get_r().get_y(), 2)) -
-                       std::sqrt(pow(u_[j].get_r().get_x(), 2) +
-                                 pow(u_[j].get_r().get_y(), 2))) <=
-              u_[i].get_k() + u_[j].get_k()) {
-            m_n = u_[i].get_m() + u_[j].get_m();
-            r_n.x = (u_[i].get_m() * u_[i].get_r().get_x() +
-                     u_[j].get_m() * u_[j].get_r().get_x()) /
-                    m_n;
-            r_n.y = (u_[i].get_m() * u_[i].get_r().get_y() +
-                     u_[j].get_m() * u_[j].get_r().get_y()) /
-                    m_n;
-            v_n.x = (u_[i].get_m() * u_[i].get_v().get_x() +
-                     u_[j].get_m() * u_[j].get_r().get_x()) /
-                    m_n;
-            r_n.x = (u_[i].get_m() * u_[i].get_v().get_y() +
-                     u_[j].get_m() * u_[j].get_v().get_y()) /
-                    m_n;
-            k = 1;
+  /*
+    void collision() {
+      Vector r_n;
+      Vector v_n;
+      double m_n{0};
+      int k = 1;
+      while (k != 0) {
+        k = 0;
+        for (size_t i{0}; i < u_.size() - 1; ++i) {
+          for (size_t j{i + 1}; j < u_.size(); ++j) {
+            if (std::abs(std::sqrt(pow(u_[i].get_r().get_x(), 2) +
+                                   pow(u_[i].get_r().get_y(), 2)) -
+                         std::sqrt(pow(u_[j].get_r().get_x(), 2) +
+                                   pow(u_[j].get_r().get_y(), 2))) <=
+                u_[i].get_k() + u_[j].get_k()) {
+              m_n = u_[i].get_m() + u_[j].get_m();
+              r_n.x = (u_[i].get_m() * u_[i].get_r().get_x() +
+                       u_[j].get_m() * u_[j].get_r().get_x()) /
+                      m_n;
+              r_n.y = (u_[i].get_m() * u_[i].get_r().get_y() +
+                       u_[j].get_m() * u_[j].get_r().get_y()) /
+                      m_n;
+              v_n.x = (u_[i].get_m() * u_[i].get_v().get_x() +
+                       u_[j].get_m() * u_[j].get_r().get_x()) /
+                      m_n;
+              r_n.x = (u_[i].get_m() * u_[i].get_v().get_y() +
+                       u_[j].get_m() * u_[j].get_v().get_y()) /
+                      m_n;
+              k = 1;
+              break;
+            }
+          }
+          if (k == 1) {
             break;
           }
         }
-        if (k == 1) {
-          break;
-        }
       }
     }
-  }
-*/
+  */
   void set_U_0() {
     U_0 = this->U_t();
     E_0 = K_0 + U_0;
   }
 
   void simulation(int steps) {
+    this->u_a_t_complete();
+    for (size_t j{0}; j < u_.size(); ++j) {
+      u_[j].set_a_(u_[j].get_a_fut());
+    }
+
     for (int i{0}; i < steps; ++i) {
       this->r_t_complete();  // non mi ricordo assolutamente se si fa così...
       this->u_a_t_complete();

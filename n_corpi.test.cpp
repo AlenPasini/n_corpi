@@ -197,8 +197,7 @@ TEST_CASE("Testing an entire simulation") {
   }
 }
 
-TEST_CASE ("Testin a simulation with many iterazrions") {
-
+TEST_CASE("Testin a simulation with many iterazrions") {
   {
     Universe u{};
 
@@ -216,14 +215,85 @@ TEST_CASE ("Testin a simulation with many iterazrions") {
     CHECK(u.get_body(0).get_r().get_x() ==
           doctest::Approx(8.3499877425 * pow(10, -2)));
 
-    CHECK(u.get_circles()[0].getPosition().x ==  doctest::Approx(8.3499877425 * pow(10, -7)));
+    CHECK(u.get_circles()[0].getPosition().x ==
+          doctest::Approx(8.3499877425 * pow(10, -7)));
 
-    CHECK(u.get_body(1).get_r().get_x() == doctest::Approx(9.9999916717 * pow(10, 6)));
+    CHECK(u.get_body(1).get_r().get_x() ==
+          doctest::Approx(9.9999916717 * pow(10, 6)));
 
-    CHECK(u.get_body(2).get_r().get_x() == doctest::Approx(1.9999997834 * pow(10, 7)));
+    CHECK(u.get_body(2).get_r().get_x() ==
+          doctest::Approx(1.9999997834 * pow(10, 7)));
+    CHECK(u.get_body(2).get_a().get_x() ==
+          doctest::Approx(-1.7342 * pow(10, -1)));
   }
+  /*
+    {
+      Universe u{};
+
+      Body b0({0., 0.}, {0., 0.}, 1. * pow(10, 24));
+      u.add(b0);
+
+      Body b1({50000., 0.}, {0., 25694.29}, 1. * pow(10, 22));
+      u.add(b1);
+
+      u.simulation(10);
+
+      CHECK(u.get_body(0).get_r().get_x() == doctest::Approx(0.3335));
+      CHECK(u.get_body(0).get_r().get_y() == doctest::Approx(2.828 *
+    pow(10,-3)));
+
+      CHECK(u.get_body(1).get_r().get_x() == doctest::Approx(49966.65));
+      CHECK(u.get_body(1).get_r().get_y() == doctest::Approx(1284.43));
+      CHECK(u.get_body(1).get_a().get_x() == doctest::Approx(-26689.5));
+    }
+      */
+  /*
+    {
+      Universe u{};
+
+      Body b0({0., 0.}, {0., 2.}, 5. * pow(10, 12));
+      u.add(b0);
+
+      Body b1({50., 0.}, {0., -1.5}, 3. * pow(10, 22));
+      u.add(b1);
+
+      Body b2({0., 80.}, {-1., 0.}, 4. * pow(10, 20));
+      u.add(b2);
+
+      u.simulation(10);
+
+      CHECK(u.get_body(0).get_r().get_x() == doctest::Approx(0.0001));
+      CHECK(u.get_body(0).get_r().get_y() == doctest::Approx(0.100052));
+
+      CHECK(u.get_body(1).get_r().get_x() == doctest::Approx(49.999813));
+      CHECK(u.get_body(1).get_r().get_y() == doctest::Approx(-0.074968));
+
+      CHECK(u.get_body(2).get_r().get_x() == doctest::Approx(-0.049985));
+      CHECK(u.get_body(2).get_r().get_y() == doctest::Approx(79.999911));
+    }
+      */
 }
 
+TEST_CASE("Testing the y component") {
+  {
+    Universe u{};
+
+    Body b0({0., 0.}, {0., 0.}, 1. * pow(10, 24));
+    u.add(b0);
+
+    Body b1({0., 50000.}, {0., 0.}, 1. * pow(10, 22));
+    u.add(b1);
+
+    u.simulation(100);
+
+    CHECK(u.get_body(0).get_v().get_y() == doctest::Approx(139.88));
+    CHECK(u.get_body(0).get_r().get_y() ==
+          doctest::Approx(34.14));
+
+    CHECK(u.get_body(1).get_v().get_y() == doctest::Approx(-13987.71));
+    CHECK(u.get_body(1).get_r().get_y() == doctest::Approx(46586.16));
+  }
+}
 
 /*
 TEST_CASE("Testing the conservation of mechanical energy") {

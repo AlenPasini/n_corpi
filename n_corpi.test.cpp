@@ -127,8 +127,8 @@ TEST_CASE("Testing an entire simulation") {
 
     Body b1({2. * pow(10, 7), 0.}, {0., 0.}, 3. * pow(10, 24), 1.);
     u.add(b1);
-
-    u.simulation(1);
+    u.set_a_0();
+    u.simulation_steps(1);
 
     CHECK(u.get_body(0).get_r().get_x() ==
           doctest::Approx(6.253125 * pow(10, -6)));
@@ -153,8 +153,8 @@ TEST_CASE("Testing an entire simulation") {
 
     Body b2({2 * pow(10, 7), 0.}, {0., 0.}, 1. * pow(10, 20), 1.);
     u.add(b2);
-
-    u.simulation(10);
+    u.set_a_0();
+    u.simulation_steps(10);
 
     CHECK(u.get_body(0).get_r().get_x() ==
           doctest::Approx(8.35834 * pow(10, -6)));
@@ -187,8 +187,8 @@ TEST_CASE("Testing a simulation with many iterations") {
 
     Body b2({2 * pow(10, 7), 0.}, {0., 0.}, 1. * pow(10, 20), 1.);
     u.add(b2);
-
-    u.simulation(1000);
+    u.set_a_0();
+    u.simulation_steps(1000);
 
     CHECK(u.get_body(0).get_r().get_x() ==
           doctest::Approx(8.3583461 * pow(10, -2)));
@@ -211,7 +211,8 @@ TEST_CASE("Testing the y component") {
     Body b1({0., 50000.}, {0., 0.}, 1. * pow(10, 22), 1.);
     u.add(b1);
 
-    u.simulation(100);
+    u.set_a_0();
+    u.simulation_steps(100);
 
     CHECK(u.get_body(0).get_r().get_y() == doctest::Approx(34.138356));
     CHECK(u.get_body(0).get_v().get_y() == doctest::Approx(139.8771175));
@@ -231,36 +232,40 @@ TEST_CASE("Testing a system with velocities on x and y") {
     Body b1({1. * pow(10, 7), 5. * pow(10, 6)}, {-20., 300.}, 1. * pow(10, 22),
             1.);
     u.add(b1);
-
-    u.simulation(10);
+    u.set_a_0();
+    u.simulation_steps(10);
 
     CHECK(u.get_body(0).get_r().get_x() ==
           doctest::Approx(5.00005966 * pow(10, -1)));
     CHECK(u.get_body(0).get_r().get_y() ==
           doctest::Approx(-2.4999701708 * pow(10, -1)));
 
-    CHECK(u.get_body(0).get_v().get_x() == doctest::Approx(1.0000238633 * pow(10, 1)));
+    CHECK(u.get_body(0).get_v().get_x() ==
+          doctest::Approx(1.0000238633 * pow(10, 1)));
 
     CHECK(u.get_body(0).get_v().get_y() == doctest::Approx(-4.9998806833));
 
-    CHECK(u.get_body(0).get_a().get_x() == doctest::Approx(4.7726557600 * pow(10, -3)));
+    CHECK(u.get_body(0).get_a().get_x() ==
+          doctest::Approx(4.7726557600 * pow(10, -3)));
 
-    CHECK(u.get_body(0).get_a().get_y() == doctest::Approx(2.3863355163 * pow(10,-3)));
-
-
+    CHECK(u.get_body(0).get_a().get_y() ==
+          doctest::Approx(2.3863355163 * pow(10, -3)));
 
     CHECK(u.get_body(1).get_r().get_x() ==
           doctest::Approx(9.99999 * pow(10, 6)));
     CHECK(u.get_body(1).get_r().get_y() ==
           doctest::Approx(5.000015 * pow(10, 6)));
 
-    CHECK(u.get_body(1).get_v().get_x() == doctest::Approx(-2.0023863298 * pow(10, 1)));
+    CHECK(u.get_body(1).get_v().get_x() ==
+          doctest::Approx(-2.0023863298 * pow(10, 1)));
 
-    CHECK(u.get_body(1).get_v().get_y() == doctest::Approx(2.9998806833 * pow(10,2)));
+    CHECK(u.get_body(1).get_v().get_y() ==
+          doctest::Approx(2.9998806833 * pow(10, 2)));
 
-    CHECK(u.get_body(1).get_a().get_x() == doctest::Approx(-4.7726557600 * pow(10, -1)));
+    CHECK(u.get_body(1).get_a().get_x() ==
+          doctest::Approx(-4.7726557600 * pow(10, -1)));
 
-    CHECK(u.get_body(1).get_a().get_y() == doctest::Approx(-2.3863355163 * pow(10,-1)));
-
+    CHECK(u.get_body(1).get_a().get_y() ==
+          doctest::Approx(-2.3863355163 * pow(10, -1)));
   }
 }

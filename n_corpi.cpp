@@ -8,20 +8,17 @@
 #include <iostream>
 #include <vector>
 
-struct Vector
-{
+struct Vector {
   double x;
   double y;
 
-  Vector &operator+=(Vector const &v)
-  {
+  Vector &operator+=(Vector const &v) {
     x += v.x;
     y += v.y;
     return *this;
   }
 
-  Vector &operator-=(Vector const &v)
-  {
+  Vector &operator-=(Vector const &v) {
     x -= v.x;
     y -= v.y;
     return *this;
@@ -31,26 +28,22 @@ struct Vector
   double get_y() { return y; }
 };
 
-Vector operator+(Vector const &v1, Vector const &v2)
-{
+Vector operator+(Vector const &v1, Vector const &v2) {
   auto result{v1};
   return result += v2;
 }
 
-Vector operator-(Vector const &v1, Vector const &v2)
-{
+Vector operator-(Vector const &v1, Vector const &v2) {
   auto result{v1};
   return result -= v2;
 }
 
-bool operator==(Vector const &v1, Vector const &v2)
-{
+bool operator==(Vector const &v1, Vector const &v2) {
   return v1.x == v2.x && v1.y == v2.y;
 }
 
-class Body
-{
-private:
+class Body {
+ private:
   Vector r_;
   Vector v_;
   Vector a_{0., 0.};
@@ -60,7 +53,7 @@ private:
   int id_{-1};
   double dt{0.005};
 
-public:
+ public:
   Body(Vector r, Vector v, double m, double k) : r_{r}, v_{v}, m_{m}, k_{k} {}
   Vector get_r() { return r_; }
   double get_k() { return k_; }
@@ -72,14 +65,12 @@ public:
   // deve essere const perché altrimenti non me la fa paragonare
   // nell'operatore ==
 
-  void r_t()
-  {
+  void r_t() {
     r_.x += v_.x * dt + 0.5 * a_.x * dt * dt;
     r_.y += v_.y * dt + 0.5 * a_.y * dt * dt;
   }
 
-  void v_t()
-  {
+  void v_t() {
     v_.x += 0.5 * (a_.x + a_fut_.x) * dt;
     v_.y += 0.5 * (a_.y + a_fut_.y) * dt;
   }
@@ -91,14 +82,12 @@ public:
   void set_a_(Vector a_t_fut) { a_ = a_t_fut; }
 };
 
-bool operator==(Body const &b1, Body const &b2)
-{
+bool operator==(Body const &b1, Body const &b2) {
   return b1.get_id() == b2.get_id();
 }
 
-class Universe
-{
-private:
+class Universe {
+ private:
   std::vector<Body> u_{};
   std::vector<sf::CircleShape> circles_{};
 
@@ -116,16 +105,16 @@ private:
 
   double dt{0.005};
   double G{6.67 * pow(10., -11.)};
+  //double G{1.};
   double eps{pow(10., -12.)};
-  double scale_{1e5};
+  double scale_{0.5e-2};
 
-public:
+ public:
   int size() { return u_.size(); }
 
   void set_dt(double dt_input) { dt = dt_input; }
 
-  void add_body(Body &b)
-  {
+  void add_body(Body &b) {
     u_.push_back(b);
     u_.back().add_id(u_.size() - 1);
 
@@ -139,8 +128,7 @@ public:
                         b.get_v().get_x() * b.get_r().get_y());
   }
 
-  void add_circle(Body &b)
-  {
+  void add_circle(Body &b) {
     sf::CircleShape circle(10.);
     circle.setOrigin(10., 10.);
 
@@ -149,8 +137,7 @@ public:
     circles_.push_back(circle);
   }
 
-  void add(Body &b)
-  {
+  void add(Body &b) {
     add_body(b);
     add_circle(b);
   }
@@ -171,24 +158,13 @@ public:
   double get_U_() { return U_; }
   double get_E_() { return E_; }
 
-  // al momento ogni body prende un id identificativa quando viene
-  // inserito dentro a Universe. Non ha quindi senso avere un body al di fuori
-  // di Universe. Ogni body al di fuori di Universe ha id = -1, che non ha
-  // senso.
-  // Bisogna inserire un "require qualcosa??" Non lo so fare
-
-  void u_a_t(Body &b)
-  {
+  void u_a_t(Body &b) {
     double a_t_x = 0.0;
     double a_t_y = 0.0;
 
-    for (size_t j{0}; j < u_.size(); ++j)
-    {
-      if (b == u_[j])
-      {
-      }
-      else
-      {
+    for (size_t j{0}; j < u_.size(); ++j) {
+      if (b == u_[j]) {
+      } else {
         Vector distance{b.get_r() - u_[j].get_r()};
 
         double num_x{get_G() * u_[j].get_m() * distance.get_x()};
@@ -207,67 +183,52 @@ public:
     b.a_t(a_t_x, a_t_y);
   }
 
-  void r_t_complete()
-  {
-    for (size_t i{0}; i < u_.size(); ++i)
-    {
+  void r_t_complete() {
+    for (size_t i{0}; i < u_.size(); ++i) {
       u_[i].r_t();
     }
   }
 
-  void u_a_t_complete()
-  {
-    for (size_t i{0}; i < u_.size(); ++i)
-    {
+  void u_a_t_complete() {
+    for (size_t i{0}; i < u_.size(); ++i) {
       u_a_t(u_[i]);
     }
   }
 
-  void u_a_v_complete()
-  {
-    for (size_t i{0}; i < u_.size(); ++i)
-    {
+  void u_a_v_complete() {
+    for (size_t i{0}; i < u_.size(); ++i) {
       u_[i].v_t();
     }
   }
 
-  void K_t()
-  {
+  void K_t() {
     K_ = 0.;
-    for (size_t j{0}; j < u_.size(); ++j)
-    {
+    for (size_t j{0}; j < u_.size(); ++j) {
       K_ += 0.5 * u_[j].get_m() *
             (pow(u_[j].get_v().get_x(), 2) + pow(u_[j].get_v().get_y(), 2));
     }
   }
 
-  void P_t()
-  {
+  void P_t() {
     P_ = 0.;
-    for (size_t j{0}; j < u_.size(); ++j)
-    {
+    for (size_t j{0}; j < u_.size(); ++j) {
       P_ += u_[j].get_m() * std::sqrt((pow(u_[j].get_v().get_x(), 2) +
                                        pow(u_[j].get_v().get_y(), 2)));
     }
   }
 
-  void L_t()
-  {
+  void L_t() {
     L_ = 0.;
-    for (size_t j{0}; j < u_.size(); ++j)
-    {
+    for (size_t j{0}; j < u_.size(); ++j) {
       L_ += u_[j].get_m() * (u_[j].get_v().get_y() * u_[j].get_r().get_x() -
                              u_[j].get_v().get_x() * u_[j].get_r().get_y());
     }
   }
 
-  double U_t()
-  {
+  double U_t() {
     double U{};
-    for (size_t i{0}; i < u_.size() - 1; ++i)
-    {
-      for (size_t j{i + 1}; j < u_.size(); ++j)
-      {
+    for (size_t i{0}; i < u_.size() - 1; ++i) {
+      for (size_t j{i + 1}; j < u_.size(); ++j) {
         double num = get_G() * u_[i].get_m() * u_[j].get_m();
 
         double denom =
@@ -281,8 +242,7 @@ public:
     return U;
   }
 
-  void collision()
-  {
+  void collision() {
     Vector r_n;
     Vector v_n;
     double m_n{0};
@@ -290,20 +250,15 @@ public:
     int n{1};
     int c_1{0};
     int c_2{0};
-    while (n != 0)
-    {
+    while (n != 0) {
       n = 0;
-      for (size_t i{0}; i < u_.size() - 1; ++i)
-      {
-        for (size_t j{i + 1}; j < u_.size(); ++j)
-        {
+      for (size_t i{0}; i < u_.size() - 1; ++i) {
+        for (size_t j{i + 1}; j < u_.size(); ++j) {
           if (std::abs(std::sqrt(pow(u_[i].get_r().get_x(), 2) +
                                  pow(u_[i].get_r().get_y(), 2)) -
                        std::sqrt(pow(u_[j].get_r().get_x(), 2) +
                                  pow(u_[j].get_r().get_y(), 2))) <=
-              u_[i].get_k() + u_[j].get_k())
-          {
-
+              u_[i].get_k() + u_[j].get_k()) {
             c_1 = i;
             c_2 = j - 1;
             m_n = u_[i].get_m() + u_[j].get_m();
@@ -326,22 +281,18 @@ public:
             break;
           }
         }
-        if (k == 1)
-        {
+        if (n == 1) {
           u_.erase(u_.begin() + i);
           break;
         }
       }
-      if (k == 1)
-      {
+      if (n == 1) {
         Body d{r_n, v_n, m_n, k_n};
-        u_.add(d);
-        for (size_t i{c_1}; i < c_2; ++i)
-        {
+        this->add(d);  //da controllare
+        for (int i{c_1}; i < c_2; ++i) {
           u_[i].add_id(u_[i].get_id() - 1);
         }
-        for (size_t i{c_2}; i < u_.size() - 1; ++i)
-        {
+        for (int i{c_2}; i < u_.size() - 1; ++i) {
           u_[i].add_id(u_[i].get_id() - 2);
         }
         u_[u_.size() - 1].add_id(u_.size() - 1);
@@ -349,74 +300,52 @@ public:
     }
   }
 
-  void set_U_0()
-  {
+  void set_U_0() {
     U_0 = this->U_t();
     E_0 = K_0 + U_0;
   }
 
-  void simulation(int steps)
-  {
+  void set_a_0() {
     this->u_a_t_complete();
-    for (size_t j{0}; j < u_.size(); ++j)
-    {
+    for (size_t j{0}; j < u_.size(); ++j) {
       u_[j].set_a_(u_[j].get_a_fut());
     }
+  }
 
-    for (int i{0}; i < steps; ++i)
-    {
-      this->r_t_complete(); // non mi ricordo assolutamente se si fa così...
+  void simulation_steps(int steps) {
+    for (int i{0}; i < steps; ++i) {
+      this->r_t_complete();  // non mi ricordo assolutamente se si fa così...
       this->u_a_t_complete();
       this->u_a_v_complete();
       this->K_t();
       U_ = this->U_t();
       E_ = K_ + U_;
 
-      for (size_t j{0}; j < u_.size(); ++j)
-      {
+      for (size_t j{0}; j < u_.size(); ++j) {
         u_[j].set_a_(u_[j].get_a_fut());
-        circles_[j].setPosition(u_[j].get_r().get_x() / scale_,
-                                -u_[j].get_r().get_y() / scale_);
       }
     }
   }
 
-  void simulation_graphics(double dt)
-  {
-    set_dt(dt);
-    this->r_t_complete(); // non mi ricordo assolutamente se si fa così...
+  void single_simulation_step() {
+    this->r_t_complete();  // non mi ricordo assolutamente se si fa così...
     this->u_a_t_complete();
     this->u_a_v_complete();
     this->K_t();
     U_ = this->U_t();
     E_ = K_ + U_;
 
-    for (size_t j{0}; j < u_.size(); ++j)
-    {
+    for (size_t j{0}; j < u_.size(); ++j) {
       u_[j].set_a_(u_[j].get_a_fut());
-      circles_[j].setPosition(u_[j].get_r().get_x() / scale_,
-                              -u_[j].get_r().get_y() / scale_);
     }
   }
 
-  void single_simulation()
-  {
-    this->r_t_complete(); // non mi ricordo assolutamente se si fa così...
-    this->u_a_t_complete();
-    this->u_a_v_complete();
-    this->K_t();
-    U_ = this->U_t();
-    E_ = K_ + U_;
-
-    std::cout << "Position body: " << u_[0].get_r().get_x() << "    ";
-
-    for (size_t j{0}; j < u_.size(); ++j)
-    {
-      u_[j].set_a_(u_[j].get_a_fut());
+  void update_graphics() {
+    for (size_t j{0}; j < u_.size(); ++j) {
       circles_[j].setPosition(u_[j].get_r().get_x() / scale_,
                               -u_[j].get_r().get_y() / scale_);
     }
-    std::cout << "Position circle: " << circles_[0].getPosition().x << '\n';
   }
 };
+
 // #endif

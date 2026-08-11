@@ -104,7 +104,7 @@ class Universe {
   double L_;
 
   double dt{0.005};
-  //double G{6.67 * pow(10., -11.)};
+  // double G{6.67 * pow(10., -11.)};
   double G{1.};
   double eps{pow(10., -12.)};
   double scale_{0.5e-2};
@@ -162,7 +162,7 @@ class Universe {
     double a_t_x = 0.0;
     double a_t_y = 0.0;
 
-    for (size_t j{0}; j < u_.size(); ++j) {
+    for (std::size_t j{0}; j < u_.size(); ++j) {
       if (b == u_[j]) {
       } else {
         Vector distance{b.get_r() - u_[j].get_r()};
@@ -184,26 +184,26 @@ class Universe {
   }
 
   void r_t_complete() {
-    for (size_t i{0}; i < u_.size(); ++i) {
+    for (std::size_t i{0}; i < u_.size(); ++i) {
       u_[i].r_t();
     }
   }
 
   void u_a_t_complete() {
-    for (size_t i{0}; i < u_.size(); ++i) {
+    for (std::size_t i{0}; i < u_.size(); ++i) {
       u_a_t(u_[i]);
     }
   }
 
   void u_a_v_complete() {
-    for (size_t i{0}; i < u_.size(); ++i) {
+    for (std::size_t i{0}; i < u_.size(); ++i) {
       u_[i].v_t();
     }
   }
 
   void K_t() {
     K_ = 0.;
-    for (size_t j{0}; j < u_.size(); ++j) {
+    for (std::size_t j{0}; j < u_.size(); ++j) {
       K_ += 0.5 * u_[j].get_m() *
             (pow(u_[j].get_v().get_x(), 2) + pow(u_[j].get_v().get_y(), 2));
     }
@@ -211,7 +211,7 @@ class Universe {
 
   void P_t() {
     P_ = 0.;
-    for (size_t j{0}; j < u_.size(); ++j) {
+    for (std::size_t j{0}; j < u_.size(); ++j) {
       P_ += u_[j].get_m() * std::sqrt((pow(u_[j].get_v().get_x(), 2) +
                                        pow(u_[j].get_v().get_y(), 2)));
     }
@@ -219,7 +219,7 @@ class Universe {
 
   void L_t() {
     L_ = 0.;
-    for (size_t j{0}; j < u_.size(); ++j) {
+    for (std::size_t j{0}; j < u_.size(); ++j) {
       L_ += u_[j].get_m() * (u_[j].get_v().get_y() * u_[j].get_r().get_x() -
                              u_[j].get_v().get_x() * u_[j].get_r().get_y());
     }
@@ -227,8 +227,8 @@ class Universe {
 
   double U_t() {
     double U{};
-    for (size_t i{0}; i < u_.size() - 1; ++i) {
-      for (size_t j{i + 1}; j < u_.size(); ++j) {
+    for (std::size_t i{0}; i + 1 < u_.size(); ++i) {
+      for (std::size_t j{i + 1}; j < u_.size(); ++j) {
         double num = get_G() * u_[i].get_m() * u_[j].get_m();
 
         double denom =
@@ -248,12 +248,12 @@ class Universe {
     double m_n{0};
     double k_n{0};
     int n{1};
-    int c_1{0};
-    int c_2{0};
+    std::size_t c_1{0};
+    std::size_t c_2{0};
     while (n != 0) {
       n = 0;
-      for (size_t i{0}; i < u_.size() - 1; ++i) {
-        for (size_t j{i + 1}; j < u_.size(); ++j) {
+      for (std::size_t i{0}; i + 1 < u_.size(); ++i) {
+        for (std::size_t j{i + 1}; j < u_.size(); ++j) {
           if (std::abs(std::sqrt(pow(u_[i].get_r().get_x(), 2) +
                                  pow(u_[i].get_r().get_y(), 2)) -
                        std::sqrt(pow(u_[j].get_r().get_x(), 2) +
@@ -288,11 +288,11 @@ class Universe {
       }
       if (n == 1) {
         Body d{r_n, v_n, m_n, k_n};
-        this->add(d);  //da controllare
-        for (int i{c_1}; i < c_2; ++i) {
+        this->add(d);  // da controllare
+        for (std::size_t i{c_1}; i < c_2; ++i) {
           u_[i].add_id(u_[i].get_id() - 1);
         }
-        for (int i{c_2}; i < u_.size() - 1; ++i) {
+        for (std::size_t i = c_2; i + 1 < u_.size(); ++i) {
           u_[i].add_id(u_[i].get_id() - 2);
         }
         u_[u_.size() - 1].add_id(u_.size() - 1);
@@ -307,7 +307,7 @@ class Universe {
 
   void set_a_0() {
     this->u_a_t_complete();
-    for (size_t j{0}; j < u_.size(); ++j) {
+    for (std::size_t j{0}; j < u_.size(); ++j) {
       u_[j].set_a_(u_[j].get_a_fut());
     }
   }
@@ -321,7 +321,7 @@ class Universe {
       U_ = this->U_t();
       E_ = K_ + U_;
 
-      for (size_t j{0}; j < u_.size(); ++j) {
+      for (std::size_t j{0}; j < u_.size(); ++j) {
         u_[j].set_a_(u_[j].get_a_fut());
       }
     }
@@ -335,13 +335,13 @@ class Universe {
     U_ = this->U_t();
     E_ = K_ + U_;
 
-    for (size_t j{0}; j < u_.size(); ++j) {
+    for (std::size_t j{0}; j < u_.size(); ++j) {
       u_[j].set_a_(u_[j].get_a_fut());
     }
   }
 
   void update_graphics() {
-    for (size_t j{0}; j < u_.size(); ++j) {
+    for (std::size_t j{0}; j < u_.size(); ++j) {
       circles_[j].setPosition(u_[j].get_r().get_x() / scale_,
                               -u_[j].get_r().get_y() / scale_);
     }

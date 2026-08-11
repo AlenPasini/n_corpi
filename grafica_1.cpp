@@ -9,13 +9,20 @@
 int main() {
   Universe u{};
 
-  sf::RenderWindow window(sf::VideoMode(1600, 800), "Universe");
+  double l{1600.};
+  double h{800.};
 
-  sf::View view(sf::Vector2f(0.f, 0.f), sf::Vector2f(1600.f, 800.f));
+  sf::RenderWindow window(sf::VideoMode(l, h), "Universe");
+
+  sf::View view(sf::Vector2f(0.f, 0.f), sf::Vector2f(l, h));
 
   window.setView(view);
 
   std::vector<sf::CircleShape> bodies;
+
+  sf::Font times;
+  times.loadFromFile("times.ttf");
+  sf::Text text;
 
   bool running{false};
 
@@ -46,25 +53,20 @@ int main() {
 
     window.clear();
 
+    text.setFont(times);
+    text.setString("Press SPACE to start / stop the simulation");
+    text.setPosition(0, -200.);
+    window.draw(text);
+
     if (running) {
       u.single_simulation_step();
     }
 
-    u.update_graphics(); 
+    u.update_graphics();
 
     for (int i{0}; i < u.size(); ++i) {
       window.draw(u.get_circles()[i]);
     }
-
-    /*
-  u.single_simulation_step();
-
-  u.update_graphics();
-
-  for (int i{0}; i < u.size(); ++i) {
-    window.draw(u.get_circles()[i]);
-  }
-    */
 
     window.display();
   }

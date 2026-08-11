@@ -104,8 +104,8 @@ class Universe {
   double L_;
 
   double dt{0.005};
-  double G{6.67 * pow(10., -11.)};
-  //double G{1.};
+  //double G{6.67 * pow(10., -11.)};
+  double G{1.};
   double eps{pow(10., -12.)};
   double scale_{0.5e-2};
 

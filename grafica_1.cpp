@@ -17,6 +17,8 @@ int main() {
 
   std::vector<sf::CircleShape> bodies;
 
+  bool running{false};
+
   Body b0({-0.97000436, 0.24308753}, {0.4662036850, 0.4323657300}, 1., 1.);
   u.add(b0);
 
@@ -30,22 +32,39 @@ int main() {
   u.set_a_0();
 
   while (window.isOpen()) {
-
-    u.single_simulation_step();
-
-    u.update_graphics();
-
     sf::Event event;
 
     while (window.pollEvent(event)) {
       if (event.type == sf::Event::Closed) window.close();
+
+      if (event.type == sf::Event::KeyPressed) {
+        if (event.key.code == sf::Keyboard::Space) {
+          running = !running;
+        }
+      }
     }
 
     window.clear();
 
+    if (running) {
+      u.single_simulation_step();
+    }
+
+    u.update_graphics(); 
+
     for (int i{0}; i < u.size(); ++i) {
       window.draw(u.get_circles()[i]);
     }
+
+    /*
+  u.single_simulation_step();
+
+  u.update_graphics();
+
+  for (int i{0}; i < u.size(); ++i) {
+    window.draw(u.get_circles()[i]);
+  }
+    */
 
     window.display();
   }

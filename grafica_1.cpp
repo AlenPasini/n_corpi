@@ -54,25 +54,52 @@ int main() {
     while (window.pollEvent(event)) {
       if (event.type == sf::Event::Closed) window.close();
 
+      /*
       if (event.type == sf::Event::KeyPressed) {
         if (event.key.code == sf::Keyboard::Space) {
           running = !running;
+        }
+      }
+      */
+
+      if (event.type == sf::Event::KeyPressed) {
+        if (event.key.code == sf::Keyboard::Space) {
+          if (running == false) {
+            running = true;
+          }
+
+          else {
+            running = false;
+          }
+        }
+
+        if (running == false) {
+          if (event.key.code == sf::Keyboard::Right) {
+            u.single_simulation_step();
+
+            for (int i{0}; i < u.size(); ++i) {
+              window.draw(u.get_circles()[i]);
+            }
+          }
+
+          if (event.key.code == sf::Keyboard::Left) {
+            u.single_simulation_step_back();
+
+            for (int i{0}; i < u.size(); ++i) {
+              window.draw(u.get_circles()[i]);
+            }
+          }
         }
       }
     }
 
     window.clear();
 
-    // Creazione "istruzioni" (e rettangolo che lo incapsula, posizionato al
-    // centro)
-    sf::Text instructions{"Press SPACE to start / stop the simulation", times};
-    sf::FloatRect bounds = instructions.getLocalBounds();
-    instructions.setOrigin((bounds.left + bounds.width) / 2.,
-                           (bounds.top + bounds.height) / 2.);
-    instructions.setPosition(0, -340.);
-    window.draw(instructions);
+    window.draw(space_instructions(times));
 
-    // Creazione legenda dati energia
+    if (running == false) {
+      window.draw(arrows_instructions(times));
+    }
 
     for (size_t i{0}; i < legend.size(); ++i) {
       window.draw(legend[i]);
@@ -89,7 +116,7 @@ int main() {
     }
 
     // Calcolo di una simulazione, aggiornamento grafica e disegno corpi
-    if (running) {
+    if (running == true) {
       u.single_simulation_step();
     }
 

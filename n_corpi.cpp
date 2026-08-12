@@ -80,6 +80,8 @@ class Body {
   void a_t(double a_t_x, double a_t_y) { a_fut_ = {a_t_x, a_t_y}; }
 
   void set_a_(Vector a_t_fut) { a_ = a_t_fut; }
+
+  void set_dt(double new_dt) { dt = new_dt; }
 };
 
 bool operator==(Body const &b1, Body const &b2) {
@@ -334,6 +336,9 @@ class Universe {
   }
 
   void single_simulation_step() {
+    for (std::size_t j{0}; j < u_.size(); ++j) {
+      u_[j].set_dt(dt);
+    } 
     this->r_t_complete();  // non mi ricordo assolutamente se si fa così...
     this->u_a_t_complete();
     this->u_a_v_complete();
@@ -346,6 +351,12 @@ class Universe {
     }
   }
 
+  void single_simulation_step_back() {
+    dt = -dt;
+    this->single_simulation_step();
+    dt = -dt;
+  }
+
   void update_graphics() {
     for (std::size_t j{0}; j < u_.size(); ++j) {
       circles_[j].setPosition(u_[j].get_r().get_x() / scale_,
@@ -354,11 +365,31 @@ class Universe {
   }
 };
 
+sf::Text space_instructions(sf::Font const &times) {
+  sf::Text instructions{"Press SPACE to start / stop the simulation", times};
+  sf::FloatRect bounds = instructions.getLocalBounds();
+  instructions.setOrigin((bounds.left + bounds.width) / 2.,
+                         (bounds.top + bounds.height) / 2.);
+  instructions.setPosition(0, -340.);
 
+  return instructions;
+}
 
+sf::Text arrows_instructions(sf::Font const &times) {
+  sf::Text instructions{
+      "Press --> to move forward in the simulation, press <-- to move back",
+      times, 20};
+  sf::FloatRect bounds = instructions.getLocalBounds();
+  instructions.setOrigin((bounds.left + bounds.width) / 2.,
+                         (bounds.top + bounds.height) / 2.);
+  instructions.setPosition(0, -310.);
 
-std::vector<sf::Text> intial_legend_setting(double w, double h, sf::Font const& times,
-                                     Universe const& u) {
+  return instructions;
+}
+
+std::vector<sf::Text> intial_legend_setting(double w, double h,
+                                            sf::Font const &times,
+                                            Universe const &u) {
   std::vector<sf::Text> text;
 
   sf::Text legend_0_title{"Intial energetic conditions", times, 20};
@@ -380,8 +411,9 @@ std::vector<sf::Text> intial_legend_setting(double w, double h, sf::Font const& 
   return text;
 }
 
-std::vector<sf::Text> current_legend_setting(double w, double h, sf::Font const& times,
-                                     Universe const& u) {
+std::vector<sf::Text> current_legend_setting(double w, double h,
+                                             sf::Font const &times,
+                                             Universe const &u) {
   std::vector<sf::Text> text;
 
   sf::Text legend_title{"Current energetic conditions", times, 20};
@@ -400,7 +432,8 @@ std::vector<sf::Text> current_legend_setting(double w, double h, sf::Font const&
   E.setPosition(-w / 2 + 10., -h / 2 + 180.);
   text.push_back(E);
 
-  sf::Text dE{"E_0 - E = " + std::to_string(u.get_E_0() - u.get_E_()) + "J", times, 16};
+  sf::Text dE{"E_0 - E = " + std::to_string(u.get_E_0() - u.get_E_()) + "J",
+              times, 16};
   dE.setPosition(-w / 2 + 10., -h / 2 + 220.);
   text.push_back(dE);
 

@@ -24,8 +24,8 @@ struct Vector {
     return *this;
   }
 
-  double get_x() { return x; }
-  double get_y() { return y; }
+  double get_x() const { return x; }
+  double get_y() const { return y; }
 };
 
 Vector operator+(Vector const &v1, Vector const &v2) {
@@ -55,12 +55,12 @@ class Body {
 
  public:
   Body(Vector r, Vector v, double m, double k) : r_{r}, v_{v}, m_{m}, k_{k} {}
-  Vector get_r() { return r_; }
-  double get_k() { return k_; }
-  Vector get_v() { return v_; }
-  Vector get_a() { return a_; }
-  Vector get_a_fut() { return a_fut_; }
-  double get_m() { return m_; }
+  Vector get_r() const { return r_; }
+  double get_k() const { return k_; }
+  Vector get_v() const { return v_; }
+  Vector get_a() const { return a_; }
+  Vector get_a_fut() const { return a_fut_; }
+  double get_m() const { return m_; }
   int get_id() const { return id_; }
   // deve essere const perché altrimenti non me la fa paragonare
   // nell'operatore ==
@@ -146,17 +146,17 @@ class Universe {
 
   Body get_body(int id) { return u_[id]; }
 
-  double get_eps() { return eps; }
-  double get_G() { return G; }
-  double get_dt() { return dt; }
+  double get_eps() const { return eps; }
+  double get_G() const { return G; }
+  double get_dt() const { return dt; }
 
-  double get_K_0() { return K_0; }
-  double get_U_0() { return U_0; }
-  double get_E_0() { return E_0; }
+  double get_K_0() const { return K_0; }
+  double get_U_0() const { return U_0; }
+  double get_E_0() const { return E_0; }
 
-  double get_K_() { return K_; }
-  double get_U_() { return U_; }
-  double get_E_() { return E_; }
+  double get_K_() const { return K_; }
+  double get_U_() const { return U_; }
+  double get_E_() const { return E_; }
 
   void u_a_t(Body &b) {
     double a_t_x = 0.0;
@@ -305,6 +305,12 @@ class Universe {
     E_0 = K_0 + U_0;
   }
 
+  void set_energies() {
+    K_ = K_0;
+    U_ = U_0;
+    E_ = E_0;
+  }
+
   void set_a_0() {
     this->u_a_t_complete();
     for (std::size_t j{0}; j < u_.size(); ++j) {
@@ -347,5 +353,58 @@ class Universe {
     }
   }
 };
+
+
+
+
+std::vector<sf::Text> intial_legend_setting(double w, double h, sf::Font const& times,
+                                     Universe const& u) {
+  std::vector<sf::Text> text;
+
+  sf::Text legend_0_title{"Intial energetic conditions", times, 20};
+  legend_0_title.setPosition(-w / 2 + 10., -h / 2 + 5.);
+  text.push_back(legend_0_title);
+
+  sf::Text K_0{"K = " + std::to_string(u.get_K_0()) + "J", times, 16};
+  K_0.setPosition(-w / 2 + 10., -h / 2 + 35.);
+  text.push_back(K_0);
+
+  sf::Text U_0{"U = " + std::to_string(u.get_U_0()) + "J", times, 16};
+  U_0.setPosition(-w / 2 + 10., -h / 2 + 55.);
+  text.push_back(U_0);
+
+  sf::Text E_0{"E = " + std::to_string(u.get_E_0()) + "J", times, 16};
+  E_0.setPosition(-w / 2 + 10., -h / 2 + 75.);
+  text.push_back(E_0);
+
+  return text;
+}
+
+std::vector<sf::Text> current_legend_setting(double w, double h, sf::Font const& times,
+                                     Universe const& u) {
+  std::vector<sf::Text> text;
+
+  sf::Text legend_title{"Current energetic conditions", times, 20};
+  legend_title.setPosition(-w / 2 + 10., -h / 2 + 110.);
+  text.push_back(legend_title);
+
+  sf::Text K{"K = " + std::to_string(u.get_K_()) + "J", times, 16};
+  K.setPosition(-w / 2 + 10., -h / 2 + 140.);
+  text.push_back(K);
+
+  sf::Text U{"U = " + std::to_string(u.get_U_()) + "J", times, 16};
+  U.setPosition(-w / 2 + 10., -h / 2 + 160.);
+  text.push_back(U);
+
+  sf::Text E{"E = " + std::to_string(u.get_E_()) + "J", times, 16};
+  E.setPosition(-w / 2 + 10., -h / 2 + 180.);
+  text.push_back(E);
+
+  sf::Text dE{"E_0 - E = " + std::to_string(u.get_E_0() - u.get_E_()) + "J", times, 16};
+  dE.setPosition(-w / 2 + 10., -h / 2 + 220.);
+  text.push_back(dE);
+
+  return text;
+}
 
 // #endif

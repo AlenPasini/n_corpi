@@ -5,20 +5,19 @@
 #include <vector>
 
 #include "n_corpi.cpp"
+// #include "graphic_setting.cpp"
 
 int main() {
-
   // Costruzione del canvas e posizionamento di (0,0) nel centro del canvas
-  double l{1600.};
+  double w{1600.};
   double h{800.};
 
-  sf::RenderWindow window(sf::VideoMode(l, h), "Universe");
+  sf::RenderWindow window(sf::VideoMode(w, h), "Universe");
 
-  sf::View view(sf::Vector2f(0.f, 0.f), sf::Vector2f(l, h));
+  sf::View view(sf::Vector2f(0.f, 0.f), sf::Vector2f(w, h));
 
   window.setView(view);
 
-  
   // Caricamento del font da file
   sf::Font times;
 
@@ -41,6 +40,10 @@ int main() {
 
   u.set_U_0();
   u.set_a_0();
+  u.set_energies();
+
+  auto legend = intial_legend_setting(w, h, times, u);
+  auto legend_current = current_legend_setting(w, h, times, u);
 
   // Apertura del canvas e setting per l'utilizzo dei tasti
   bool running{false};
@@ -60,31 +63,30 @@ int main() {
 
     window.clear();
 
-    // Creazione "istruzioni" (e rettangolo che lo incapsula, posizionato al centro)
-    sf::Text instructions {"Press SPACE to start / stop the simulation", times};
+    // Creazione "istruzioni" (e rettangolo che lo incapsula, posizionato al
+    // centro)
+    sf::Text instructions{"Press SPACE to start / stop the simulation", times};
     sf::FloatRect bounds = instructions.getLocalBounds();
     instructions.setOrigin((bounds.left + bounds.width) / 2.,
-                   (bounds.top + bounds.height) / 2.);
+                           (bounds.top + bounds.height) / 2.);
     instructions.setPosition(0, -340.);
     window.draw(instructions);
 
     // Creazione legenda dati energia
-    sf::Text legend_0_title {"Intial energetic conditions", times, 20};
-    legend_0_title.setPosition(-l/2 + 10., -h/2 + 5.);
-    window.draw(legend_0_title);
 
-    sf::Text K_0 {"K = ", times, 16};
-    K_0.setPosition(-l/2 + 10., -h/2 + 30.);
-    window.draw(K_0);
+    for (size_t i{0}; i < legend.size(); ++i) {
+      window.draw(legend[i]);
+    }
 
-    sf::Text U_0 {"U = ", times, 16};
-    U_0.setPosition(-l/2 + 10., -h/2 + 50.);
-    window.draw(U_0);
+    legend_current[1].setString("K = " + std::to_string(u.get_K_()) + "J");
+    legend_current[2].setString("U = " + std::to_string(u.get_U_()) + "J");
+    legend_current[3].setString("E = " + std::to_string(u.get_E_()) + "J");
+    legend_current[4].setString(
+        "E_0 - E = " + std::to_string(u.get_E_0() - u.get_E_()) + "J");
 
-    sf::Text E_0 {"E = ", times, 16};
-    E_0.setPosition(-l/2 + 10., -h/2 + 70.);
-    window.draw(E_0);
-    
+    for (size_t i{0}; i < legend_current.size(); ++i) {
+      window.draw(legend_current[i]);
+    }
 
     // Calcolo di una simulazione, aggiornamento grafica e disegno corpi
     if (running) {

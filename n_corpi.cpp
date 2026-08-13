@@ -109,7 +109,7 @@ class Universe {
   double L_;
 
   double dt{0.005};
-  //double G{6.67 * pow(10., -11.)};
+  // double G{6.67 * pow(10., -11.)};
   double G{1.};
   double eps{pow(10., -12.)};
   double scale_{0.5e-2};
@@ -119,45 +119,7 @@ class Universe {
 
   void set_dt(double dt_input) { dt = dt_input; }
 
-  void add_body(Body &b) {
-    u_.push_back(b);
-    u_.back().add_id(u_.size() - 1);
-
-    K_0 += 0.5 * b.get_m() *
-           (pow(b.get_v().get_x(), 2) + pow(b.get_v().get_y(), 2));
-
-    P_0 += b.get_m() *
-           std::sqrt((pow(b.get_v().get_x(), 2) + pow(b.get_v().get_y(), 2)));
-
-    L_0 += b.get_m() * (b.get_v().get_y() * b.get_r().get_x() -
-                        b.get_v().get_x() * b.get_r().get_y());
-  }
-
-  void add_circle(Body &b) {
-    sf::CircleShape circle(b.get_k() * 10.);
-
-    circle.setOrigin(10., 10.);
-
-    circle.setPosition(b.get_r().get_x() / scale_, b.get_r().get_y() / scale_);
-
-    /*
-    if (b.get_id() <= this->n_colors()) {
-      circle.setFillColor(colors_[b.get_id()]);
-    }
-
-    else {
-      circle.setFillColor(colors_[b.get_id() % this->n_colors()]);
-    }
-    */
-    circles_.push_back(circle);
-  }
-
   void add(Body &b) {
-    /*
-    add_body(b);
-    add_circle(b);
-    */
-
     u_.push_back(b);
     u_.back().add_id(u_.size() - 1);
 
@@ -372,6 +334,9 @@ class Universe {
   }
 
   void simulation_steps(int steps) {
+    for (std::size_t j{0}; j < u_.size(); ++j) {
+      u_[j].set_dt(dt);
+    }
     for (int i{0}; i < steps; ++i) {
       this->r_t_complete();  // non mi ricordo assolutamente se si fa così...
       this->u_a_t_complete();
@@ -408,6 +373,18 @@ class Universe {
     dt = -dt;
   }
 
+  void reset(int iterations) {
+    if (iterations >= 0) {
+      dt = -dt;
+      this->simulation_steps(iterations);
+      dt = -dt;
+    }
+
+    else {
+      this->simulation_steps(-iterations);
+    }
+  }
+
   void update_graphics() {
     for (std::size_t j{0}; j < u_.size(); ++j) {
       circles_[j].setPosition(u_[j].get_r().get_x() / scale_,
@@ -422,6 +399,16 @@ sf::Text space_instructions(sf::Font const &times) {
   instructions.setOrigin((bounds.left + bounds.width) / 2.,
                          (bounds.top + bounds.height) / 2.);
   instructions.setPosition(0, -340.);
+
+  return instructions;
+}
+
+sf::Text ctrlE_instructions(sf::Font const &times) {
+  sf::Text instructions{"Press ctrl + E to reset the simulation to its starting configuration", times, 20};
+  sf::FloatRect bounds = instructions.getLocalBounds();
+  instructions.setOrigin((bounds.left + bounds.width) / 2.,
+                         (bounds.top + bounds.height) / 2.);
+  instructions.setPosition(0, 340.);
 
   return instructions;
 }

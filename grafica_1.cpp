@@ -12,6 +12,8 @@ int main() {
   double w{1600.};
   double h{800.};
 
+  int iterations{0};
+
   sf::RenderWindow window(sf::VideoMode(w, h), "Universe");
 
   sf::View view(sf::Vector2f(0.f, 0.f), sf::Vector2f(w, h));
@@ -68,6 +70,7 @@ int main() {
         if (running == false) {
           if (event.key.code == sf::Keyboard::Right) {
             u.single_simulation_step();
+            iterations += 1;
 
             for (int i{0}; i < u.size(); ++i) {
               window.draw(u.get_circles()[i]);
@@ -76,11 +79,17 @@ int main() {
 
           if (event.key.code == sf::Keyboard::Left) {
             u.single_simulation_step_back();
+            iterations -= 1;
 
             for (int i{0}; i < u.size(); ++i) {
               window.draw(u.get_circles()[i]);
             }
           }
+        }
+        if (event.key.code == sf::Keyboard::E && event.key.control) {
+          u.reset(iterations);
+          u.update_graphics();
+          iterations = 0;
         }
       }
     }
@@ -88,6 +97,7 @@ int main() {
     window.clear();
 
     window.draw(space_instructions(times));
+    window.draw(ctrlE_instructions(times));
 
     if (running == false) {
       window.draw(arrows_instructions(times));
@@ -110,6 +120,7 @@ int main() {
     // Calcolo di una simulazione, aggiornamento grafica e disegno corpi
     if (running == true) {
       u.single_simulation_step();
+      iterations += 1;
     }
 
     u.update_graphics();

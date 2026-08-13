@@ -92,6 +92,9 @@ class Universe {
  private:
   std::vector<Body> u_{};
   std::vector<sf::CircleShape> circles_{};
+  std::vector<sf::Color> colors_{sf::Color::Red,     sf::Color::Green,
+                                 sf::Color::Blue,    sf::Color::Yellow,
+                                 sf::Color::Magenta, sf::Color::Cyan};
 
   double K_0{0.};
   double U_0{0.};
@@ -106,7 +109,7 @@ class Universe {
   double L_;
 
   double dt{0.005};
-  // double G{6.67 * pow(10., -11.)};
+  //double G{6.67 * pow(10., -11.)};
   double G{1.};
   double eps{pow(10., -12.)};
   double scale_{0.5e-2};
@@ -131,17 +134,63 @@ class Universe {
   }
 
   void add_circle(Body &b) {
-    sf::CircleShape circle(10.);
+    sf::CircleShape circle(b.get_k() * 10.);
+
     circle.setOrigin(10., 10.);
 
     circle.setPosition(b.get_r().get_x() / scale_, b.get_r().get_y() / scale_);
 
+    /*
+    if (b.get_id() <= this->n_colors()) {
+      circle.setFillColor(colors_[b.get_id()]);
+    }
+
+    else {
+      circle.setFillColor(colors_[b.get_id() % this->n_colors()]);
+    }
+    */
     circles_.push_back(circle);
   }
 
   void add(Body &b) {
+    /*
     add_body(b);
     add_circle(b);
+    */
+
+    u_.push_back(b);
+    u_.back().add_id(u_.size() - 1);
+
+    K_0 += 0.5 * b.get_m() *
+           (pow(b.get_v().get_x(), 2) + pow(b.get_v().get_y(), 2));
+
+    P_0 += b.get_m() *
+           std::sqrt((pow(b.get_v().get_x(), 2) + pow(b.get_v().get_y(), 2)));
+
+    L_0 += b.get_m() * (b.get_v().get_y() * b.get_r().get_x() -
+                        b.get_v().get_x() * b.get_r().get_y());
+
+    sf::CircleShape circle(b.get_k() * 10.);
+
+    circle.setOrigin(10., 10.);
+
+    circle.setPosition(b.get_r().get_x() / scale_, b.get_r().get_y() / scale_);
+
+    circle.setFillColor(colors_[u_.size() - 1]);
+
+    int color_id;
+
+    if (u_.back().get_id() <= this->n_colors() - 1) {
+      color_id = u_.back().get_id();
+    }
+
+    else {
+      color_id = u_.back().get_id() % n_colors();
+    }
+
+    circle.setFillColor(colors_[color_id]);
+
+    circles_.push_back(circle);
   }
 
   std::vector<sf::CircleShape> &get_circles() { return circles_; }
@@ -159,6 +208,8 @@ class Universe {
   double get_K_() const { return K_; }
   double get_U_() const { return U_; }
   double get_E_() const { return E_; }
+
+  int n_colors() const { return colors_.size(); }
 
   void u_a_t(Body &b) {
     double a_t_x = 0.0;
@@ -338,7 +389,7 @@ class Universe {
   void single_simulation_step() {
     for (std::size_t j{0}; j < u_.size(); ++j) {
       u_[j].set_dt(dt);
-    } 
+    }
     this->r_t_complete();  // non mi ricordo assolutamente se si fa così...
     this->u_a_t_complete();
     this->u_a_v_complete();

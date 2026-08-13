@@ -292,6 +292,8 @@ class Universe {
             k_n = u_[i].get_k() + u_[j].get_k();
 
             u_.erase(u_.begin() + j);
+            // erase necessita di un iteratore, non un indice
+
             n = 1;
             break;
           }
@@ -301,6 +303,7 @@ class Universe {
           break;
         }
       }
+      
       if (n == 1) {
         Body d{r_n, v_n, m_n, k_n};
         this->add(d);  // da controllare
@@ -404,7 +407,9 @@ sf::Text space_instructions(sf::Font const &times) {
 }
 
 sf::Text ctrlE_instructions(sf::Font const &times) {
-  sf::Text instructions{"Press ctrl + E to reset the simulation to its starting configuration", times, 20};
+  sf::Text instructions{
+      "Press ctrl + E to reset the simulation to its starting configuration",
+      times, 20};
   sf::FloatRect bounds = instructions.getLocalBounds();
   instructions.setOrigin((bounds.left + bounds.width) / 2.,
                          (bounds.top + bounds.height) / 2.);

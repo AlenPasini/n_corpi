@@ -269,3 +269,23 @@ TEST_CASE("Testing a system with velocities on x and y") {
           doctest::Approx(-2.3863355163 * pow(10, -1)));
   }
 }
+
+TEST_CASE("Testing collisions") {
+  {
+    Universe u{};
+
+    Body b0({-1., -1.}, {0., 0.}, 1., 1.);
+    u.add(b0);
+
+    Body b1({1., 1.}, {0., 0.}, 1., 1.);
+    u.add(b1);
+
+    u.set_U_0();
+    u.set_a_0();
+    u.set_energies();
+
+    u.simulation_steps(750);
+
+    CHECK(u.size() = 1);
+  }
+}

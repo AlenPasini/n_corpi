@@ -26,6 +26,8 @@ struct Vector {
 
   double get_x() const { return x; }
   double get_y() const { return y; }
+
+  double norm() const { return sqrt(x * x + y * y); }
 };
 
 Vector operator+(Vector const &v1, Vector const &v2) {
@@ -184,11 +186,8 @@ class Universe {
 
         double num_x{get_G() * u_[j].get_m() * distance.get_x()};
         double num_y{get_G() * u_[j].get_m() * distance.get_y()};
-
-        double d_norm{distance.get_x() * distance.get_x() +
-                      distance.get_y() * distance.get_y()};
-
-        double denom{pow(d_norm + get_eps() * get_eps(), 1.5)};
+        
+        double denom{pow(distance.norm()*distance.norm() + get_eps() * get_eps(), 1.5)};
 
         a_t_x -= num_x / denom;
         a_t_y -= num_y / denom;
@@ -303,7 +302,7 @@ class Universe {
           break;
         }
       }
-      
+
       if (n == 1) {
         Body d{r_n, v_n, m_n, k_n};
         this->add(d);  // da controllare

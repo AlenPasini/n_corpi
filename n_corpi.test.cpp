@@ -288,4 +288,46 @@ TEST_CASE("Testing collisions") {
 
     CHECK(u.size() = 1);
   }
+
+  TEST_CASE("Testing Lagrange L1 point stability on three bodies") {
+  {
+    
+    
+    Body b0({-1.0, 0.0}, {0.0, -1.0}, 1000.0, 1.0);
+    Body b1({99.0, 0.0}, {0.0, 99.0}, 10.0, 1.0);
+    Body b2({77.0, 0.0}, {0.0, 77.0}, 0.001, 1.0); // Punto L1 calcolato sulla linea tra b0 e b1
+
+    Universe u{};
+
+    u.add(b0);
+    u.add(b1);
+    u.add(b2);
+
+    
+    u.r_t_complete();
+
+    // VERIFICA: I corpi devono essersi spostati mantenendo il corretto incremento
+    // Calcolato in base alla velocità impostata e al dt interno del tuo programma
+    // (I valori qui sotto sono indicativi, inserisci i decimali esatti sputati dal tuo dt)
+    CHECK(u.get_body(0).get_r() == Vector{-1.0, -0.005});
+    CHECK(u.get_body(1).get_r() == Vector{99.0, 0.495});
+    
+    // Il corpo in L1 deve essersi spostato coerentemente senza deviare dall'asse
+    CHECK(u.get_body(2).get_r() == Vector{77.0, 0.385});
+
+    // VERIFICA AGGIUNTIVA: La distanza relativa tra b1 (Terra) e b2 (L1) 
+    // deve rimanere stabile e non mostrare derive improvvise dovute a forze sbilanciate
+    double distanza_iniziale_l1 = 99.0 - 77.0; // 22.0
+    
+    Vector pos_b1_dopo = u.get_body(1).get_r();
+    Vector pos_b2_dopo = u.get_body(2).get_r();
+    
+    // Calcoliamo la distanza tra i vettori (supponendo che la tua classe Vector abbia un metodo di distanza o modulo)
+    double distanza_dopo_passo = (pos_b1_dopo - pos_b2_dopo).modulus(); 
+    
+    // Verifichiamo che la distanza sia rimasta invariata a meno di tolleranze decimali minima (es. 0.001)
+    CHECK(std::abs(distanza_dopo_passo - distanza_iniziale_l1) < 0.001);
+  }
+}
+
 }

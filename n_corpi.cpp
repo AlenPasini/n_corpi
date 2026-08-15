@@ -110,13 +110,14 @@ class Universe {
   double P_;
   double L_;
 
-  double dt{0.005};
-  // double G{6.67 * pow(10., -11.)};
-  double G{1.};
+  double G;
+  double dt;
   double eps{pow(10., -12.)};
-  double scale_{0.5e-2};
+  double scale_;
 
  public:
+  Universe(double G, double dt, double scale) : G{G}, dt{dt}, scale_{scale} {}
+
   int size() { return u_.size(); }
 
   void set_dt(double dt_input) { dt = dt_input; }
@@ -134,12 +135,10 @@ class Universe {
     L_0 += b.get_m() * (b.get_v().get_y() * b.get_r().get_x() -
                         b.get_v().get_x() * b.get_r().get_y());
 
-    sf::CircleShape circle(b.get_k() * 10.);
 
+    sf::CircleShape circle(b.get_k() / scale_);
     circle.setOrigin(10., 10.);
-
     circle.setPosition(b.get_r().get_x() / scale_, b.get_r().get_y() / scale_);
-
     circle.setFillColor(colors_[u_.size() - 1]);
 
     int color_id;
@@ -153,7 +152,7 @@ class Universe {
     }
 
     circle.setFillColor(colors_[color_id]);
-
+    
     circles_.push_back(circle);
   }
 
@@ -186,8 +185,9 @@ class Universe {
 
         double num_x{get_G() * u_[j].get_m() * distance.get_x()};
         double num_y{get_G() * u_[j].get_m() * distance.get_y()};
-        
-        double denom{pow(distance.norm()*distance.norm() + get_eps() * get_eps(), 1.5)};
+
+        double denom{pow(
+            distance.norm() * distance.norm() + get_eps() * get_eps(), 1.5)};
 
         a_t_x -= num_x / denom;
         a_t_y -= num_y / denom;
@@ -256,9 +256,9 @@ class Universe {
     return U;
   }
 
-  void collision() {
-    Vector r_n;
-    Vector v_n;
+  void check_collisions() {
+    Vector r_n{0., 0.};
+    Vector v_n{0., 0.};
     double m_n{0};
     double k_n{0};
     int n{1};
@@ -268,14 +268,21 @@ class Universe {
       n = 0;
       for (std::size_t i{0}; i + 1 < u_.size(); ++i) {
         for (std::size_t j{i + 1}; j < u_.size(); ++j) {
-          if (std::abs(std::sqrt(pow(u_[i].get_r().get_x(), 2) +
-                                 pow(u_[i].get_r().get_y(), 2)) -
-                       std::sqrt(pow(u_[j].get_r().get_x(), 2) +
-                                 pow(u_[j].get_r().get_y(), 2))) <=
-              u_[i].get_k() + u_[j].get_k()) {
+          Vector distance = u_[i].get_r() - u_[j].get_r();
+          if (distance.norm() <= u_[i].get_k() + u_[j].get_k())
+
+          /*
+                    if (std::abs(std::sqrt(pow(u_[i].get_r().get_x(), 2) +
+                                           pow(u_[i].get_r().get_y(), 2)) -
+                                 std::sqrt(pow(u_[j].get_r().get_x(), 2) +
+                                           pow(u_[j].get_r().get_y(), 2))) <=
+                        u_[i].get_k() + u_[j].get_k())
+          */
+          {
             c_1 = i;
             c_2 = j - 1;
             m_n = u_[i].get_m() + u_[j].get_m();
+
             r_n.x = (u_[i].get_m() * u_[i].get_r().get_x() +
                      u_[j].get_m() * u_[j].get_r().get_x()) /
                     m_n;
@@ -283,9 +290,9 @@ class Universe {
                      u_[j].get_m() * u_[j].get_r().get_y()) /
                     m_n;
             v_n.x = (u_[i].get_m() * u_[i].get_v().get_x() +
-                     u_[j].get_m() * u_[j].get_r().get_x()) /
+                     u_[j].get_m() * u_[j].get_v().get_x()) /
                     m_n;
-            r_n.x = (u_[i].get_m() * u_[i].get_v().get_y() +
+            v_n.y = (u_[i].get_m() * u_[i].get_v().get_y() +
                      u_[j].get_m() * u_[j].get_v().get_y()) /
                     m_n;
             k_n = u_[i].get_k() + u_[j].get_k();
@@ -313,6 +320,8 @@ class Universe {
           u_[i].add_id(u_[i].get_id() - 2);
         }
         u_[u_.size() - 1].add_id(u_.size() - 1);
+
+        this->set_a_0();
       }
     }
   }
@@ -357,6 +366,7 @@ class Universe {
     for (std::size_t j{0}; j < u_.size(); ++j) {
       u_[j].set_dt(dt);
     }
+    this->check_collisions();
     this->r_t_complete();  // non mi ricordo assolutamente se si fa così...
     this->u_a_t_complete();
     this->u_a_v_complete();
@@ -378,12 +388,16 @@ class Universe {
   void reset(int iterations) {
     if (iterations >= 0) {
       dt = -dt;
-      this->simulation_steps(iterations);
+      for (int i{0}; i < iterations; ++i) {
+        this->single_simulation_step();
+      }
       dt = -dt;
     }
 
     else {
-      this->simulation_steps(-iterations);
+      for (int i{0}; i < -iterations; ++i) {
+        this->single_simulation_step();
+      }
     }
   }
 
@@ -480,6 +494,14 @@ std::vector<sf::Text> current_legend_setting(double w, double h,
   text.push_back(dE);
 
   return text;
+}
+
+sf::Text iterations_title(double w, double h, sf::Font const &times,
+                          int n_iterations) {
+  sf::Text iterations{"Iterations: " + std::to_string(n_iterations), times, 20};
+  iterations.setPosition(w / 2 - 150., -h / 2 + 5.);
+
+  return iterations;
 }
 
 // #endif

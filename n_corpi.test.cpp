@@ -3,6 +3,15 @@
 
 #include "doctest.h"
 
+TEST_CASE("Testing the norm function for vector") {
+  {
+    Vector v{2.0, -3.0};
+
+    CHECK(v.norm() == std::sqrt(13.));
+    CHECK(v.norm() == std::sqrt(v.get_x()*v.get_x() + v.get_y()*v.get_y()));
+  }
+}
+
 TEST_CASE("Testing position increment") {
   {
     Vector r{0.0, 0.0};
@@ -31,7 +40,7 @@ TEST_CASE("Testing the addition of the id to a body") {
 
 TEST_CASE("Testing the Universe class") {
   {
-    Universe u{};
+    Universe u{1., 0.005, 1.e-2};
 
     Body b1({0.0, 0.0}, {3.0, 4.0}, 1., 1.);
     u.add(b1);
@@ -46,7 +55,7 @@ TEST_CASE("Testing the Universe class") {
   }
 
   {
-    Universe u{};
+    Universe u{1., 0.005, 1.e-2};
 
     Body b1({0.0, 0.0}, {3.0, 4.0}, 1., 1.);
     u.add(b1);
@@ -63,7 +72,7 @@ TEST_CASE("Testing the Universe class") {
 
 TEST_CASE("Testing the acceleration function on two bodies") {
   {
-    Universe u{};
+    Universe u{6.67e-11, 0.005, 1.e5};
 
     Body b0({0., 0.}, {0., 0.}, 2. * pow(10, 24), 1.);
     u.add(b0);
@@ -83,7 +92,7 @@ TEST_CASE("Testing the acceleration function on two bodies") {
   }
 
   {
-    Universe u{};
+    Universe u{6.67e-11, 0.005, 1.e5};
 
     Body b0({0., 0.}, {0., 0.}, 2. * pow(10, 24), 1.);
     u.add(b0);
@@ -106,7 +115,7 @@ TEST_CASE("Testing the position increment universe function on two bodies") {
     Body b0({0.0, 0.0}, {3.0, 4.0}, 1., 1.);
     Body b1({1.0, -2.0}, {2.0, -1.0}, 1., 1.);
 
-    Universe u{};
+    Universe u{6.67e-11, 0.005, 1.e5};
 
     u.add(b0);
     u.add(b1);
@@ -120,7 +129,7 @@ TEST_CASE("Testing the position increment universe function on two bodies") {
 
 TEST_CASE("Testing an entire simulation") {
   {
-    Universe u{};
+    Universe u{6.67e-11, 0.005, 1.e5};
 
     Body b0({0., 0.}, {0., 0.}, 2. * pow(10, 24), 1.);
     u.add(b0);
@@ -143,7 +152,7 @@ TEST_CASE("Testing an entire simulation") {
   }
 
   {
-    Universe u{};
+    Universe u{6.67e-11, 0.005, 1.e5};
 
     Body b0({0., 0.}, {0., 0.}, 1. * pow(10, 24), 1.);
     u.add(b0);
@@ -177,7 +186,7 @@ TEST_CASE("Testing an entire simulation") {
 
 TEST_CASE("Testing a simulation with many iterations") {
   {
-    Universe u{};
+    Universe u{6.67e-11, 0.005, 1.e5};
 
     Body b0({0., 0.}, {0., 0.}, 1. * pow(10, 24), 1.);
     u.add(b0);
@@ -203,7 +212,7 @@ TEST_CASE("Testing a simulation with many iterations") {
 
 TEST_CASE("Testing the y component") {
   {
-    Universe u{};
+    Universe u{6.67e-11, 0.005, 1.e5};
 
     Body b0({0., 0.}, {0., 0.}, 1. * pow(10, 24), 1.);
     u.add(b0);
@@ -224,7 +233,7 @@ TEST_CASE("Testing the y component") {
 
 TEST_CASE("Testing a system with velocities on x and y") {
   {
-    Universe u{};
+    Universe u{6.67e-11, 0.005, 1.e5};
 
     Body b0({0., 0.}, {10., -5.}, 1. * pow(10, 24), 1.);
     u.add(b0);
@@ -272,30 +281,45 @@ TEST_CASE("Testing a system with velocities on x and y") {
 
 TEST_CASE("Testing collisions") {
   {
-    Universe u{};
+    Universe u{1., 0.005, 1e-2};
 
-    Body b0({-1., -1.}, {0., 0.}, 1., 1.);
+    Body b0({-1., -1.}, {0., 0.}, 1., 0.1);
     u.add(b0);
 
-    Body b1({1., 1.}, {0., 0.}, 1., 1.);
+    Body b1({1., 1.}, {0., 0.}, 1., 0.1);
     u.add(b1);
 
     u.set_U_0();
     u.set_a_0();
     u.set_energies();
 
-    u.simulation_steps(750);
+    for (int i{0}; i < 742; ++i) {
+      u.single_simulation_step();
+    }
 
-    CHECK(u.size() = 1);
+    CHECK(u.size() == 2);
+    CHECK(u.get_body(0).get_v().get_x() == - u.get_body(1).get_v().get_x());
+    CHECK(u.get_body(0).get_v().get_y() == - u.get_body(1).get_v().get_y());
+
+    for (int i{0}; i < 3; ++i) {
+      u.single_simulation_step();
+    }
+    CHECK(u.size() == 1);
+    CHECK(u.get_body(0).get_v().get_x() == 0.0);
+    CHECK(u.get_body(0).get_a().get_x() == 0.0);
+
+    CHECK(u.get_body(0).get_v().get_y() == 0.0);
+    CHECK(u.get_body(0).get_a().get_y() == 0.0);
   }
+}
 
-  TEST_CASE("Testing Lagrange L1 point stability on three bodies") {
+/*
+TEST_CASE("Testing Lagrange L1 point stability on three bodies") {
   {
-    
-    
     Body b0({-1.0, 0.0}, {0.0, -1.0}, 1000.0, 1.0);
     Body b1({99.0, 0.0}, {0.0, 99.0}, 10.0, 1.0);
-    Body b2({77.0, 0.0}, {0.0, 77.0}, 0.001, 1.0); // Punto L1 calcolato sulla linea tra b0 e b1
+    Body b2({77.0, 0.0}, {0.0, 77.0}, 0.001,
+            1.0);  // Punto L1 calcolato sulla linea tra b0 e b1
 
     Universe u{};
 
@@ -303,31 +327,34 @@ TEST_CASE("Testing collisions") {
     u.add(b1);
     u.add(b2);
 
-    
     u.r_t_complete();
 
-    // VERIFICA: I corpi devono essersi spostati mantenendo il corretto incremento
-    // Calcolato in base alla velocità impostata e al dt interno del tuo programma
-    // (I valori qui sotto sono indicativi, inserisci i decimali esatti sputati dal tuo dt)
+    // VERIFICA: I corpi devono essersi spostati mantenendo il corretto
+    // incremento Calcolato in base alla velocità impostata e al dt interno del
+    // tuo programma (I valori qui sotto sono indicativi, inserisci i decimali
+    // esatti sputati dal tuo dt)
     CHECK(u.get_body(0).get_r() == Vector{-1.0, -0.005});
     CHECK(u.get_body(1).get_r() == Vector{99.0, 0.495});
-    
-    // Il corpo in L1 deve essersi spostato coerentemente senza deviare dall'asse
+
+    // Il corpo in L1 deve essersi spostato coerentemente senza deviare
+    // dall'asse
     CHECK(u.get_body(2).get_r() == Vector{77.0, 0.385});
 
-    // VERIFICA AGGIUNTIVA: La distanza relativa tra b1 (Terra) e b2 (L1) 
-    // deve rimanere stabile e non mostrare derive improvvise dovute a forze sbilanciate
-    double distanza_iniziale_l1 = 99.0 - 77.0; // 22.0
-    
+    // VERIFICA AGGIUNTIVA: La distanza relativa tra b1 (Terra) e b2 (L1)
+    // deve rimanere stabile e non mostrare derive improvvise dovute a forze
+    // sbilanciate
+    double distanza_iniziale_l1 = 99.0 - 77.0;  // 22.0
+
     Vector pos_b1_dopo = u.get_body(1).get_r();
     Vector pos_b2_dopo = u.get_body(2).get_r();
-    
-    // Calcoliamo la distanza tra i vettori (supponendo che la tua classe Vector abbia un metodo di distanza o modulo)
-    double distanza_dopo_passo = (pos_b1_dopo - pos_b2_dopo).modulus(); 
-    
-    // Verifichiamo che la distanza sia rimasta invariata a meno di tolleranze decimali minima (es. 0.001)
+
+    // Calcoliamo la distanza tra i vettori (supponendo che la tua classe Vector
+    // abbia un metodo di distanza o modulo)
+    double distanza_dopo_passo = (pos_b1_dopo - pos_b2_dopo).norm();
+
+    // Verifichiamo che la distanza sia rimasta invariata a meno di tolleranze
+    // decimali minima (es. 0.001)
     CHECK(std::abs(distanza_dopo_passo - distanza_iniziale_l1) < 0.001);
   }
 }
-
-}
+*/

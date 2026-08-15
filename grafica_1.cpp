@@ -29,15 +29,17 @@ int main() {
   }
 
   // Caricamento dei corpi nell'Universo e setting dell'Universo
-  Universe u{};
-
-  Body b0({-1., -1.}, {0., 0.}, 1., 1.);
-  u.add(b0);
-
-  Body b1({1., 1.}, {0., 0.}, 1., 1.);
-  u.add(b1);
+  Universe u{1., 0.005, 1e-2};
 
   /*
+  Body b0({-1., -1.}, {0., 0.}, 1., 0.1);
+  u.add(b0);
+
+  Body b1({1., 1.}, {0., 0.}, 1., 0.1);
+  u.add(b1);
+  
+
+  
   Body b0({-0.97000436, 0.24308753}, {0.4662036850, 0.4323657300}, 1., 1.);
   u.add(b0);
 
@@ -47,6 +49,15 @@ int main() {
   Body b2({0., 0.}, {-0.93240737, -0.86473146}, 1., 1.);
   u.add(b2);
   */
+
+  Body b0({-1., -1.}, {0., 0.}, 1., 0.1);
+  u.add(b0);
+
+  Body b1({1., 1.}, {0., 0.}, 1., 0.1);
+  u.add(b1);
+
+  Body b2({0., 2.}, {1., 0.}, 0.2, 0.1);
+  u.add(b2);
 
   u.set_U_0();
   u.set_a_0();
@@ -106,6 +117,7 @@ int main() {
 
     window.draw(space_instructions(times));
     window.draw(ctrlE_instructions(times));
+    window.draw(iterations_title(w, h, times, iterations));
 
     if (running == false) {
       window.draw(arrows_instructions(times));
@@ -136,8 +148,6 @@ int main() {
     for (int i{0}; i < u.size(); ++i) {
       window.draw(u.get_circles()[i]);
     }
-
-    std::cout << iterations << '\n';
 
     window.display();
   }

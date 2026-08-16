@@ -31,7 +31,28 @@ int main() {
   // Caricamento dei corpi nell'Universo e setting dell'Universo
   Universe u{1., 0.005, 1e-2};
 
-  /*
+  Body sole(    {0.0, 0.0},   {0.0, 0.0},    100.0,   0.15); // Sole (al centro)
+Body mercurio({1.5, 0.0},   {0.0, 8.16},   0.0001,  0.03); // Mercurio
+Body venere(  {3.0, 0.0},   {0.0, 5.77},   0.005,   0.05); // Venere
+Body terra(   {5.0, 0.0},   {0.0, 4.47},   0.006,   0.06); // Terra
+Body marte(   {8.0, 0.0},   {0.0, 3.53},   0.0006,  0.04); // Marte
+
+  
+  u.add(sole);     // ID 0
+  u.add(mercurio); // ID 1
+  u.add(venere);   // ID 2
+  u.add(terra);    // ID 3
+  u.add(marte);    // ID 4
+/*
+  Body b0({-9.1, 0.0}, {0.0, -0.0095}, 10.0,   0.2); // Stella
+Body b1({90.9, 0.0},  {0.0,  0.0954}, 1.0,    0.2); // Pianeta (Lontanissimo a x = 90.9!)
+Body b2({58.7, 0.0},  {0.0,  0.0616}, 0.0001, 0.2);     // Satellite L1 (Raggio 0.1, è a x = 25.0)
+
+  u.add(b0);
+  u.add(b1); 
+  u.add(b2); 
+
+  
   Body b0({-1., -1.}, {0., 0.}, 1., 0.1);
   u.add(b0);
 
@@ -39,7 +60,8 @@ int main() {
   u.add(b1);
   
 
-  
+  */
+ /*
   Body b0({-0.97000436, 0.24308753}, {0.4662036850, 0.4323657300}, 1., 1.);
   u.add(b0);
 
@@ -50,7 +72,7 @@ int main() {
   u.add(b2);
   */
 
-  Body b0({-1., -1.}, {0., 0.}, 1., 0.1);
+  /*Body b0({-1., -1.}, {0., 0.}, 1., 0.1);
   u.add(b0);
 
   Body b1({1., 1.}, {0., 0.}, 1., 0.1);
@@ -58,6 +80,7 @@ int main() {
 
   Body b2({0., 2.}, {1., 0.}, 0.2, 0.1);
   u.add(b2);
+  */
 
   u.set_U_0();
   u.set_a_0();

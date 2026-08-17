@@ -310,6 +310,8 @@ TEST_CASE("Testing collisions") {
 
     CHECK(u.get_body(0).get_v().get_y() == 0.0);
     CHECK(u.get_body(0).get_a().get_y() == 0.0);
+
+    CHECK(u.get_body(0).get_k() == 0.2);
   }
 }
 

@@ -70,7 +70,7 @@ int main() {
 
         if (event.mouseButton.button == sf::Mouse::Left) {
           for (int i{0}; i < 6; ++i) {
-            if (buttons[i].getGlobalBounds().contains(mouseWorld)) {
+            if (buttons[i].getGlobalBounds().contains(mouseWorld) && clicked != i) {
               clicked = i;
               pars = run_conf(conf_titles[i]);
 
@@ -93,8 +93,6 @@ int main() {
 
               legend = intial_legend_setting(w, h, times, u);
               legend_current = current_legend_setting(w, h, times, u);
-
-              std::cout << "Current K = " << u.get_K_() << '\n';
             }
           }
         }

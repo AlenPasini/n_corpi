@@ -146,7 +146,9 @@ class Universe {
     circle.setPosition(b.get_r().get_x() / scale_, b.get_r().get_y() / scale_);
     circle.setFillColor(colors_[u_.size() - 1]);
 
+    /*
     int color_id;
+    
 
     if (u_.back().get_id() <= this->n_colors() - 1) {
       color_id = u_.back().get_id();
@@ -157,7 +159,9 @@ class Universe {
     }
 
     circle.setFillColor(colors_[color_id]);
+    */
 
+    circle.setFillColor(colors_[u_.back().get_id()]);
     circles_.push_back(circle);
   }
 
@@ -416,6 +420,7 @@ class Universe {
     E_0 = 0.;
 
     u_.clear();
+    circles_.clear();
   }
 
   void update_graphics() {

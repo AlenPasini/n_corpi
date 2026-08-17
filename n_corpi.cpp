@@ -5,7 +5,9 @@
 
 #include <SFML/Graphics.hpp>
 #include <cmath>
+#include <fstream>
 #include <iostream>
+#include <sstream>
 #include <vector>
 
 struct Vector {
@@ -118,9 +120,13 @@ class Universe {
  public:
   Universe(double G, double dt, double scale) : G{G}, dt{dt}, scale_{scale} {}
 
-  int size() { return u_.size(); }
+  int size() const { return u_.size(); }
 
   void set_dt(double dt_input) { dt = dt_input; }
+
+  void set_G(double new_G) { G = new_G; }
+
+  void set_scale(double new_scale) { scale_ = new_scale; }
 
   void add(Body &b) {
     u_.push_back(b);
@@ -134,7 +140,6 @@ class Universe {
 
     L_0 += b.get_m() * (b.get_v().get_y() * b.get_r().get_x() -
                         b.get_v().get_x() * b.get_r().get_y());
-
 
     sf::CircleShape circle(b.get_k() / scale_);
     circle.setOrigin(10., 10.);
@@ -152,7 +157,7 @@ class Universe {
     }
 
     circle.setFillColor(colors_[color_id]);
-    
+
     circles_.push_back(circle);
   }
 
@@ -163,6 +168,7 @@ class Universe {
   double get_eps() const { return eps; }
   double get_G() const { return G; }
   double get_dt() const { return dt; }
+  double get_scale() const { return scale_; }
 
   double get_K_0() const { return K_0; }
   double get_U_0() const { return U_0; }
@@ -401,6 +407,17 @@ class Universe {
     }
   }
 
+  void new_config(double new_G, double new_dt, double new_scale) {
+    this->set_G(new_G);
+    this->set_dt(new_dt);
+    this->set_scale(new_scale);
+    K_0 = 0.;
+    U_0 = 0.;
+    E_0 = 0.;
+
+    u_.clear();
+  }
+
   void update_graphics() {
     for (std::size_t j{0}; j < u_.size(); ++j) {
       circles_[j].setPosition(u_[j].get_r().get_x() / scale_,
@@ -496,12 +513,31 @@ std::vector<sf::Text> current_legend_setting(double w, double h,
   return text;
 }
 
-sf::Text iterations_title(double w, double h, sf::Font const &times,
-                          int n_iterations) {
+std::vector<sf::Text> u_informations(double w, double h, sf::Font const &times,
+                                     int n_iterations, Universe const &u) {
+  std::vector<sf::Text> info;
+
   sf::Text iterations{"Iterations: " + std::to_string(n_iterations), times, 20};
   iterations.setPosition(w / 2 - 150., -h / 2 + 5.);
+  info.push_back(iterations);
 
-  return iterations;
+  sf::Text G{"G = " + std::to_string(u.get_G()), times, 20};
+  G.setPosition(w / 2 - 150., -h / 2 + 25.);
+  info.push_back(G);
+
+  sf::Text dt{"dt = " + std::to_string(u.get_dt()), times, 20};
+  dt.setPosition(w / 2 - 150., -h / 2 + 50.);
+  info.push_back(dt);
+
+  sf::Text scale{"scale = " + std::to_string(u.get_scale()), times, 20};
+  scale.setPosition(w / 2 - 150., -h / 2 + 75.);
+  info.push_back(scale);
+
+  sf::Text bodies{"# bodies = " + std::to_string(u.size()), times, 20};
+  bodies.setPosition(w / 2 - 150., -h / 2 + 100.);
+  info.push_back(bodies);
+
+  return info;
 }
 
 std::vector<sf::Text> configuration_text_setting(
@@ -582,5 +618,44 @@ std::vector<sf::RectangleShape> configuration_button_setting() {
   conf_buttons.push_back(b6);
 
   return conf_buttons;
+}
+
+std::vector<double> run_conf(std::string conf_title) {
+  std::fstream file;
+  file.open("configurations.txt");
+  std::vector<double> all_parameters;
+  std::string line;
+
+  bool check = false;
+  if (file.is_open()) {
+    while (getline(file, line)) {
+      if (line == conf_title) {
+        check = true;
+        continue;  // salta il resto di questa iterazione, passa direttamente
+                   // alla successiva
+      }
+
+      if (check == true) {
+        std::istringstream stream(line);
+
+        std::string par;
+        while (stream >> par) {
+          if (par == "fine") {
+            check = false;
+            break;
+          }
+          all_parameters.push_back(std::stod(par));
+        }
+      }
+    }
+
+    file.close();
+  }
+
+  else {
+    std::cout << "Errore: file non trovato" << '\n';
+  }
+
+  return all_parameters;
 }
 // #endif

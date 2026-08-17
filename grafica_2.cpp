@@ -28,91 +28,6 @@ int main() {
     std::cerr << "Couldn't load font" << '\n';
   }
 
-  /* PUNTO DI LAGRANGE
-
-    const double G_REAL = 6.67430e-11;
-    const double AU = 149597870700.0;
-    double m0 = 1.9885e30; // Massa del Sole in kg
-    double m1 = 5.9722e24; // Massa della Terra in kg
-    double m2 = 1850.0;    // Massa del satellite in kg
-    double x0 = -AU * (m1 / (m0 + m1)); // Posizione del Sole: circa -449.000
-    metri dal CM double x1 =  AU * (m0 / (m1 + m0)); // Posizione della Terra:
-    circa 1.495974e11 metri dal CM double x2 = 148100000000.0; double omega =
-    std::sqrt(G_REAL * (m0 + m1) / std::pow(AU, 3)); // ~1.991e-7 rad/s
-
-    double v0 = -omega * std::abs(x0); // Velocità del Sole (~0.089 m/s, si
-    muove pochissimo) double v1 =  omega * std::abs(x1); // Velocità della Terra
-    (~29780.0 m/s) double v2 =  omega * x2;           // Velocità sincrona del
-    satellite in L1 (~29482.0 m/s)
-
-
-    double raggio_sole  = 696340000.0; // ~696.340 km
-    double raggio_terra = 6371000.0;   // ~6.371 km
-    double raggio_soho  = 5.0;         // 5 metri (dimensione fittizia del
-    satellite)
-
-    Body b0({x0, 0.0}, {0.0, v0}, m0, raggio_sole);
-    Body b1({x1, 0.0}, {0.0, v1}, m1, raggio_terra);
-    Body b2({x2, 0.0}, {0.0, v2}, m2, raggio_soho);
-
-    Universe u{1., 0.005, 2.3e+10};
-
-    u.add(b0); // ID 0
-    u.add(b1); // ID 1
-    u.add(b2); // ID 2
-
-
-
-  LAGRANGE 2
-  Body b0({-2.47524752475248, 0.0},  {0.0, -0.19801980198020},  100000.0, 15.0);
-  // Stella Body b1({247.52475247524752, 0.0}, {0.0, 19.80198019801980}, 1000.0,
-  6.0);  // Pianeta Body b2({194.41315802196025, 0.0}, {0.0, 15.55305264175682},
-  0.0001,   3.0);  // Satellite L1
-
-
-
-  Universe u{1., 0.001, 1e-0};
-  u.add(b0);
-  u.add(b1);
-  u.add(b2);
-
-
-    Caricamento dei corpi nell'Universo e setting dell'Universo
-    Universe u{1., 0.005, 1e-2};
-
-    Body sole({0.0, 0.0}, {0.0, 0.0}, 100.0, 0.15);        // Sole (al centro)
-    Body mercurio({1.5, 0.0}, {0.0, 8.16}, 0.0001, 0.03);  // Mercurio
-    Body venere({3.0, 0.0}, {0.0, 5.77}, 0.005, 0.05);     // Venere
-    Body terra({5.0, 0.0}, {0.0, 4.47}, 0.006, 0.06);      // Terra
-    Body marte({8.0, 0.0}, {0.0, 3.53}, 0.0006, 0.04);     // Marte
-
-    u.add(sole);      // ID 0
-    u.add(mercurio);  // ID 1
-    u.add(venere);    // ID 2
-    u.add(terra);     // ID 3
-    u.add(marte);     // ID 4
-
-
-
-    Body b0({-9.1, 0.0}, {0.0, -0.0095}, 10.0,   0.2); // Stella
-  Body b1({90.9, 0.0},  {0.0,  0.0954}, 1.0,    0.2); // Pianeta (Lontanissimo a
-  x = 90.9!)                   Body b2({58.7, 0.0},  {0.0,  0.0616}, 0.0001,
-  0.2);     //                   Satellite L1 (Raggio 0.1, è a x = 25.0)
-
-    u.add(b0);
-    u.add(b1);
-    u.add(b2);
-
-
-    Body b0({-1., -1.}, {0., 0.}, 1., 0.1);
-    u.add(b0);
-
-    Body b1({1., 1.}, {0., 0.}, 1., 0.1);
-    u.add(b1);
-
-
-    */
-
   Universe u{1., 0.005, 5.e-3};
 
   Body b0({-0.97000436, 0.24308753}, {0.4662036850, 0.4323657300}, 1., 0.05);
@@ -124,16 +39,6 @@ int main() {
   Body b2({0., 0.}, {-0.93240737, -0.86473146}, 1., 0.05);
   u.add(b2);
 
-  /*Body b0({-1., -1.}, {0., 0.}, 1., 0.1);
-  u.add(b0);
-
-  Body b1({1., 1.}, {0., 0.}, 1., 0.1);
-  u.add(b1);
-
-  Body b2({0., 2.}, {1., 0.}, 0.2, 0.2);
-  u.add(b2);
-  */
-
   u.set_U_0();
   u.set_a_0();
   u.set_energies();
@@ -142,11 +47,12 @@ int main() {
   auto legend_current = current_legend_setting(w, h, times, u);
   auto buttons = configuration_button_setting();
   auto conf_text = configuration_text_setting(times, buttons);
+  auto info = u_informations(w, h, times, 0, u);
 
   // Apertura del canvas e setting per l'utilizzo dei tasti
   bool running{false};
   int clicked{0};
-  std::vector<double> parameters;
+  std::vector<double> pars;
 
   std::vector<std::string> conf_titles{
       "First configuration",  "Second configuration", "Third configuration",
@@ -166,8 +72,24 @@ int main() {
           for (int i{0}; i < 6; ++i) {
             if (buttons[i].getGlobalBounds().contains(mouseWorld)) {
               clicked = i;
-              parameters = run_conf(conf_titles[i]);
-              
+              pars = run_conf(conf_titles[i]);
+
+              u.new_config(pars[0], pars[1], pars[2]);
+
+              std::size_t n_bodies{(pars.size() - 3) / 6};
+
+              for (std::size_t j{0}; j < n_bodies; ++j) {
+                Body b({pars[3 + 6 * j], pars[4 + 6 * j]},
+                       {pars[5 + 6 * j], pars[6 + 6 * j]}, pars[7 + 6 * j],
+                       pars[8 + 6 * j]);
+
+                u.add(b);
+              }
+
+              u.set_U_0();
+              u.set_a_0();
+              u.set_energies();
+              iterations = 0;
             }
           }
         }
@@ -215,7 +137,12 @@ int main() {
 
     window.draw(space_instructions(times));
     window.draw(ctrlE_instructions(times));
-    window.draw(iterations_title(w, h, times, iterations));
+
+    info[0].setString("Iterations: " + std::to_string(iterations));
+    info[4].setString("# bodies: " + std::to_string(u.size()));
+    for (size_t i{0}; i < info.size(); ++i) {
+      window.draw(info[i]);
+    }
 
     if (running == false) {
       window.draw(arrows_instructions(times));

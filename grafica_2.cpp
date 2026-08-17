@@ -90,6 +90,11 @@ int main() {
               u.set_a_0();
               u.set_energies();
               iterations = 0;
+
+              legend = intial_legend_setting(w, h, times, u);
+              legend_current = current_legend_setting(w, h, times, u);
+
+              std::cout << "Current K = " << u.get_K_() << '\n';
             }
           }
         }

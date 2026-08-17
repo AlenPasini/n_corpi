@@ -28,7 +28,53 @@ int main() {
     std::cerr << "Couldn't load font" << '\n';
   }
 
-  // Caricamento dei corpi nell'Universo e setting dell'Universo
+/* PUNTO DI LAGRANGE
+
+  const double G_REAL = 6.67430e-11;
+  const double AU = 149597870700.0; 
+  double m0 = 1.9885e30; // Massa del Sole in kg
+  double m1 = 5.9722e24; // Massa della Terra in kg
+  double m2 = 1850.0;    // Massa del satellite in kg
+  double x0 = -AU * (m1 / (m0 + m1)); // Posizione del Sole: circa -449.000 metri dal CM
+  double x1 =  AU * (m0 / (m1 + m0)); // Posizione della Terra: circa 1.495974e11 metri dal CM
+  double x2 = 148100000000.0; 
+  double omega = std::sqrt(G_REAL * (m0 + m1) / std::pow(AU, 3)); // ~1.991e-7 rad/s
+
+  double v0 = -omega * std::abs(x0); // Velocità del Sole (~0.089 m/s, si muove pochissimo)
+  double v1 =  omega * std::abs(x1); // Velocità della Terra (~29780.0 m/s)
+  double v2 =  omega * x2;           // Velocità sincrona del satellite in L1 (~29482.0 m/s)
+
+
+  double raggio_sole  = 696340000.0; // ~696.340 km
+  double raggio_terra = 6371000.0;   // ~6.371 km
+  double raggio_soho  = 5.0;         // 5 metri (dimensione fittizia del satellite)
+
+  Body b0({x0, 0.0}, {0.0, v0}, m0, raggio_sole);
+  Body b1({x1, 0.0}, {0.0, v1}, m1, raggio_terra);
+  Body b2({x2, 0.0}, {0.0, v2}, m2, raggio_soho);
+
+  Universe u{1., 0.005, 2.3e+10};
+
+  u.add(b0); // ID 0
+  u.add(b1); // ID 1
+  u.add(b2); // ID 2
+
+*/
+
+/* LAGRANGE 2
+Body b0({-2.47524752475248, 0.0},  {0.0, -0.19801980198020},  100000.0, 15.0); // Stella
+Body b1({247.52475247524752, 0.0}, {0.0, 19.80198019801980}, 1000.0,   6.0);  // Pianeta
+Body b2({194.41315802196025, 0.0}, {0.0, 15.55305264175682}, 0.0001,   3.0);  // Satellite L1
+
+
+
+Universe u{1., 0.001, 1e-0};
+u.add(b0);
+u.add(b1);
+u.add(b2);
+
+*⁄
+  /* Caricamento dei corpi nell'Universo e setting dell'Universo
   Universe u{1., 0.005, 1e-2};
 
   Body sole({0.0, 0.0}, {0.0, 0.0}, 100.0, 0.15);        // Sole (al centro)
@@ -42,6 +88,8 @@ int main() {
   u.add(venere);    // ID 2
   u.add(terra);     // ID 3
   u.add(marte);     // ID 4
+*/
+
                     /*
                       Body b0({-9.1, 0.0}, {0.0, -0.0095}, 10.0,   0.2); // Stella
                     Body b1({90.9, 0.0},  {0.0,  0.0954}, 1.0,    0.2); // Pianeta (Lontanissimo a

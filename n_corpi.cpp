@@ -504,4 +504,83 @@ sf::Text iterations_title(double w, double h, sf::Font const &times,
   return iterations;
 }
 
+std::vector<sf::Text> configuration_text_setting(
+    sf::Font const &times, std::vector<sf::RectangleShape> buttons) {
+  std::vector<sf::Text> confs_text;
+
+  sf::Text conf1{"First configuration", times, 20};
+  confs_text.push_back(conf1);
+
+  sf::Text conf2{"Second configuration", times, 20};
+  confs_text.push_back(conf2);
+
+  sf::Text conf3{"Third configuration", times, 20};
+  confs_text.push_back(conf3);
+
+  sf::Text conf4{"Fourth configuration", times, 20};
+  confs_text.push_back(conf4);
+
+  sf::Text conf5{"Fifth configuration", times, 20};
+  confs_text.push_back(conf5);
+
+  sf::Text conf6{"Sixth configuration", times, 20};
+  confs_text.push_back(conf6);
+
+  for (int i{0}; i < 6; ++i) {
+    sf::FloatRect tbounds = confs_text[i].getLocalBounds();
+
+    // 2. Imposta l'origine al centro del testo (tenendo conto di left/top)
+    confs_text[i].setOrigin(tbounds.left + tbounds.width / 2.f,
+                            tbounds.top + tbounds.height / 2.f);
+
+    // 3. Posiziona il testo al centro del rettangolo
+    sf::FloatRect rectBounds = buttons[i].getGlobalBounds();
+    confs_text[i].setPosition(rectBounds.left + rectBounds.width / 2.f,
+                              rectBounds.top + rectBounds.height / 2.f);
+  }
+
+  return confs_text;
+}
+
+std::vector<sf::RectangleShape> configuration_button_setting() {
+  std::vector<sf::RectangleShape> conf_buttons;
+
+  sf::RectangleShape b1;
+  b1.setSize(sf::Vector2f(200.f, 40.f));
+  b1.setFillColor(sf::Color::Blue);
+  b1.setPosition(-790., 0.);
+  conf_buttons.push_back(b1);
+
+  sf::RectangleShape b2;
+  b2.setSize(sf::Vector2f(200.f, 40.f));
+  b2.setFillColor(sf::Color::Blue);
+  b2.setPosition(-790., 50.);
+  conf_buttons.push_back(b2);
+
+  sf::RectangleShape b3;
+  b3.setSize(sf::Vector2f(200.f, 40.f));
+  b3.setFillColor(sf::Color::Blue);
+  b3.setPosition(-790., 100.);
+  conf_buttons.push_back(b3);
+
+  sf::RectangleShape b4;
+  b4.setSize(sf::Vector2f(200.f, 40.f));
+  b4.setFillColor(sf::Color::Blue);
+  b4.setPosition(-790., 150.);
+  conf_buttons.push_back(b4);
+
+  sf::RectangleShape b5;
+  b5.setSize(sf::Vector2f(200.f, 40.f));
+  b5.setFillColor(sf::Color::Blue);
+  b5.setPosition(-790., 200.);
+  conf_buttons.push_back(b5);
+
+  sf::RectangleShape b6;
+  b6.setSize(sf::Vector2f(200.f, 40.f));
+  b6.setFillColor(sf::Color::Blue);
+  b6.setPosition(-790., 250.);
+  conf_buttons.push_back(b6);
+
+  return conf_buttons;
+}
 // #endif

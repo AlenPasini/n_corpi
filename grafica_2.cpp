@@ -56,7 +56,8 @@ int main() {
 
   std::vector<std::string> conf_titles{
       "First configuration",  "Second configuration", "Third configuration",
-      "Fourth configuration", "Fifth configuration",  "Sixth configuration"};
+      "Fourth configuration", "Fifth configuration",  "Sixth configuration",
+      "Seventh configuration"};
 
   while (window.isOpen()) {
     sf::Event event;
@@ -69,8 +70,9 @@ int main() {
             sf::Vector2i(event.mouseButton.x, event.mouseButton.y));
 
         if (event.mouseButton.button == sf::Mouse::Left) {
-          for (int i{0}; i < 6; ++i) {
-            if (buttons[i].getGlobalBounds().contains(mouseWorld) && clicked != i) {
+          for (int i{0}; i < 7; ++i) {
+            if (buttons[i].getGlobalBounds().contains(mouseWorld) &&
+                clicked != i) {
               clicked = i;
               pars = run_conf(conf_titles[i]);
 
@@ -129,9 +131,26 @@ int main() {
           }
         }
         if (event.key.code == sf::Keyboard::E && event.key.control) {
-          u.reset(iterations);
-          u.update_graphics();
+          pars = run_conf(conf_titles[clicked]);
+
+          u.new_config(pars[0], pars[1], pars[2]);
+
+          std::size_t n_bodies{(pars.size() - 3) / 6};
+
+          for (std::size_t j{0}; j < n_bodies; ++j) {
+            Body b({pars[3 + 6 * j], pars[4 + 6 * j]},
+                   {pars[5 + 6 * j], pars[6 + 6 * j]}, pars[7 + 6 * j],
+                   pars[8 + 6 * j]);
+
+            u.add(b);
+          }
+
+          u.set_U_0();
+          u.set_a_0();
+          u.set_energies();
           iterations = 0;
+
+          legend_current = current_legend_setting(w, h, times, u);
         }
       }
     }
@@ -168,7 +187,7 @@ int main() {
     buttons[clicked].setFillColor(sf::Color::Yellow);
     conf_text[clicked].setFillColor(sf::Color::Black);
 
-    for (int i{0}; i < 6; ++i) {
+    for (int i{0}; i < 7; ++i) {
       if (clicked != i) {
         buttons[i].setFillColor(sf::Color::Blue);
         conf_text[i].setFillColor(sf::Color::White);

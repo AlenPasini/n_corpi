@@ -395,22 +395,6 @@ class Universe {
     dt = -dt;
   }
 
-  void reset(int iterations) {
-    if (iterations >= 0) {
-      dt = -dt;
-      for (int i{0}; i < iterations; ++i) {
-        this->single_simulation_step();
-      }
-      dt = -dt;
-    }
-
-    else {
-      for (int i{0}; i < -iterations; ++i) {
-        this->single_simulation_step();
-      }
-    }
-  }
-
   void new_config(double new_G, double new_dt, double new_scale) {
     this->set_G(new_G);
     this->set_dt(new_dt);
@@ -522,24 +506,24 @@ std::vector<sf::Text> u_informations(double w, double h, sf::Font const &times,
                                      int n_iterations, Universe const &u) {
   std::vector<sf::Text> info;
 
-  sf::Text iterations{"Iterations: " + std::to_string(n_iterations), times, 20};
-  iterations.setPosition(w / 2 - 150., -h / 2 + 5.);
+  sf::Text iterations{"Iterations: " + std::to_string(n_iterations), times, 16};
+  iterations.setPosition(w / 2 - 120., -h / 2 + 5.);
   info.push_back(iterations);
 
-  sf::Text G{"G = " + std::to_string(u.get_G()), times, 20};
-  G.setPosition(w / 2 - 150., -h / 2 + 25.);
+  sf::Text G{"G = " + std::to_string(u.get_G()), times, 16};
+  G.setPosition(w / 2 - 120., -h / 2 + 25.);
   info.push_back(G);
 
-  sf::Text dt{"dt = " + std::to_string(u.get_dt()), times, 20};
-  dt.setPosition(w / 2 - 150., -h / 2 + 50.);
+  sf::Text dt{"dt = " + std::to_string(u.get_dt()), times, 16};
+  dt.setPosition(w / 2 - 120., -h / 2 + 45.);
   info.push_back(dt);
 
-  sf::Text scale{"scale = " + std::to_string(u.get_scale()), times, 20};
-  scale.setPosition(w / 2 - 150., -h / 2 + 75.);
+  sf::Text scale{"scale = " + std::to_string(u.get_scale()), times, 16};
+  scale.setPosition(w / 2 - 120., -h / 2 + 65.);
   info.push_back(scale);
 
-  sf::Text bodies{"# bodies = " + std::to_string(u.size()), times, 20};
-  bodies.setPosition(w / 2 - 150., -h / 2 + 100.);
+  sf::Text bodies{"# bodies = " + std::to_string(u.size()), times, 16};
+  bodies.setPosition(w / 2 - 120., -h / 2 + 85.);
   info.push_back(bodies);
 
   return info;
@@ -567,7 +551,10 @@ std::vector<sf::Text> configuration_text_setting(
   sf::Text conf6{"Sixth configuration", times, 20};
   confs_text.push_back(conf6);
 
-  for (int i{0}; i < 6; ++i) {
+  sf::Text conf7{"Seventh configuration", times, 20};
+  confs_text.push_back(conf7);
+
+  for (int i{0}; i < 7; ++i) {
     sf::FloatRect tbounds = confs_text[i].getLocalBounds();
 
     // 2. Imposta l'origine al centro del testo (tenendo conto di left/top)
@@ -622,6 +609,12 @@ std::vector<sf::RectangleShape> configuration_button_setting() {
   b6.setPosition(-790., 250.);
   conf_buttons.push_back(b6);
 
+  sf::RectangleShape b7;
+  b7.setSize(sf::Vector2f(200.f, 40.f));
+  b7.setFillColor(sf::Color::Blue);
+  b7.setPosition(-790., 300.);
+  conf_buttons.push_back(b7);
+  
   return conf_buttons;
 }
 

@@ -77,8 +77,8 @@ int main() {
   u.add(b2);
 
 
-    Caricamento dei corpi nell'Universo e setting dell'Universo
-    Universe u{1., 0.005, 1e-2};
+    //Caricamento dei corpi nell'Universo e setting dell'Universo
+    Universe u{1., 0.005, 1e+2};
 
     Body sole({0.0, 0.0}, {0.0, 0.0}, 100.0, 0.15);        // Sole (al centro)
     Body mercurio({1.5, 0.0}, {0.0, 8.16}, 0.0001, 0.03);  // Mercurio
@@ -111,7 +111,7 @@ int main() {
     u.add(b1);
 
 
-    */
+    
 
   Universe u{1., 0.005, 5.e-3};
 
@@ -124,7 +124,7 @@ int main() {
   Body b2({0., 0.}, {-0.93240737, -0.86473146}, 1., 0.05);
   u.add(b2);
 
-  /*Body b0({-1., -1.}, {0., 0.}, 1., 0.1);
+  Body b0({-1., -1.}, {0., 0.}, 1., 0.1);
   u.add(b0);
 
   Body b1({1., 1.}, {0., 0.}, 1., 0.1);

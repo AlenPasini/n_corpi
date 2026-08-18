@@ -142,13 +142,11 @@ class Universe {
                         b.get_v().get_x() * b.get_r().get_y());
 
     sf::CircleShape circle(b.get_k() / scale_);
+
     circle.setOrigin(10., 10.);
     circle.setPosition(b.get_r().get_x() / scale_, b.get_r().get_y() / scale_);
-    circle.setFillColor(colors_[u_.size() - 1]);
-
-    /*
-    int color_id;
     
+    int color_id;
 
     if (u_.back().get_id() <= this->n_colors() - 1) {
       color_id = u_.back().get_id();
@@ -159,9 +157,7 @@ class Universe {
     }
 
     circle.setFillColor(colors_[color_id]);
-    */
-
-    circle.setFillColor(colors_[u_.back().get_id()]);
+    
     circles_.push_back(circle);
   }
 
@@ -279,16 +275,7 @@ class Universe {
       for (std::size_t i{0}; i + 1 < u_.size(); ++i) {
         for (std::size_t j{i + 1}; j < u_.size(); ++j) {
           Vector distance = u_[i].get_r() - u_[j].get_r();
-          if (distance.norm() <= u_[i].get_k() + u_[j].get_k())
-
-          /*
-                    if (std::abs(std::sqrt(pow(u_[i].get_r().get_x(), 2) +
-                                           pow(u_[i].get_r().get_y(), 2)) -
-                                 std::sqrt(pow(u_[j].get_r().get_x(), 2) +
-                                           pow(u_[j].get_r().get_y(), 2))) <=
-                        u_[i].get_k() + u_[j].get_k())
-          */
-          {
+          if (distance.norm() <= u_[i].get_k() + u_[j].get_k()) {
             c_1 = i;
             c_2 = j - 1;
             m_n = u_[i].get_m() + u_[j].get_m();
@@ -308,6 +295,7 @@ class Universe {
             k_n = u_[i].get_k() + u_[j].get_k();
 
             u_.erase(u_.begin() + j);
+            circles_.erase(circles_.begin() + j);
             // erase necessita di un iteratore, non un indice
 
             n = 1;
@@ -316,6 +304,7 @@ class Universe {
         }
         if (n == 1) {
           u_.erase(u_.begin() + i);
+          circles_.erase(circles_.begin() + i);
           break;
         }
       }
@@ -323,6 +312,7 @@ class Universe {
       if (n == 1) {
         Body d{r_n, v_n, m_n, k_n};
         this->add(d);  // da controllare
+
         for (std::size_t i{c_1}; i < c_2; ++i) {
           u_[i].add_id(u_[i].get_id() - 1);
         }
@@ -614,7 +604,7 @@ std::vector<sf::RectangleShape> configuration_button_setting() {
   b7.setFillColor(sf::Color::Blue);
   b7.setPosition(-790., 300.);
   conf_buttons.push_back(b7);
-  
+
   return conf_buttons;
 }
 

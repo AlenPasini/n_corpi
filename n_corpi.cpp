@@ -145,7 +145,7 @@ class Universe {
 
     circle.setOrigin(10., 10.);
     circle.setPosition(b.get_r().get_x() / scale_, b.get_r().get_y() / scale_);
-    
+
     int color_id;
 
     if (u_.back().get_id() <= this->n_colors() - 1) {
@@ -157,7 +157,7 @@ class Universe {
     }
 
     circle.setFillColor(colors_[color_id]);
-    
+
     circles_.push_back(circle);
   }
 
@@ -173,10 +173,14 @@ class Universe {
   double get_K_0() const { return K_0; }
   double get_U_0() const { return U_0; }
   double get_E_0() const { return E_0; }
+  double get_P_0() const { return P_0; }
+  double get_L_0() const { return L_0; }
 
   double get_K_() const { return K_; }
   double get_U_() const { return U_; }
   double get_E_() const { return E_; }
+  double get_P_() const { return P_; }
+  double get_L_() const { return L_; }
 
   int n_colors() const { return colors_.size(); }
 
@@ -372,6 +376,8 @@ class Universe {
     this->u_a_v_complete();
     this->K_t();
     U_ = this->U_t();
+    this -> P_t();
+    this -> L_t();
     E_ = K_ + U_;
 
     for (std::size_t j{0}; j < u_.size(); ++j) {
@@ -444,7 +450,7 @@ std::vector<sf::Text> intial_legend_setting(double w, double h,
                                             Universe const &u) {
   std::vector<sf::Text> text;
 
-  sf::Text legend_0_title{"Intial energetic conditions", times, 20};
+  sf::Text legend_0_title{"Intial universe conditions", times, 20};
   legend_0_title.setPosition(-w / 2 + 10., -h / 2 + 5.);
   text.push_back(legend_0_title);
 
@@ -460,6 +466,14 @@ std::vector<sf::Text> intial_legend_setting(double w, double h,
   E_0.setPosition(-w / 2 + 10., -h / 2 + 75.);
   text.push_back(E_0);
 
+  sf::Text P_0{"P = " + std::to_string(u.get_P_0()) + "J", times, 16};
+  P_0.setPosition(-w / 2 + 10., -h / 2 + 95.);
+  text.push_back(P_0);
+
+  sf::Text L_0{"L = " + std::to_string(u.get_L_0()) + "J", times, 16};
+  L_0.setPosition(-w / 2 + 10., -h / 2 + 115.);
+  text.push_back(L_0);
+
   return text;
 }
 
@@ -468,26 +482,45 @@ std::vector<sf::Text> current_legend_setting(double w, double h,
                                              Universe const &u) {
   std::vector<sf::Text> text;
 
-  sf::Text legend_title{"Current energetic conditions", times, 20};
-  legend_title.setPosition(-w / 2 + 10., -h / 2 + 110.);
+  sf::Text legend_title{"Current universe conditions", times, 20};
+  legend_title.setPosition(-w / 2 + 10., -h / 2 + 150.);
   text.push_back(legend_title);
 
   sf::Text K{"K = " + std::to_string(u.get_K_()) + "J", times, 16};
-  K.setPosition(-w / 2 + 10., -h / 2 + 140.);
+  K.setPosition(-w / 2 + 10., -h / 2 + 180.);
   text.push_back(K);
 
   sf::Text U{"U = " + std::to_string(u.get_U_()) + "J", times, 16};
-  U.setPosition(-w / 2 + 10., -h / 2 + 160.);
+  U.setPosition(-w / 2 + 10., -h / 2 + 200.);
   text.push_back(U);
 
   sf::Text E{"E = " + std::to_string(u.get_E_()) + "J", times, 16};
-  E.setPosition(-w / 2 + 10., -h / 2 + 180.);
+  E.setPosition(-w / 2 + 10., -h / 2 + 220.);
   text.push_back(E);
+
+  sf::Text P{"P = " + std::to_string(u.get_P_()) + "J", times, 16};
+  P.setPosition(-w / 2 + 10., -h / 2 + 240.);
+  text.push_back(P);
+
+  sf::Text L{"L = " + std::to_string(u.get_L_()) + "J", times, 16};
+  L.setPosition(-w / 2 + 10., -h / 2 + 260.);
+  text.push_back(L);
 
   sf::Text dE{"E_0 - E = " + std::to_string(u.get_E_0() - u.get_E_()) + "J",
               times, 16};
-  dE.setPosition(-w / 2 + 10., -h / 2 + 220.);
+  dE.setPosition(-w / 2 + 10., -h / 2 + 300.);
   text.push_back(dE);
+
+  sf::Text dP{"P_0 - P = " + std::to_string(u.get_P_0() - u.get_P_()) + "J",
+              times, 16};
+  dP.setPosition(-w / 2 + 10., -h / 2 + 320.);
+  text.push_back(dP);
+
+  sf::Text dL{"L_0 - L = " + std::to_string(u.get_L_0() - u.get_L_()) + "J",
+              times, 16};
+  dL.setPosition(-w / 2 + 10., -h / 2 + 340.);
+  text.push_back(dL);
+  
 
   return text;
 }
@@ -566,43 +599,43 @@ std::vector<sf::RectangleShape> configuration_button_setting() {
   sf::RectangleShape b1;
   b1.setSize(sf::Vector2f(200.f, 40.f));
   b1.setFillColor(sf::Color::Blue);
-  b1.setPosition(-790., 0.);
+  b1.setPosition(-790., 50.);
   conf_buttons.push_back(b1);
 
   sf::RectangleShape b2;
   b2.setSize(sf::Vector2f(200.f, 40.f));
   b2.setFillColor(sf::Color::Blue);
-  b2.setPosition(-790., 50.);
+  b2.setPosition(-790., 100.);
   conf_buttons.push_back(b2);
 
   sf::RectangleShape b3;
   b3.setSize(sf::Vector2f(200.f, 40.f));
   b3.setFillColor(sf::Color::Blue);
-  b3.setPosition(-790., 100.);
+  b3.setPosition(-790., 150.);
   conf_buttons.push_back(b3);
 
   sf::RectangleShape b4;
   b4.setSize(sf::Vector2f(200.f, 40.f));
   b4.setFillColor(sf::Color::Blue);
-  b4.setPosition(-790., 150.);
+  b4.setPosition(-790., 200.);
   conf_buttons.push_back(b4);
 
   sf::RectangleShape b5;
   b5.setSize(sf::Vector2f(200.f, 40.f));
   b5.setFillColor(sf::Color::Blue);
-  b5.setPosition(-790., 200.);
+  b5.setPosition(-790., 250.);
   conf_buttons.push_back(b5);
 
   sf::RectangleShape b6;
   b6.setSize(sf::Vector2f(200.f, 40.f));
   b6.setFillColor(sf::Color::Blue);
-  b6.setPosition(-790., 250.);
+  b6.setPosition(-790., 300.);
   conf_buttons.push_back(b6);
 
   sf::RectangleShape b7;
   b7.setSize(sf::Vector2f(200.f, 40.f));
   b7.setFillColor(sf::Color::Blue);
-  b7.setPosition(-790., 300.);
+  b7.setPosition(-790., 350.);
   conf_buttons.push_back(b7);
 
   return conf_buttons;

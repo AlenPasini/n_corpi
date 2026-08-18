@@ -27,7 +27,7 @@ int main() {
   if (!times.loadFromFile("times.ttf")) {
     std::cerr << "Couldn't load font" << '\n';
   }
- 
+
   Universe u{1., 0.005, 5.e-3};
 
   Body b0({-0.97000436, 0.24308753}, {0.4662036850, 0.4323657300}, 1., 0.05);
@@ -37,7 +37,7 @@ int main() {
   u.add(b1);
 
   Body b2({0., 0.}, {-0.93240737, -0.86473146}, 1., 0.05);
-  u.add(b2);  
+  u.add(b2);
 
   u.set_U_0();
   u.set_a_0();
@@ -177,8 +177,14 @@ int main() {
     legend_current[1].setString("K = " + std::to_string(u.get_K_()) + "J");
     legend_current[2].setString("U = " + std::to_string(u.get_U_()) + "J");
     legend_current[3].setString("E = " + std::to_string(u.get_E_()) + "J");
-    legend_current[4].setString(
+    legend_current[4].setString("P = " + std::to_string(u.get_P_()) + "J");
+    legend_current[5].setString("L = " + std::to_string(u.get_L_()) + "J");
+    legend_current[6].setString(
         "E_0 - E = " + std::to_string(u.get_E_0() - u.get_E_()) + "J");
+    legend_current[7].setString(
+        "P_0 - P = " + std::to_string(u.get_P_0() - u.get_P_()) + "J");
+    legend_current[8].setString(
+        "L_0 - L = " + std::to_string(u.get_L_0() - u.get_L_()) + "J");
 
     for (size_t i{0}; i < legend_current.size(); ++i) {
       window.draw(legend_current[i]);

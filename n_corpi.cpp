@@ -131,16 +131,17 @@ class Universe {
   void add(Body &b) {
     u_.push_back(b);
     u_.back().add_id(u_.size() - 1);
+    /*
+        K_0 += 0.5 * b.get_m() *
+               (pow(b.get_v().get_x(), 2) + pow(b.get_v().get_y(), 2));
 
-    K_0 += 0.5 * b.get_m() *
-           (pow(b.get_v().get_x(), 2) + pow(b.get_v().get_y(), 2));
+        P_0 += b.get_m() *
+               std::sqrt((pow(b.get_v().get_x(), 2) + pow(b.get_v().get_y(),
+       2)));
 
-    P_0 += b.get_m() *
-           std::sqrt((pow(b.get_v().get_x(), 2) + pow(b.get_v().get_y(), 2)));
-
-    L_0 += b.get_m() * (b.get_v().get_y() * b.get_r().get_x() -
-                        b.get_v().get_x() * b.get_r().get_y());
-
+        L_0 += b.get_m() * (b.get_v().get_y() * b.get_r().get_x() -
+                            b.get_v().get_x() * b.get_r().get_y());
+    */
     sf::CircleShape circle(b.get_k() / scale_);
 
     circle.setOrigin(10., 10.);
@@ -224,33 +225,44 @@ class Universe {
       u_[i].v_t();
     }
   }
+  /*
+    void K_t_old() {
+      K_ = 0.;
+      for (std::size_t j{0}; j < u_.size(); ++j) {
+        K_ += 0.5 * u_[j].get_m() *
+              (pow(u_[j].get_v().get_x(), 2) + pow(u_[j].get_v().get_y(), 2));
+      }
+    }
 
-  void K_t() {
-    K_ = 0.;
+    void P_t_old() {
+      P_ = 0.;
+      for (std::size_t j{0}; j < u_.size(); ++j) {
+        P_ += u_[j].get_m() * std::sqrt((pow(u_[j].get_v().get_x(), 2) +
+                                         pow(u_[j].get_v().get_y(), 2)));
+      }
+    }
+
+    void L_t_old() {
+      L_ = 0.;
+      for (std::size_t j{0}; j < u_.size(); ++j) {
+        L_ += u_[j].get_m() * (u_[j].get_v().get_y() * u_[j].get_r().get_x() -
+                               u_[j].get_v().get_x() * u_[j].get_r().get_y());
+      }
+    }
+  */
+
+  double K_t() {
+    double K{0.};
     for (std::size_t j{0}; j < u_.size(); ++j) {
-      K_ += 0.5 * u_[j].get_m() *
+      K += 0.5 * u_[j].get_m() *
             (pow(u_[j].get_v().get_x(), 2) + pow(u_[j].get_v().get_y(), 2));
     }
-  }
 
-  void P_t() {
-    P_ = 0.;
-    for (std::size_t j{0}; j < u_.size(); ++j) {
-      P_ += u_[j].get_m() * std::sqrt((pow(u_[j].get_v().get_x(), 2) +
-                                       pow(u_[j].get_v().get_y(), 2)));
-    }
-  }
-
-  void L_t() {
-    L_ = 0.;
-    for (std::size_t j{0}; j < u_.size(); ++j) {
-      L_ += u_[j].get_m() * (u_[j].get_v().get_y() * u_[j].get_r().get_x() -
-                             u_[j].get_v().get_x() * u_[j].get_r().get_y());
-    }
+    return K;
   }
 
   double U_t() {
-    double U{};
+    double U;
     for (std::size_t i{0}; i + 1 < u_.size(); ++i) {
       for (std::size_t j{i + 1}; j < u_.size(); ++j) {
         double num = get_G() * u_[i].get_m() * u_[j].get_m();
@@ -264,6 +276,24 @@ class Universe {
     }
 
     return U;
+  }
+
+  double P_t() {
+    double P{0.};
+    for (std::size_t j{0}; j < u_.size(); ++j) {
+      P += u_[j].get_m() * std::sqrt((pow(u_[j].get_v().get_x(), 2) +
+                                       pow(u_[j].get_v().get_y(), 2)));
+    }
+    return P;
+  }
+
+  double L_t() {
+    double L{0.};
+    for (std::size_t j{0}; j < u_.size(); ++j) {
+      L += u_[j].get_m() * (u_[j].get_v().get_y() * u_[j].get_r().get_x() -
+                             u_[j].get_v().get_x() * u_[j].get_r().get_y());
+    }
+    return L;
   }
 
   void check_collisions() {
@@ -330,15 +360,34 @@ class Universe {
     }
   }
 
-  void set_U_0() {
+  void set_universe_0() {
+    K_0 = this->K_t();
     U_0 = this->U_t();
     E_0 = K_0 + U_0;
+    P_0 = this->P_t();
+    L_0 = this->L_t();
+
+    K_ = K_0;
+    U_ = U_0;
+    E_ = E_0;
+    P_ = P_0;
+    L_ = L_0;
   }
 
   void set_energies() {
     K_ = K_0;
     U_ = U_0;
     E_ = E_0;
+    P_ = P_0;
+    L_ = L_0;
+  }
+
+  void update_variables() {
+    K_ = this->K_t();
+    U_ = this->U_t();
+    E_ = K_0 + U_0;
+    P_ = this->P_t();
+    L_ = this->L_t();
   }
 
   void set_a_0() {
@@ -356,9 +405,12 @@ class Universe {
       this->r_t_complete();  // non mi ricordo assolutamente se si fa così...
       this->u_a_t_complete();
       this->u_a_v_complete();
+      /*
       this->K_t();
       U_ = this->U_t();
       E_ = K_ + U_;
+      */
+      this->update_variables();
 
       for (std::size_t j{0}; j < u_.size(); ++j) {
         u_[j].set_a_(u_[j].get_a_fut());
@@ -374,11 +426,14 @@ class Universe {
     this->r_t_complete();  // non mi ricordo assolutamente se si fa così...
     this->u_a_t_complete();
     this->u_a_v_complete();
+    /*
     this->K_t();
     U_ = this->U_t();
-    this -> P_t();
-    this -> L_t();
+    this->P_t();
+    this->L_t();
     E_ = K_ + U_;
+    */
+    this->update_variables();
 
     for (std::size_t j{0}; j < u_.size(); ++j) {
       u_[j].set_a_(u_[j].get_a_fut());
@@ -398,6 +453,8 @@ class Universe {
     K_0 = 0.;
     U_0 = 0.;
     E_0 = 0.;
+    P_0 = 0.;
+    L_0 = 0.;
 
     u_.clear();
     circles_.clear();
@@ -520,7 +577,6 @@ std::vector<sf::Text> current_legend_setting(double w, double h,
               times, 16};
   dL.setPosition(-w / 2 + 10., -h / 2 + 340.);
   text.push_back(dL);
-  
 
   return text;
 }

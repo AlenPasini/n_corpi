@@ -38,10 +38,13 @@ int main() {
 
   Body b2({0., 0.}, {-0.93240737, -0.86473146}, 1., 0.05);
   u.add(b2);
-
+  /*
   u.set_U_0();
   u.set_a_0();
   u.set_energies();
+  */
+  u.set_universe_0();
+  u.set_a_0();
 
   auto legend = intial_legend_setting(w, h, times, u);
   auto legend_current = current_legend_setting(w, h, times, u);
@@ -87,10 +90,13 @@ int main() {
 
                 u.add(b);
               }
-
+              /*
               u.set_U_0();
               u.set_a_0();
               u.set_energies();
+              */
+              u.set_universe_0();
+              u.set_a_0();
               iterations = 0;
 
               legend = intial_legend_setting(w, h, times, u);
@@ -145,9 +151,14 @@ int main() {
             u.add(b);
           }
 
+          /*
           u.set_U_0();
           u.set_a_0();
           u.set_energies();
+          */
+
+          u.set_universe_0();
+          u.set_a_0();
           iterations = 0;
 
           legend_current = current_legend_setting(w, h, times, u);

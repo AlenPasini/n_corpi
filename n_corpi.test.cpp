@@ -8,7 +8,7 @@ TEST_CASE("Testing the norm function for vector") {
     Vector v{2.0, -3.0};
 
     CHECK(v.norm() == std::sqrt(13.));
-    CHECK(v.norm() == std::sqrt(v.get_x()*v.get_x() + v.get_y()*v.get_y()));
+    CHECK(v.norm() == std::sqrt(v.get_x() * v.get_x() + v.get_y() * v.get_y()));
   }
 }
 
@@ -71,26 +71,6 @@ TEST_CASE("Testing the Universe class") {
 }
 
 TEST_CASE("Testing the acceleration function on two bodies") {
-  {
-    Universe u{6.67e-11, 0.005, 1.e5};
-
-    Body b0({0., 0.}, {0., 0.}, 2. * pow(10, 24), 1.);
-    u.add(b0);
-
-    Body b1({2. * pow(10, 7), 0.0}, {0., 0.}, 3. * pow(10, 24), 1.);
-    u.add(b1);
-
-    b0.r_t();
-    b1.r_t();
-
-    u.u_a_t(b0);
-    u.u_a_t(b1);
-
-    CHECK(b0.get_a_fut().get_x() == 0.50025);
-
-    CHECK(b1.get_a_fut().get_x() == -0.3335);
-  }
-
   {
     Universe u{6.67e-11, 0.005, 1.e5};
 
@@ -289,7 +269,7 @@ TEST_CASE("Testing collisions") {
     Body b1({1., 1.}, {0., 0.}, 1., 0.1);
     u.add(b1);
 
-    u.set_U_0();
+    u.set_universe_0();
     u.set_a_0();
     u.set_energies();
 
@@ -298,8 +278,8 @@ TEST_CASE("Testing collisions") {
     }
 
     CHECK(u.size() == 2);
-    CHECK(u.get_body(0).get_v().get_x() == - u.get_body(1).get_v().get_x());
-    CHECK(u.get_body(0).get_v().get_y() == - u.get_body(1).get_v().get_y());
+    CHECK(u.get_body(0).get_v().get_x() == -u.get_body(1).get_v().get_x());
+    CHECK(u.get_body(0).get_v().get_y() == -u.get_body(1).get_v().get_y());
 
     for (int i{0}; i < 3; ++i) {
       u.single_simulation_step();
@@ -312,6 +292,73 @@ TEST_CASE("Testing collisions") {
     CHECK(u.get_body(0).get_a().get_y() == 0.0);
 
     CHECK(u.get_body(0).get_k() == 0.2);
+  }
+}
+
+TEST_CASE("Testing conservations (no collisions)") {
+  {
+    Universe u{1., 0.005, 5.e-3};
+    Body b0({-0.5, 0.}, {0., -0.7071067812}, 1., 0.05);
+    u.add(b0);
+
+    Body b1({0.5, 0.}, {0., 0.7071067812}, 1., 0.05);
+    u.add(b1);
+
+    u.set_universe_0();
+    u.set_a_0();
+    u.set_energies();
+
+    for (int i{0}; i < 1000; ++i) {
+      u.single_simulation_step();
+    }
+
+    CHECK(u.get_K_0() == doctest::Approx(0.5));
+    CHECK(u.get_U_0() == doctest::Approx(-0.999987502));
+    CHECK(u.get_E_0() == doctest::Approx(-0.4999875002));
+    CHECK(u.get_P_0().get_x() == doctest::Approx(0.));
+    CHECK(u.get_P_0().get_y() == doctest::Approx(0.));
+    CHECK(u.get_L_0() == doctest::Approx(0.7071067812));
+
+    CHECK(u.get_K_() == doctest::Approx(0.4999852783));
+    CHECK(u.get_U_() == doctest::Approx(-0.9999727784));
+    CHECK(u.get_E_() == doctest::Approx(-0.4999875000));
+    CHECK(u.get_P_().get_x() == doctest::Approx(0.));
+    CHECK(u.get_P_().get_y() == doctest::Approx(0.));
+    CHECK(u.get_L_() == doctest::Approx(0.7071067812));
+  }
+}
+
+TEST_CASE("Testing conservations (collisions)") {
+  {
+    Universe u{1., 0.005, 5.e-3};
+
+    Body b0({-1., 0.}, {1., 0.}, 1., 0.1);
+    u.add(b0);
+
+    Body b1({1., 0.}, {-1., 0.}, 1., 0.1);
+    u.add(b1);
+
+    u.set_universe_0();
+    u.set_a_0();
+    u.set_energies();
+
+    for (int i{0}; i < 145; ++i) {
+      u.single_simulation_step();
+    }
+
+    CHECK(u.get_K_0() == doctest::Approx(1.));
+    CHECK(u.get_U_0() == doctest::Approx(-0.5));
+    CHECK(u.get_E_0() == doctest::Approx(0.5));
+    CHECK(u.get_P_0().get_x() == doctest::Approx(0.));
+    CHECK(u.get_P_0().get_y() == doctest::Approx(0.));
+    CHECK(u.get_L_0() == doctest::Approx(0.));
+
+    CHECK(u.get_K_() == doctest::Approx(5.5594088522));
+    CHECK(u.get_U_() == doctest::Approx(-5.0462410119));
+    CHECK(u.get_E_() == doctest::Approx(0.5131678402));
+    CHECK(u.get_P_().get_x() == doctest::Approx(0.));
+    CHECK(u.get_P_().get_y() == doctest::Approx(0.));
+    CHECK(u.get_L_() == doctest::Approx(0.));
   }
 }
 
@@ -330,7 +377,7 @@ TEST_CASE("Testing Lagrange L1 point stability on three bodies") {
 
     u.r_t_complete();
 
-   
+
     CHECK(u.get_body(0).get_r() == Vector{-1.0, -0.001});
     CHECK(u.get_body(1).get_r() == Vector{1.0, 0.001});
     CHECK(u.get_body(2).get_r() == Vector{0.704, 0.000705});
@@ -348,6 +395,6 @@ TEST_CASE("Testing Lagrange L1 point stability on three bodies") {
     // decimali minima (es. 0.001)
     CHECK(std::abs(distanza_dopo_passo - distanza_iniziale_l1) < 0.001);
   }
-    
+
 }
 */

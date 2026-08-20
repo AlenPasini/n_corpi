@@ -100,21 +100,22 @@ class Universe {
                                  sf::Color::Blue,    sf::Color::Yellow,
                                  sf::Color::Magenta, sf::Color::Cyan};
 
-  double K_0{0.};
-  double U_0{0.};
-  double E_0{0.};
-  double P_0{0.};
-  double L_0{0.};
+  double K_0;
+  double U_0;
+  double E_0;
+  Vector P_0;
+  double L_0;
 
   double K_;
   double U_;
   double E_;
-  double P_;
+  Vector P_;
   double L_;
 
   double G;
   double dt;
-  double eps{pow(10., -12.)};
+  // double eps{pow(10., -12.)};
+  // double eps{0.};
   double scale_;
 
  public:
@@ -131,20 +132,10 @@ class Universe {
   void add(Body &b) {
     u_.push_back(b);
     u_.back().add_id(u_.size() - 1);
-    /*
-        K_0 += 0.5 * b.get_m() *
-               (pow(b.get_v().get_x(), 2) + pow(b.get_v().get_y(), 2));
 
-        P_0 += b.get_m() *
-               std::sqrt((pow(b.get_v().get_x(), 2) + pow(b.get_v().get_y(),
-       2)));
-
-        L_0 += b.get_m() * (b.get_v().get_y() * b.get_r().get_x() -
-                            b.get_v().get_x() * b.get_r().get_y());
-    */
     sf::CircleShape circle(b.get_k() / scale_);
 
-    circle.setOrigin(10., 10.);
+    circle.setOrigin(b.get_k() / scale_, b.get_k() / scale_);
     circle.setPosition(b.get_r().get_x() / scale_, b.get_r().get_y() / scale_);
 
     int color_id;
@@ -164,9 +155,9 @@ class Universe {
 
   std::vector<sf::CircleShape> &get_circles() { return circles_; }
 
-  Body get_body(int id) { return u_[id]; }
+  Body get_body(int id) const { return u_[id]; }
 
-  double get_eps() const { return eps; }
+  // double get_eps() const { return eps; }
   double get_G() const { return G; }
   double get_dt() const { return dt; }
   double get_scale() const { return scale_; }
@@ -174,13 +165,13 @@ class Universe {
   double get_K_0() const { return K_0; }
   double get_U_0() const { return U_0; }
   double get_E_0() const { return E_0; }
-  double get_P_0() const { return P_0; }
+  Vector get_P_0() const { return P_0; }
   double get_L_0() const { return L_0; }
 
   double get_K_() const { return K_; }
   double get_U_() const { return U_; }
   double get_E_() const { return E_; }
-  double get_P_() const { return P_; }
+  Vector get_P_() const { return P_; }
   double get_L_() const { return L_; }
 
   int n_colors() const { return colors_.size(); }
@@ -197,8 +188,12 @@ class Universe {
         double num_x{get_G() * u_[j].get_m() * distance.get_x()};
         double num_y{get_G() * u_[j].get_m() * distance.get_y()};
 
+        /*
         double denom{pow(
             distance.norm() * distance.norm() + get_eps() * get_eps(), 1.5)};
+        */
+
+        double denom{pow(distance.norm() * distance.norm(), 1.5)};
 
         a_t_x -= num_x / denom;
         a_t_y -= num_y / denom;
@@ -225,51 +220,27 @@ class Universe {
       u_[i].v_t();
     }
   }
-  /*
-    void K_t_old() {
-      K_ = 0.;
-      for (std::size_t j{0}; j < u_.size(); ++j) {
-        K_ += 0.5 * u_[j].get_m() *
-              (pow(u_[j].get_v().get_x(), 2) + pow(u_[j].get_v().get_y(), 2));
-      }
-    }
-
-    void P_t_old() {
-      P_ = 0.;
-      for (std::size_t j{0}; j < u_.size(); ++j) {
-        P_ += u_[j].get_m() * std::sqrt((pow(u_[j].get_v().get_x(), 2) +
-                                         pow(u_[j].get_v().get_y(), 2)));
-      }
-    }
-
-    void L_t_old() {
-      L_ = 0.;
-      for (std::size_t j{0}; j < u_.size(); ++j) {
-        L_ += u_[j].get_m() * (u_[j].get_v().get_y() * u_[j].get_r().get_x() -
-                               u_[j].get_v().get_x() * u_[j].get_r().get_y());
-      }
-    }
-  */
 
   double K_t() {
     double K{0.};
     for (std::size_t j{0}; j < u_.size(); ++j) {
       K += 0.5 * u_[j].get_m() *
-            (pow(u_[j].get_v().get_x(), 2) + pow(u_[j].get_v().get_y(), 2));
+           (pow(u_[j].get_v().get_x(), 2) + pow(u_[j].get_v().get_y(), 2));
     }
 
     return K;
   }
 
   double U_t() {
-    double U;
+    double U{0.};
     for (std::size_t i{0}; i + 1 < u_.size(); ++i) {
       for (std::size_t j{i + 1}; j < u_.size(); ++j) {
         double num = get_G() * u_[i].get_m() * u_[j].get_m();
 
         double denom =
-            std::sqrt(pow(u_[i].get_r().get_x() - u_[j].get_r().get_x(), 2) +
-                      pow(u_[i].get_r().get_y() - u_[j].get_r().get_y(), 2));
+            // (u_[i].get_r() - u_[j].get_r()).norm();
+            std::sqrt(pow(u_[i].get_r().get_x() - u_[j].get_r().get_x(), 2.) +
+                      pow(u_[i].get_r().get_y() - u_[j].get_r().get_y(), 2.));
 
         U -= num / denom;
       }
@@ -278,20 +249,21 @@ class Universe {
     return U;
   }
 
-  double P_t() {
-    double P{0.};
+  Vector P_t() {
+    double p_x{0};
+    double p_y{0};
     for (std::size_t j{0}; j < u_.size(); ++j) {
-      P += u_[j].get_m() * std::sqrt((pow(u_[j].get_v().get_x(), 2) +
-                                       pow(u_[j].get_v().get_y(), 2)));
+      p_x += u_[j].get_m() * u_[j].get_v().get_x();
+      p_y += u_[j].get_m() * u_[j].get_v().get_y();
     }
-    return P;
+    return {p_x, p_y};
   }
 
   double L_t() {
     double L{0.};
     for (std::size_t j{0}; j < u_.size(); ++j) {
       L += u_[j].get_m() * (u_[j].get_v().get_y() * u_[j].get_r().get_x() -
-                             u_[j].get_v().get_x() * u_[j].get_r().get_y());
+                            u_[j].get_v().get_x() * u_[j].get_r().get_y());
     }
     return L;
   }
@@ -385,7 +357,7 @@ class Universe {
   void update_variables() {
     K_ = this->K_t();
     U_ = this->U_t();
-    E_ = K_0 + U_0;
+    E_ = K_ + U_;
     P_ = this->P_t();
     L_ = this->L_t();
   }
@@ -453,7 +425,7 @@ class Universe {
     K_0 = 0.;
     U_0 = 0.;
     E_0 = 0.;
-    P_0 = 0.;
+    P_0 = {0., 0.};
     L_0 = 0.;
 
     u_.clear();
@@ -511,23 +483,25 @@ std::vector<sf::Text> intial_legend_setting(double w, double h,
   legend_0_title.setPosition(-w / 2 + 10., -h / 2 + 5.);
   text.push_back(legend_0_title);
 
-  sf::Text K_0{"K = " + std::to_string(u.get_K_0()) + "J", times, 16};
+  sf::Text K_0{"K = " + std::to_string(u.get_K_0()) + " J", times, 16};
   K_0.setPosition(-w / 2 + 10., -h / 2 + 35.);
   text.push_back(K_0);
 
-  sf::Text U_0{"U = " + std::to_string(u.get_U_0()) + "J", times, 16};
+  sf::Text U_0{"U = " + std::to_string(u.get_U_0()) + " J", times, 16};
   U_0.setPosition(-w / 2 + 10., -h / 2 + 55.);
   text.push_back(U_0);
 
-  sf::Text E_0{"E = " + std::to_string(u.get_E_0()) + "J", times, 16};
+  sf::Text E_0{"E = " + std::to_string(u.get_E_0()) + " J", times, 16};
   E_0.setPosition(-w / 2 + 10., -h / 2 + 75.);
   text.push_back(E_0);
 
-  sf::Text P_0{"P = " + std::to_string(u.get_P_0()) + "J", times, 16};
+  sf::Text P_0{"P = (" + std::to_string(u.get_P_0().get_x()) + ", " +
+                   std::to_string(u.get_P_0().get_y()) + " ) kg m s^-1",
+               times, 16};
   P_0.setPosition(-w / 2 + 10., -h / 2 + 95.);
   text.push_back(P_0);
 
-  sf::Text L_0{"L = " + std::to_string(u.get_L_0()) + "J", times, 16};
+  sf::Text L_0{"L = " + std::to_string(u.get_L_0()) + " kg m^2 s^-1", times, 16};
   L_0.setPosition(-w / 2 + 10., -h / 2 + 115.);
   text.push_back(L_0);
 
@@ -543,37 +517,41 @@ std::vector<sf::Text> current_legend_setting(double w, double h,
   legend_title.setPosition(-w / 2 + 10., -h / 2 + 150.);
   text.push_back(legend_title);
 
-  sf::Text K{"K = " + std::to_string(u.get_K_()) + "J", times, 16};
+  sf::Text K{"K = " + std::to_string(u.get_K_()) + " J", times, 16};
   K.setPosition(-w / 2 + 10., -h / 2 + 180.);
   text.push_back(K);
 
-  sf::Text U{"U = " + std::to_string(u.get_U_()) + "J", times, 16};
+  sf::Text U{"U = " + std::to_string(u.get_U_()) + " J", times, 16};
   U.setPosition(-w / 2 + 10., -h / 2 + 200.);
   text.push_back(U);
 
-  sf::Text E{"E = " + std::to_string(u.get_E_()) + "J", times, 16};
+  sf::Text E{"E = " + std::to_string(u.get_E_()) + " J", times, 16};
   E.setPosition(-w / 2 + 10., -h / 2 + 220.);
   text.push_back(E);
 
-  sf::Text P{"P = " + std::to_string(u.get_P_()) + "J", times, 16};
+  sf::Text P{"P = (" + std::to_string(u.get_P_0().get_x()) + ", " +
+                 std::to_string(u.get_P_0().get_y()) + " ) kg m s^-1",
+             times, 16};
   P.setPosition(-w / 2 + 10., -h / 2 + 240.);
   text.push_back(P);
 
-  sf::Text L{"L = " + std::to_string(u.get_L_()) + "J", times, 16};
+  sf::Text L{"L = " + std::to_string(u.get_L_()) + " kg m^2 s^-1", times, 16};
   L.setPosition(-w / 2 + 10., -h / 2 + 260.);
   text.push_back(L);
 
-  sf::Text dE{"E_0 - E = " + std::to_string(u.get_E_0() - u.get_E_()) + "J",
+  sf::Text dE{"E_0 - E = " + std::to_string(u.get_E_0() - u.get_E_()) + " J",
               times, 16};
   dE.setPosition(-w / 2 + 10., -h / 2 + 300.);
   text.push_back(dE);
 
-  sf::Text dP{"P_0 - P = " + std::to_string(u.get_P_0() - u.get_P_()) + "J",
+  sf::Text dP{"P_0 - P = (" +
+                  std::to_string((u.get_P_0() - u.get_P_()).get_x()) + ", " +
+                  std::to_string((u.get_P_0() - u.get_P_()).get_y()) + ") kg m s^-1",
               times, 16};
   dP.setPosition(-w / 2 + 10., -h / 2 + 320.);
   text.push_back(dP);
 
-  sf::Text dL{"L_0 - L = " + std::to_string(u.get_L_0() - u.get_L_()) + "J",
+  sf::Text dL{"L_0 - L = " + std::to_string(u.get_L_0() - u.get_L_()) + " kg m^2 s^-1",
               times, 16};
   dL.setPosition(-w / 2 + 10., -h / 2 + 340.);
   text.push_back(dL);
@@ -609,28 +587,29 @@ std::vector<sf::Text> u_informations(double w, double h, sf::Font const &times,
 }
 
 std::vector<sf::Text> configuration_text_setting(
-    sf::Font const &times, std::vector<sf::RectangleShape> buttons) {
+    sf::Font const &times, std::vector<sf::RectangleShape> buttons,
+    std::vector<std::string> conf_titles) {
   std::vector<sf::Text> confs_text;
 
-  sf::Text conf1{"First configuration", times, 20};
+  sf::Text conf1{conf_titles[0], times, 20};
   confs_text.push_back(conf1);
 
-  sf::Text conf2{"Second configuration", times, 20};
+  sf::Text conf2{conf_titles[1], times, 20};
   confs_text.push_back(conf2);
 
-  sf::Text conf3{"Third configuration", times, 20};
+  sf::Text conf3{conf_titles[2], times, 20};
   confs_text.push_back(conf3);
 
-  sf::Text conf4{"Fourth configuration", times, 20};
+  sf::Text conf4{conf_titles[3], times, 20};
   confs_text.push_back(conf4);
 
-  sf::Text conf5{"Fifth configuration", times, 20};
+  sf::Text conf5{conf_titles[4], times, 20};
   confs_text.push_back(conf5);
 
-  sf::Text conf6{"Sixth configuration", times, 20};
+  sf::Text conf6{conf_titles[5], times, 20};
   confs_text.push_back(conf6);
 
-  sf::Text conf7{"Seventh configuration", times, 20};
+  sf::Text conf7{conf_titles[6], times, 20};
   confs_text.push_back(conf7);
 
   for (int i{0}; i < 7; ++i) {

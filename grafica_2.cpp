@@ -20,6 +20,14 @@ int main() {
 
   window.setView(view);
 
+  std::vector<std::string> conf_titles{"Figure-8",
+                                       "Second configuration",
+                                       "Third configuration",
+                                       "Fourth configuration",
+                                       "Fifth configuration",
+                                       "Sixth configuration",
+                                       "Seventh configuration"};
+
   // Caricamento del font da file
   sf::Font times;
 
@@ -49,18 +57,13 @@ int main() {
   auto legend = intial_legend_setting(w, h, times, u);
   auto legend_current = current_legend_setting(w, h, times, u);
   auto buttons = configuration_button_setting();
-  auto conf_text = configuration_text_setting(times, buttons);
+  auto conf_text = configuration_text_setting(times, buttons, conf_titles);
   auto info = u_informations(w, h, times, 0, u);
 
   // Apertura del canvas e setting per l'utilizzo dei tasti
   bool running{false};
   int clicked{0};
   std::vector<double> pars;
-
-  std::vector<std::string> conf_titles{
-      "First configuration",  "Second configuration", "Third configuration",
-      "Fourth configuration", "Fifth configuration",  "Sixth configuration",
-      "Seventh configuration"};
 
   while (window.isOpen()) {
     sf::Event event;
@@ -185,17 +188,23 @@ int main() {
       window.draw(legend[i]);
     }
 
-    legend_current[1].setString("K = " + std::to_string(u.get_K_()) + "J");
-    legend_current[2].setString("U = " + std::to_string(u.get_U_()) + "J");
-    legend_current[3].setString("E = " + std::to_string(u.get_E_()) + "J");
-    legend_current[4].setString("P = " + std::to_string(u.get_P_()) + "J");
-    legend_current[5].setString("L = " + std::to_string(u.get_L_()) + "J");
+    legend_current[1].setString("K = " + std::to_string(u.get_K_()) + " J");
+    legend_current[2].setString("U = " + std::to_string(u.get_U_()) + " J");
+    legend_current[3].setString("E = " + std::to_string(u.get_E_()) + " J");
+    legend_current[4].setString("P = (" + std::to_string(u.get_P_0().get_x()) +
+                                ", " + std::to_string(u.get_P_0().get_y()) +
+                                " ) kg m s^-1");
+    legend_current[5].setString("L = " + std::to_string(u.get_L_()) +
+                                " kg m^2 s^-1");
     legend_current[6].setString(
-        "E_0 - E = " + std::to_string(u.get_E_0() - u.get_E_()) + "J");
+        "E_0 - E = " + std::to_string(u.get_E_0() - u.get_E_()) + " J");
     legend_current[7].setString(
-        "P_0 - P = " + std::to_string(u.get_P_0() - u.get_P_()) + "J");
+        "P_0 - P = (" + std::to_string((u.get_P_0() - u.get_P_()).get_x()) +
+        ", " + std::to_string((u.get_P_0() - u.get_P_()).get_y()) +
+        ") kg m s^-1");
     legend_current[8].setString(
-        "L_0 - L = " + std::to_string(u.get_L_0() - u.get_L_()) + "J");
+        "L_0 - L = " + std::to_string(u.get_L_0() - u.get_L_()) +
+        " kg m^2 s^-1");
 
     for (size_t i{0}; i < legend_current.size(); ++i) {
       window.draw(legend_current[i]);

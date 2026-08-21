@@ -1,10 +1,10 @@
-#include "n_corpi.cpp"
+#include "n_corpi.hpp"
 
 #include <fstream>
 #include <iostream>
 
 int main() {
-  Universe u{};
+  nc::Universe u{};
 
   std::ifstream file("configurations.txt");
 
@@ -20,21 +20,21 @@ int main() {
   double m;
 
   while (file >> r_x >> r_y >> v_x >> v_y >> m) {
-    Vector r{r_x, r_y};
-    Vector v{v_x, v_y};
-    Body b{r, v, m};
+    nc::Vector r{r_x, r_y};
+    nc::Vector v{v_x, v_y};
+    nc::Body b{r, v, m};
 
-    u.add(b);
+    nc::u.add(b);
   }
 
   file.close();
 
-  u.set_U_0();
+  nc::u.set_U_0();
 
   std::cout << "The initial values of the Universe are:" << '\n';
-  std::cout << "K = " << u.get_K_0() << '\n';
-  std::cout << "U = " << u.get_U_0() << '\n';
-  std::cout << "E = " << u.get_E_0() << '\n';
+  std::cout << "K = " << nc::u.get_K_0() << '\n';
+  std::cout << "U = " << nc::u.get_U_0() << '\n';
+  std::cout << "E = " << nc::u.get_E_0() << '\n';
   std::cout << '\n';
 
   int n_step;
@@ -46,14 +46,14 @@ int main() {
   u.simulation(n_step);
 
   std::cout << "The final values of the Universe are:" << '\n';
-  std::cout << "K_final = " << u.get_K_() << '\n';
-  std::cout << "U_final = " << u.get_U_() << '\n';
-  std::cout << "E_final = " << u.get_E_() << '\n';
+  std::cout << "K_final = " << nc::u.get_K_() << '\n';
+  std::cout << "U_final = " << nc::u.get_U_() << '\n';
+  std::cout << "E_final = " << nc::u.get_E_() << '\n';
 
   std::cout << '\n';
   std::cout << "The difference between the initial and final total energy is "
                "equivalent to "
-            << u.get_E_() - u.get_E_0() << " J" << '\n';
+            << nc::u.get_E_() - nc::u.get_E_0() << " J" << '\n';
   std::cout << "The conservation of energy is thus confirmed" << '\n';
 }
 

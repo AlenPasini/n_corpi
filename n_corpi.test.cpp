@@ -1,5 +1,6 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
-#include "n_corpi.cpp"
+
+#include "n_corpi.hpp"
 
 #include "doctest.h"
 

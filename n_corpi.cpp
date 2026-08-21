@@ -1,7 +1,7 @@
-// #include "n_corpi.hpp"
+#include "n_corpi.hpp"
 
-// #ifndef PF_N_CORPI_HPP. // provvisorio
-// #define PF_N_CORPI_HPP
+#ifndef PF_N_CORPI_HPP // provvisorio
+#define PF_N_CORPI_HPP
 
 #include <SFML/Graphics.hpp>
 #include <cmath>
@@ -10,7 +10,9 @@
 #include <sstream>
 #include <vector>
 
-struct Vector {
+namespace nc{
+
+/*struct Vector {
   double x;
   double y;
 
@@ -30,7 +32,7 @@ struct Vector {
   double get_y() const { return y; }
 
   double norm() const { return sqrt(x * x + y * y); }
-};
+};*/
 
 Vector operator+(Vector const &v1, Vector const &v2) {
   auto result{v1};
@@ -714,4 +716,5 @@ std::vector<double> run_conf(std::string conf_title) {
 
   return all_parameters;
 }
-// #endif
+}
+#endif

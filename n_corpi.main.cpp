@@ -24,17 +24,17 @@ int main() {
     nc::Vector v{v_x, v_y};
     nc::Body b{r, v, m};
 
-    nc::u.add(b);
+    u.add(b);
   }
 
   file.close();
 
-  nc::u.set_U_0();
+  u.set_U_0();
 
   std::cout << "The initial values of the Universe are:" << '\n';
-  std::cout << "K = " << nc::u.get_K_0() << '\n';
-  std::cout << "U = " << nc::u.get_U_0() << '\n';
-  std::cout << "E = " << nc::u.get_E_0() << '\n';
+  std::cout << "K = " << u.get_K_0() << '\n';
+  std::cout << "U = " << u.get_U_0() << '\n';
+  std::cout << "E = " << u.get_E_0() << '\n';
   std::cout << '\n';
 
   int n_step;
@@ -46,14 +46,14 @@ int main() {
   u.simulation(n_step);
 
   std::cout << "The final values of the Universe are:" << '\n';
-  std::cout << "K_final = " << nc::u.get_K_() << '\n';
-  std::cout << "U_final = " << nc::u.get_U_() << '\n';
-  std::cout << "E_final = " << nc::u.get_E_() << '\n';
+  std::cout << "K_final = " << u.get_K_() << '\n';
+  std::cout << "U_final = " << u.get_U_() << '\n';
+  std::cout << "E_final = " << u.get_E_() << '\n';
 
   std::cout << '\n';
   std::cout << "The difference between the initial and final total energy is "
                "equivalent to "
-            << nc::u.get_E_() - nc::u.get_E_0() << " J" << '\n';
+            << u.get_E_() - u.get_E_0() << " J" << '\n';
   std::cout << "The conservation of energy is thus confirmed" << '\n';
 }
 

@@ -4,7 +4,7 @@
 #include <iostream>
 #include <vector>
 
-#include "n_corpi.hpp"
+#include "n_bodies.hpp"
 // #include "graphic_setting.cpp"
 
 int main() {
@@ -36,15 +36,15 @@ int main() {
     std::cerr << "Couldn't load font" << '\n';
   }
 
-  nc::Universe u{1., 0.005, 5.e-3};
+  nb::Universe u{1., 0.005, 5.e-3};
 
-  nc::Body b0({-0.97000436, 0.24308753}, {0.4662036850, 0.4323657300}, 1., 0.05);
+  nb::Body b0({-0.97000436, 0.24308753}, {0.4662036850, 0.4323657300}, 1., 0.05);
   u.add(b0);
 
-  nc::Body b1({0.97000436, -0.24308753}, {0.4662036850, 0.4323657300}, 1., 0.05);
+  nb::Body b1({0.97000436, -0.24308753}, {0.4662036850, 0.4323657300}, 1., 0.05);
   u.add(b1);
 
-  nc::Body b2({0., 0.}, {-0.93240737, -0.86473146}, 1., 0.05);
+  nb::Body b2({0., 0.}, {-0.93240737, -0.86473146}, 1., 0.05);
   u.add(b2);
   /*
   u.set_U_0();
@@ -56,8 +56,8 @@ int main() {
 
   auto legend = intial_legend_setting(w, h, times, u);
   auto legend_current = current_legend_setting(w, h, times, u);
-  auto buttons = nc::configuration_button_setting();
-  auto conf_text = nc::configuration_text_setting(times, buttons, conf_titles);
+  auto buttons = nb::configuration_button_setting();
+  auto conf_text = nb::configuration_text_setting(times, buttons, conf_titles);
   auto info = u_informations(w, h, times, 0, u);
 
   // Apertura del canvas e setting per l'utilizzo dei tasti
@@ -80,14 +80,14 @@ int main() {
             if (buttons[i].getGlobalBounds().contains(mouseWorld) &&
                 clicked != i) {
               clicked = i;
-              pars = nc::run_conf(conf_titles[i]);
+              pars = nb::run_conf(conf_titles[i]);
 
               u.new_config(pars[0], pars[1], pars[2]);
 
               std::size_t n_bodies{(pars.size() - 3) / 6};
 
               for (std::size_t j{0}; j < n_bodies; ++j) {
-                nc::Body b({pars[3 + 6 * j], pars[4 + 6 * j]},
+                nb::Body b({pars[3 + 6 * j], pars[4 + 6 * j]},
                        {pars[5 + 6 * j], pars[6 + 6 * j]}, pars[7 + 6 * j],
                        pars[8 + 6 * j]);
 
@@ -140,14 +140,14 @@ int main() {
           }
         }
         if (event.key.code == sf::Keyboard::E && event.key.control) {
-          pars = nc::run_conf(conf_titles[clicked]);
+          pars = nb::run_conf(conf_titles[clicked]);
 
           u.new_config(pars[0], pars[1], pars[2]);
 
           std::size_t n_bodies{(pars.size() - 3) / 6};
 
           for (std::size_t j{0}; j < n_bodies; ++j) {
-            nc::Body b({pars[3 + 6 * j], pars[4 + 6 * j]},
+            nb::Body b({pars[3 + 6 * j], pars[4 + 6 * j]},
                    {pars[5 + 6 * j], pars[6 + 6 * j]}, pars[7 + 6 * j],
                    pars[8 + 6 * j]);
 
@@ -170,8 +170,8 @@ int main() {
 
     window.clear();
 
-    window.draw(nc::space_instructions(times));
-    window.draw(nc::ctrlE_instructions(times));
+    window.draw(nb::space_instructions(times));
+    window.draw(nb::ctrlE_instructions(times));
 
     info[0].setString("Iterations: " + std::to_string(iterations));
     info[4].setString("# bodies: " + std::to_string(u.size()));
@@ -180,7 +180,7 @@ int main() {
     }
 
     if (running == false) {
-      window.draw(nc::arrows_instructions(times));
+      window.draw(nb::arrows_instructions(times));
     }
 
     for (size_t i{0}; i < legend.size(); ++i) {

@@ -1,12 +1,12 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 
-#include "n_corpi.hpp"
+#include "n_bodies.hpp"
 
 #include "doctest.h"
 
 TEST_CASE("Testing the norm function for vector") {
   {
-    Vector v{2.0, -3.0};
+    nc::Vector v{2.0, -3.0};
 
     CHECK(v.norm() == std::sqrt(13.));
     CHECK(v.norm() == std::sqrt(v.get_x() * v.get_x() + v.get_y() * v.get_y()));
@@ -15,57 +15,57 @@ TEST_CASE("Testing the norm function for vector") {
 
 TEST_CASE("Testing position increment") {
   {
-    Vector r{0.0, 0.0};
-    Vector v{3.0, 4.0};
+    nc::Vector r{0.0, 0.0};
+    nc::Vector v{3.0, 4.0};
 
-    Body b(r, v, 1., 1.);
+    nc::Body b(r, v, 1., 1.);
 
     b.r_t();
 
-    CHECK(b.get_r() == Vector{0.015, 0.020});
+    CHECK(b.get_r() == nc::Vector{0.015, 0.020});
   }
 }
 
 TEST_CASE("Testing the addition of the id to a body") {
   {
-    Body b1({0.0, 0.0}, {3.0, 4.0}, 1., 1.);
+    nc::Body b1({0.0, 0.0}, {3.0, 4.0}, 1., 1.);
     CHECK(b1.get_id() == -1);
   }
 
   {
-    Body b1({0.0, 0.0}, {3.0, 4.0}, 1., 1.);
+    nc::Body b1({0.0, 0.0}, {3.0, 4.0}, 1., 1.);
     b1.add_id(2);
     CHECK(b1.get_id() == 2);
   }
 }
 
-TEST_CASE("Testing the Universe class") {
+TEST_CASE("Testing the nc::Universe class") {
   {
-    Universe u{1., 0.005, 1.e-2};
+    nc::Universe u{1., 0.005, 1.e-2};
 
-    Body b1({0.0, 0.0}, {3.0, 4.0}, 1., 1.);
+    nc::Body b1({0.0, 0.0}, {3.0, 4.0}, 1., 1.);
     u.add(b1);
 
-    Body b2({0.1, 0.2}, {2.0, 3.0}, 1., 1.);
+    nc::Body b2({0.1, 0.2}, {2.0, 3.0}, 1., 1.);
     u.add(b2);
 
-    Body b3({-1.5, 2.3}, {0.2, -4.2}, 1., 1.);
+    nc::Body b3({-1.5, 2.3}, {0.2, -4.2}, 1., 1.);
     u.add(b3);
 
     CHECK(u.size() == 3);
   }
 
   {
-    Universe u{1., 0.005, 1.e-2};
+    nc::Universe u{1., 0.005, 1.e-2};
 
-    Body b1({0.0, 0.0}, {3.0, 4.0}, 1., 1.);
+    nc::Body b1({0.0, 0.0}, {3.0, 4.0}, 1., 1.);
     u.add(b1);
 
-    Body b2({0.1, 0.2}, {2.0, 3.0}, 1., 1.);
+    nc::Body b2({0.1, 0.2}, {2.0, 3.0}, 1., 1.);
     u.add(b2);
 
-    CHECK(u.get_body(1).get_v() == Vector{2.0, 3.0});
-    CHECK(u.get_body(1).get_r() == Vector{0.1, 0.2});
+    CHECK(u.get_body(1).get_v() == nc::Vector{2.0, 3.0});
+    CHECK(u.get_body(1).get_r() == nc::Vector{0.1, 0.2});
     CHECK(u.get_body(1).get_id() == 1);
     CHECK(u.get_body(1).get_r().get_x() == 0.1);
   }
@@ -73,12 +73,12 @@ TEST_CASE("Testing the Universe class") {
 
 TEST_CASE("Testing the acceleration function on two bodies") {
   {
-    Universe u{6.67e-11, 0.005, 1.e5};
+    nc::Universe u{6.67e-11, 0.005, 1.e5};
 
-    Body b0({0., 0.}, {0., 0.}, 2. * pow(10, 24), 1.);
+    nc::Body b0({0., 0.}, {0., 0.}, 2. * pow(10, 24), 1.);
     u.add(b0);
 
-    Body b1({2. * pow(10, 7), 0.0}, {0., 0.}, 3. * pow(10, 24), 1.);
+    nc::Body b1({2. * pow(10, 7), 0.0}, {0., 0.}, 3. * pow(10, 24), 1.);
     u.add(b1);
 
     u.r_t_complete();
@@ -93,29 +93,29 @@ TEST_CASE("Testing the acceleration function on two bodies") {
 
 TEST_CASE("Testing the position increment universe function on two bodies") {
   {
-    Body b0({0.0, 0.0}, {3.0, 4.0}, 1., 1.);
-    Body b1({1.0, -2.0}, {2.0, -1.0}, 1., 1.);
+    nc::Body b0({0.0, 0.0}, {3.0, 4.0}, 1., 1.);
+    nc::Body b1({1.0, -2.0}, {2.0, -1.0}, 1., 1.);
 
-    Universe u{6.67e-11, 0.005, 1.e5};
+    nc::Universe u{6.67e-11, 0.005, 1.e5};
 
     u.add(b0);
     u.add(b1);
 
     u.r_t_complete();
 
-    CHECK(u.get_body(0).get_r() == Vector{0.015, 0.02});
-    CHECK(u.get_body(1).get_r() == Vector{1.01, -2.005});
+    CHECK(u.get_body(0).get_r() == nc::Vector{0.015, 0.02});
+    CHECK(u.get_body(1).get_r() == nc::Vector{1.01, -2.005});
   }
 }
 
 TEST_CASE("Testing an entire simulation") {
   {
-    Universe u{6.67e-11, 0.005, 1.e5};
+    nc::Universe u{6.67e-11, 0.005, 1.e5};
 
-    Body b0({0., 0.}, {0., 0.}, 2. * pow(10, 24), 1.);
+    nc::Body b0({0., 0.}, {0., 0.}, 2. * pow(10, 24), 1.);
     u.add(b0);
 
-    Body b1({2. * pow(10, 7), 0.}, {0., 0.}, 3. * pow(10, 24), 1.);
+    nc::Body b1({2. * pow(10, 7), 0.}, {0., 0.}, 3. * pow(10, 24), 1.);
     u.add(b1);
     u.set_a_0();
     u.simulation_steps(1);
@@ -133,15 +133,15 @@ TEST_CASE("Testing an entire simulation") {
   }
 
   {
-    Universe u{6.67e-11, 0.005, 1.e5};
+    nc::Universe u{6.67e-11, 0.005, 1.e5};
 
-    Body b0({0., 0.}, {0., 0.}, 1. * pow(10, 24), 1.);
+    nc::Body b0({0., 0.}, {0., 0.}, 1. * pow(10, 24), 1.);
     u.add(b0);
 
-    Body b1({1 * pow(10, 7), 0.}, {0., 0.}, 1. * pow(10, 22), 1.);
+    nc::Body b1({1 * pow(10, 7), 0.}, {0., 0.}, 1. * pow(10, 22), 1.);
     u.add(b1);
 
-    Body b2({2 * pow(10, 7), 0.}, {0., 0.}, 1. * pow(10, 20), 1.);
+    nc::Body b2({2 * pow(10, 7), 0.}, {0., 0.}, 1. * pow(10, 20), 1.);
     u.add(b2);
     u.set_a_0();
     u.simulation_steps(10);
@@ -167,15 +167,15 @@ TEST_CASE("Testing an entire simulation") {
 
 TEST_CASE("Testing a simulation with many iterations") {
   {
-    Universe u{6.67e-11, 0.005, 1.e5};
+    nc::Universe u{6.67e-11, 0.005, 1.e5};
 
-    Body b0({0., 0.}, {0., 0.}, 1. * pow(10, 24), 1.);
+    nc::Body b0({0., 0.}, {0., 0.}, 1. * pow(10, 24), 1.);
     u.add(b0);
 
-    Body b1({1 * pow(10, 7), 0.}, {0., 0.}, 1. * pow(10, 22), 1.);
+    nc::Body b1({1 * pow(10, 7), 0.}, {0., 0.}, 1. * pow(10, 22), 1.);
     u.add(b1);
 
-    Body b2({2 * pow(10, 7), 0.}, {0., 0.}, 1. * pow(10, 20), 1.);
+    nc::Body b2({2 * pow(10, 7), 0.}, {0., 0.}, 1. * pow(10, 20), 1.);
     u.add(b2);
     u.set_a_0();
     u.simulation_steps(1000);
@@ -193,12 +193,12 @@ TEST_CASE("Testing a simulation with many iterations") {
 
 TEST_CASE("Testing the y component") {
   {
-    Universe u{6.67e-11, 0.005, 1.e5};
+    nc::Universe u{6.67e-11, 0.005, 1.e5};
 
-    Body b0({0., 0.}, {0., 0.}, 1. * pow(10, 24), 1.);
+    nc::Body b0({0., 0.}, {0., 0.}, 1. * pow(10, 24), 1.);
     u.add(b0);
 
-    Body b1({0., 50000.}, {0., 0.}, 1. * pow(10, 22), 1.);
+    nc::Body b1({0., 50000.}, {0., 0.}, 1. * pow(10, 22), 1.);
     u.add(b1);
 
     u.set_a_0();
@@ -214,12 +214,12 @@ TEST_CASE("Testing the y component") {
 
 TEST_CASE("Testing a system with velocities on x and y") {
   {
-    Universe u{6.67e-11, 0.005, 1.e5};
+    nc::Universe u{6.67e-11, 0.005, 1.e5};
 
-    Body b0({0., 0.}, {10., -5.}, 1. * pow(10, 24), 1.);
+    nc::Body b0({0., 0.}, {10., -5.}, 1. * pow(10, 24), 1.);
     u.add(b0);
 
-    Body b1({1. * pow(10, 7), 5. * pow(10, 6)}, {-20., 300.}, 1. * pow(10, 22),
+    nc::Body b1({1. * pow(10, 7), 5. * pow(10, 6)}, {-20., 300.}, 1. * pow(10, 22),
             1.);
     u.add(b1);
     u.set_a_0();
@@ -262,12 +262,12 @@ TEST_CASE("Testing a system with velocities on x and y") {
 
 TEST_CASE("Testing collisions") {
   {
-    Universe u{1., 0.005, 1e-2};
+    nc::Universe u{1., 0.005, 1e-2};
 
-    Body b0({-1., -1.}, {0., 0.}, 1., 0.1);
+    nc::Body b0({-1., -1.}, {0., 0.}, 1., 0.1);
     u.add(b0);
 
-    Body b1({1., 1.}, {0., 0.}, 1., 0.1);
+    nc::Body b1({1., 1.}, {0., 0.}, 1., 0.1);
     u.add(b1);
 
     u.set_universe_0();
@@ -298,11 +298,11 @@ TEST_CASE("Testing collisions") {
 
 TEST_CASE("Testing conservations (no collisions)") {
   {
-    Universe u{1., 0.005, 5.e-3};
-    Body b0({-0.5, 0.}, {0., -0.7071067812}, 1., 0.05);
+    nc::Universe u{1., 0.005, 5.e-3};
+    nc::Body b0({-0.5, 0.}, {0., -0.7071067812}, 1., 0.05);
     u.add(b0);
 
-    Body b1({0.5, 0.}, {0., 0.7071067812}, 1., 0.05);
+    nc::Body b1({0.5, 0.}, {0., 0.7071067812}, 1., 0.05);
     u.add(b1);
 
     u.set_universe_0();
@@ -331,12 +331,12 @@ TEST_CASE("Testing conservations (no collisions)") {
 
 TEST_CASE("Testing conservations (collisions)") {
   {
-    Universe u{1., 0.005, 5.e-3};
+    nc::Universe u{1., 0.005, 5.e-3};
 
-    Body b0({-1., 0.}, {1., 0.}, 1., 0.1);
+    nc::Body b0({-1., 0.}, {1., 0.}, 1., 0.1);
     u.add(b0);
 
-    Body b1({1., 0.}, {-1., 0.}, 1., 0.1);
+    nc::Body b1({1., 0.}, {-1., 0.}, 1., 0.1);
     u.add(b1);
 
     u.set_universe_0();
@@ -366,11 +366,11 @@ TEST_CASE("Testing conservations (collisions)") {
 /*
 TEST_CASE("Testing Lagrange L1 point stability on three bodies") {
   {
-    Body b0({-1.0, 0.0}, {0.0, -0.2}, 100.0, 0.1);
-    Body b1({1.0, 0.0}, {0.0, 0.2}, 1.0, 0.1);
-    Body b2({0.704, 0.0}, {0.0, 0.141}, 0.0001, 0.1);
+    nc::Body b0({-1.0, 0.0}, {0.0, -0.2}, 100.0, 0.1);
+    nc::Body b1({1.0, 0.0}, {0.0, 0.2}, 1.0, 0.1);
+    nc::Body b2({0.704, 0.0}, {0.0, 0.141}, 0.0001, 0.1);
 
-    Universe u{};
+    nc::Universe u{};
 
     u.add(b0);
     u.add(b1);
@@ -379,16 +379,16 @@ TEST_CASE("Testing Lagrange L1 point stability on three bodies") {
     u.r_t_complete();
 
 
-    CHECK(u.get_body(0).get_r() == Vector{-1.0, -0.001});
-    CHECK(u.get_body(1).get_r() == Vector{1.0, 0.001});
-    CHECK(u.get_body(2).get_r() == Vector{0.704, 0.000705});
+    CHECK(u.get_body(0).get_r() == nc::Vector{-1.0, -0.001});
+    CHECK(u.get_body(1).get_r() == nc::Vector{1.0, 0.001});
+    CHECK(u.get_body(2).get_r() == nc::Vector{0.704, 0.000705});
 
     double distanza_iniziale_l1 = 99.0 - 77.0;  // 22.0
 
-    Vector pos_b1_dopo = u.get_body(1).get_r();
-    Vector pos_b2_dopo = u.get_body(2).get_r();
+    nc::Vector pos_b1_dopo = u.get_body(1).get_r();
+    nc::Vector pos_b2_dopo = u.get_body(2).get_r();
 
-    // Calcoliamo la distanza tra i vettori (supponendo che la tua classe Vector
+    // Calcoliamo la distanza tra i vettori (supponendo che la tua classe nc::Vector
     // abbia un metodo di distanza o modulo)
     double distanza_dopo_passo = (pos_b1_dopo - pos_b2_dopo).norm();
 

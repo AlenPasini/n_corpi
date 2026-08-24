@@ -1,4 +1,4 @@
-#include "n_corpi.hpp"
+#include "n_bodies.hpp"
 
 #ifndef PF_N_CORPI_HPP  // provvisorio
 #define PF_N_CORPI_HPP
@@ -10,7 +10,7 @@
 #include <sstream>
 #include <vector>
 
-namespace nc {
+namespace nb {
 
 Vector operator+(Vector const &v1, Vector const &v2) {
   auto result{v1};
@@ -654,5 +654,5 @@ std::vector<double> run_conf(std::string conf_title) {
   return all_parameters;
 }
 
-}  // namespace nc
+}  // namespace nb
 #endif

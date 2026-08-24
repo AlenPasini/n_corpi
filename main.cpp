@@ -159,7 +159,6 @@ int main() {
           u.set_a_0();
           u.set_energies();
           */
-
           u.set_universe_0();
           u.set_a_0();
           iterations = 0;

@@ -202,4 +202,4 @@ namespace nc
 
   std::vector<double> run_conf(std::string conf_title);
 
-}
+}  // namespace nc

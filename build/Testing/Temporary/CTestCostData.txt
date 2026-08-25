@@ -1,2 +1,2 @@
-n_bodies_simulation.t 11 0.0018702
+n_bodies_simulation.t 44 0.000171114
 ---

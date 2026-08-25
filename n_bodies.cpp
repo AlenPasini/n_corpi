@@ -6,6 +6,7 @@
 #include <SFML/Graphics.hpp>
 #include <cmath>
 #include <fstream>
+#include <iomanip>
 #include <iostream>
 #include <sstream>
 #include <vector>
@@ -373,9 +374,22 @@ void Universe::new_config(double new_G, double new_dt, double new_scale) {
 
 void Universe::update_graphics() {
   for (std::size_t j{0}; j < u_.size(); ++j) {
-    circles_[j].setPosition(static_cast<float>(u_[j].get_r().get_x() / scale_),
-                            static_cast<float>(-u_[j].get_r().get_y() / scale_));
+    circles_[j].setPosition(
+        static_cast<float>(u_[j].get_r().get_x() / scale_),
+        static_cast<float>(-u_[j].get_r().get_y() / scale_));
   }
+}
+
+std::string scient(double value) {
+  std::ostringstream stream;
+
+  if (value != 0.0 && (std::fabs(value) > 1.e5 || std::fabs(value) < 1.e-10)) {
+    stream << std::scientific << std::setprecision(5) << value;
+  } else {
+    stream << value;
+  }
+
+  return stream.str();
 }
 
 sf::Text space_instructions(sf::Font const &times) {
@@ -424,26 +438,25 @@ std::vector<sf::Text> intial_legend_setting(unsigned int w, unsigned int h,
   legend_0_title.setPosition(-wf / 2.f + 10.f, -hf / 2.f + 5.f);
   text.push_back(legend_0_title);
 
-  sf::Text K_0{"K = " + std::to_string(u.get_K_0()) + " J", times, 16};
+  sf::Text K_0{"K = " + scient(u.get_K_0()) + " J", times, 16};
   K_0.setPosition(-wf / 2.f + 10.f, -hf / 2.f + 35.f);
   text.push_back(K_0);
 
-  sf::Text U_0{"U = " + std::to_string(u.get_U_0()) + " J", times, 16};
+  sf::Text U_0{"U = " + scient(u.get_U_0()) + " J", times, 16};
   U_0.setPosition(-wf / 2.f + 10.f, -hf / 2.f + 55.f);
   text.push_back(U_0);
 
-  sf::Text E_0{"E = " + std::to_string(u.get_E_0()) + " J", times, 16};
+  sf::Text E_0{"E = " + scient(u.get_E_0()) + " J", times, 16};
   E_0.setPosition(-wf / 2.f + 10.f, -hf / 2.f + 75.f);
   text.push_back(E_0);
 
-  sf::Text P_0{"P = (" + std::to_string(u.get_P_0().get_x()) + ", " +
-                   std::to_string(u.get_P_0().get_y()) + " ) kg m s^-1",
+  sf::Text P_0{"P = (" + scient(u.get_P_0().get_x()) + ", " +
+                   scient(u.get_P_0().get_y()) + " ) kg m s^-1",
                times, 16};
   P_0.setPosition(-wf / 2.f + 10.f, -hf / 2.f + 95.f);
   text.push_back(P_0);
 
-  sf::Text L_0{"L = " + std::to_string(u.get_L_0()) + " kg m^2 s^-1", times,
-               16};
+  sf::Text L_0{"L = " + scient(u.get_L_0()) + " kg m^2 s^-1", times, 16};
   L_0.setPosition(-wf / 2.f + 10.f, -hf / 2.f + 115.f);
   text.push_back(L_0);
 
@@ -454,6 +467,7 @@ std::vector<sf::Text> current_legend_setting(unsigned int w, unsigned int h,
                                              sf::Font const &times,
                                              Universe const &u) {
   std::vector<sf::Text> text;
+
   float wf = static_cast<float>(w);
   float hf = static_cast<float>(h);
 
@@ -461,43 +475,47 @@ std::vector<sf::Text> current_legend_setting(unsigned int w, unsigned int h,
   legend_title.setPosition(-wf / 2.f + 10.f, -hf / 2.f + 150.f);
   text.push_back(legend_title);
 
-  sf::Text K{"K = " + std::to_string(u.get_K_()) + " J", times, 16};
+  sf::Text K{"K = " + scient(u.get_K_()) + " J", times, 16};
   K.setPosition(-wf / 2.f + 10.f, -hf / 2.f + 180.f);
   text.push_back(K);
 
-  sf::Text U{"U = " + std::to_string(u.get_U_()) + " J", times, 16};
+  sf::Text U{"U = " + scient(u.get_U_()) + " J", times, 16};
   U.setPosition(-wf / 2.f + 10.f, -hf / 2.f + 200.f);
   text.push_back(U);
 
-  sf::Text E{"E = " + std::to_string(u.get_E_()) + " J", times, 16};
+  sf::Text E{"E = " + scient(u.get_E_()) + " J", times, 16};
   E.setPosition(-wf / 2.f + 10.f, -hf / 2.f + 220.f);
   text.push_back(E);
 
-  sf::Text P{"P = (" + std::to_string(u.get_P_0().get_x()) + ", " +
-                 std::to_string(u.get_P_0().get_y()) + " ) kg m s^-1",
+  sf::Text P{"P = (" + scient(u.get_P_0().get_x()) + ", " +
+                 scient(u.get_P_0().get_y()) + " ) kg m s^-1",
              times, 16};
   P.setPosition(-wf / 2.f + 10.f, -hf / 2.f + 240.f);
   text.push_back(P);
 
-  sf::Text L{"L = " + std::to_string(u.get_L_()) + " kg m^2 s^-1", times, 16};
+  sf::Text L{"L = " + scient(u.get_L_()) + " kg m^2 s^-1", times, 16};
   L.setPosition(-wf / 2.f + 10.f, -hf / 2.f + 260.f);
   text.push_back(L);
 
-  sf::Text dE{"E_0 - E = " + std::to_string(u.get_E_0() - u.get_E_()) + " J",
+  sf::Text dE{"(E_0 - E) % = " +
+                  scient((u.get_E_0() - u.get_E_()) / u.get_E_0()) + " J",
               times, 16};
   dE.setPosition(-wf / 2.f + 10.f, -hf / 2.f + 300.f);
   text.push_back(dE);
 
-  sf::Text dP{"P_0 - P = (" +
-                  std::to_string((u.get_P_0() - u.get_P_()).get_x()) + ", " +
-                  std::to_string((u.get_P_0() - u.get_P_()).get_y()) +
-                  ") kg m s^-1",
-              times, 16};
+  sf::Text dP{
+      "(P_0 - P) % = (" +
+          scient(((u.get_P_0() - u.get_P_()).get_x()) / u.get_P_0().get_x()) +
+          ", " +
+          scient(((u.get_P_0() - u.get_P_()).get_y()) / u.get_P_0().get_y()) +
+          ") kg m s^-1",
+      times, 16};
   dP.setPosition(-wf / 2.f + 10.f, -hf / 2.f + 320.f);
   text.push_back(dP);
 
   sf::Text dL{
-      "L_0 - L = " + std::to_string(u.get_L_0() - u.get_L_()) + " kg m^2 s^-1",
+      "(L_0 - L) % = " + scient((u.get_L_0() - u.get_L_()) / u.get_L_0()) +
+          " kg m^2 s^-1",
       times, 16};
   dL.setPosition(-wf / 2.f + 10.f, -hf / 2.f + 340.f);
   text.push_back(dL);

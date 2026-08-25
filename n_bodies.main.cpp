@@ -3,6 +3,7 @@
 #include <SFML/Graphics.hpp>
 #include <cmath>
 #include <fstream>
+#include <iomanip>
 #include <iostream>
 #include <vector>
 // #include "graphic_setting.cpp"
@@ -21,13 +22,11 @@ int main() {
 
   window.setView(view);
 
-  std::vector<std::string> conf_titles{"Figure-8",
-                                       "Second configuration",
-                                       "Third configuration",
-                                       "Fourth configuration",
-                                       "Fifth configuration",
-                                       "Sixth configuration",
-                                       "Seventh configuration"};
+  std::vector<std::string> conf_titles{
+      "Figure-8",           "Pulsating Hexagon",
+      "CollisioneL",        "Fourth configuration",
+      "Inner Solar System", "Sixth configuration",
+      "Earth & Moon"};
 
   // Caricamento del font da file
   sf::Font times;
@@ -190,23 +189,28 @@ int main() {
       window.draw(legend[i]);
     }
 
-    legend_current[1].setString("K = " + std::to_string(u.get_K_()) + " J");
-    legend_current[2].setString("U = " + std::to_string(u.get_U_()) + " J");
-    legend_current[3].setString("E = " + std::to_string(u.get_E_()) + " J");
-    legend_current[4].setString("P = (" + std::to_string(u.get_P_0().get_x()) +
-                                ", " + std::to_string(u.get_P_0().get_y()) +
+    legend_current[1].setString("K = " + nb::scient(u.get_K_()) + " J");
+    legend_current[2].setString("U = " + nb::scient(u.get_U_()) + " J");
+    legend_current[3].setString("E = " + nb::scient(u.get_E_()) + " J");
+    legend_current[4].setString("P = (" + nb::scient(u.get_P_0().get_x()) +
+                                ", " + nb::scient(u.get_P_0().get_y()) +
                                 " ) kg m s^-1");
-    legend_current[5].setString("L = " + std::to_string(u.get_L_()) +
+    legend_current[5].setString("L = " + nb::scient(u.get_L_()) +
                                 " kg m^2 s^-1");
     legend_current[6].setString(
-        "E_0 - E = " + std::to_string(u.get_E_0() - u.get_E_()) + " J");
+        "(E_0 - E) % = " +
+        nb::scient((u.get_E_0() - u.get_E_()) / u.get_E_0()) + " J");
     legend_current[7].setString(
-        "P_0 - P = (" + std::to_string((u.get_P_0() - u.get_P_()).get_x()) +
-        ", " + std::to_string((u.get_P_0() - u.get_P_()).get_y()) +
+        "(P_0 - P) % = (" +
+        nb::scient(((u.get_P_0() - u.get_P_()).get_x()) /
+                       u.get_P_0().get_x()) +
+        ", " +
+        nb::scient(((u.get_P_0() - u.get_P_()).get_y()) /
+                       u.get_P_0().get_y()) +
         ") kg m s^-1");
     legend_current[8].setString(
-        "L_0 - L = " + std::to_string(u.get_L_0() - u.get_L_()) +
-        " kg m^2 s^-1");
+        "(L_0 - L) % = " +
+        nb::scient((u.get_L_0() - u.get_L_()) / u.get_L_0()) + " kg m^2 s^-1");
 
     for (size_t i{0}; i < legend_current.size(); ++i) {
       window.draw(legend_current[i]);

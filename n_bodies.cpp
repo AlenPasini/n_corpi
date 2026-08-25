@@ -114,6 +114,10 @@ double Universe::get_E_() const { return E_; }
 Vector Universe::get_P_() const { return P_; }
 double Universe::get_L_() const { return L_; }
 
+double Universe::get_dE_() const { return dE_; }
+double Universe::get_dP_() const { return dP_; }
+double Universe::get_dL_() const { return dL_; }
+
 std::size_t Universe::n_colors() const { return colors_.size(); }
 
 void Universe::u_a_t(Body &b) {
@@ -190,8 +194,8 @@ double Universe::U_t() {
 }
 
 Vector Universe::P_t() {
-  double p_x{0};
-  double p_y{0};
+  double p_x{0.};
+  double p_y{0.};
   for (std::size_t j{0}; j < u_.size(); ++j) {
     p_x += u_[j].get_m() * u_[j].get_v().get_x();
     p_y += u_[j].get_m() * u_[j].get_v().get_y();
@@ -279,11 +283,9 @@ void Universe::set_universe_0() {
   P_0 = this->P_t();
   L_0 = this->L_t();
 
-  K_ = K_0;
-  U_ = U_0;
-  E_ = E_0;
-  P_ = P_0;
-  L_ = L_0;
+  this->set_energies();
+
+  this->set_differences();
 }
 
 void Universe::set_energies() {
@@ -292,6 +294,24 @@ void Universe::set_energies() {
   E_ = E_0;
   P_ = P_0;
   L_ = L_0;
+}
+
+void Universe::set_differences() {
+  dE_ = (this->E_0 - this->E_) / this->E_0;
+
+  double denom_dP;
+
+  for (std::size_t j{0}; j < u_.size(); ++j) {
+    denom_dP += u_[j].get_m() * u_[j].get_v().norm();
+  }
+
+  dP_ = (this->P_0 - this->P_).norm() / denom_dP;
+
+  if (L_0 != 0.0) {
+    dL_ = (this->L_0 - this->L_) / this->L_0;
+  } else {
+    dL_ = (this->L_0 - this->L_);
+  }
 }
 
 void Universe::update_variables() {
@@ -346,6 +366,7 @@ void Universe::single_simulation_step() {
   E_ = K_ + U_;
   */
   this->update_variables();
+  this->set_differences();
 
   for (std::size_t j{0}; j < u_.size(); ++j) {
     u_[j].set_a_(u_[j].get_a_fut());
@@ -497,26 +518,16 @@ std::vector<sf::Text> current_legend_setting(unsigned int w, unsigned int h,
   L.setPosition(-wf / 2.f + 10.f, -hf / 2.f + 260.f);
   text.push_back(L);
 
-  sf::Text dE{"(E_0 - E) % = " +
-                  scient((u.get_E_0() - u.get_E_()) / u.get_E_0()) + " J",
-              times, 16};
+  sf::Text dE{"(E_0 - E) % = " + scient(u.get_dE_()) + " J", times, 16};
   dE.setPosition(-wf / 2.f + 10.f, -hf / 2.f + 300.f);
   text.push_back(dE);
 
-  sf::Text dP{
-      "(P_0 - P) % = (" +
-          scient(((u.get_P_0() - u.get_P_()).get_x()) / u.get_P_0().get_x()) +
-          ", " +
-          scient(((u.get_P_0() - u.get_P_()).get_y()) / u.get_P_0().get_y()) +
-          ") kg m s^-1",
-      times, 16};
+  sf::Text dP{"|P_0 - P|  = " + scient(u.get_dP_()) + ") kg m s^-1", times, 16};
   dP.setPosition(-wf / 2.f + 10.f, -hf / 2.f + 320.f);
   text.push_back(dP);
 
-  sf::Text dL{
-      "(L_0 - L) % = " + scient((u.get_L_0() - u.get_L_()) / u.get_L_0()) +
-          " kg m^2 s^-1",
-      times, 16};
+  sf::Text dL{"(L_0 - L) % = " + scient(u.get_dL_()) + " kg m^2 s^-1", times,
+              16};
   dL.setPosition(-wf / 2.f + 10.f, -hf / 2.f + 340.f);
   text.push_back(dL);
 

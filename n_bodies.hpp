@@ -92,6 +92,10 @@ class Universe {
   Vector P_;
   double L_;
 
+  double dE_;
+  double dP_;
+  double dL_;
+
   double G_;
   double dt_;
   // double eps{pow(10., -12.)};
@@ -132,6 +136,10 @@ class Universe {
   Vector get_P_() const;
   double get_L_() const;
 
+  double get_dE_() const;
+  double get_dP_() const;
+  double get_dL_() const;
+
   std::size_t n_colors() const;
 
   void u_a_t(Body &b);
@@ -149,6 +157,10 @@ class Universe {
   Vector P_t();
 
   double L_t();
+
+  void set_differences();
+
+  void set_om();
 
   void check_collisions();
 

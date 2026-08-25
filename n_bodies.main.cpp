@@ -199,18 +199,11 @@ int main() {
                                 " kg m^2 s^-1");
     legend_current[6].setString(
         "(E_0 - E) % = " +
-        nb::scient((u.get_E_0() - u.get_E_()) / u.get_E_0()) + " J");
+        nb::scient(u.get_dE_()) + " J");
     legend_current[7].setString(
-        "(P_0 - P) % = (" +
-        nb::scient(((u.get_P_0() - u.get_P_()).get_x()) /
-                       u.get_P_0().get_x()) +
-        ", " +
-        nb::scient(((u.get_P_0() - u.get_P_()).get_y()) /
-                       u.get_P_0().get_y()) +
-        ") kg m s^-1");
-    legend_current[8].setString(
-        "(L_0 - L) % = " +
-        nb::scient((u.get_L_0() - u.get_L_()) / u.get_L_0()) + " kg m^2 s^-1");
+        "|P_0 - P| % = " + nb::scient(u.get_dP_()) + " kg m s^-1");
+    legend_current[8].setString("(L_0 - L) % = " + nb::scient(u.get_dL_()) +
+                                " kg m^2 s^-1");
 
     for (size_t i{0}; i < legend_current.size(); ++i) {
       window.draw(legend_current[i]);

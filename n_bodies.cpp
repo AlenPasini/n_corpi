@@ -32,37 +32,37 @@ Vector Body::get_v() const { return v_; }
 Vector Body::get_a() const { return a_; }
 Vector Body::get_a_fut() const { return a_fut_; }
 double Body::get_m() const { return m_; }
-int Body::get_id() const { return id_; }
+std::size_t Body::get_id() const { return id_; }
 // deve essere const perché altrimenti non me la fa paragonare
 // nell'operatore ==
 
 void Body::r_t() {
-  r_.x += v_.x * dt + 0.5 * a_.x * dt * dt;
-  r_.y += v_.y * dt + 0.5 * a_.y * dt * dt;
+  r_.x += v_.x * dt_ + 0.5 * a_.x * dt_ * dt_;
+  r_.y += v_.y * dt_ + 0.5 * a_.y * dt_ * dt_;
 }
 
 void Body::v_t() {
-  v_.x += 0.5 * (a_.x + a_fut_.x) * dt;
-  v_.y += 0.5 * (a_.y + a_fut_.y) * dt;
+  v_.x += 0.5 * (a_.x + a_fut_.x) * dt_;
+  v_.y += 0.5 * (a_.y + a_fut_.y) * dt_;
 }
 
-void Body::add_id(int id) { id_ = id; }
+void Body::add_id(std::size_t id) { id_ = id; }
 
 void Body::a_t(double a_t_x, double a_t_y) { a_fut_ = {a_t_x, a_t_y}; }
 
 void Body::set_a_(Vector a_t_fut) { a_ = a_t_fut; }
 
-void Body::set_dt(double new_dt) { dt = new_dt; }
+void Body::set_dt(double new_dt) { dt_ = new_dt; }
 
 bool operator==(Body const &b1, Body const &b2) {
   return b1.get_id() == b2.get_id();
 }
 
-int Universe::size() const { return u_.size(); }
+std::size_t Universe::size() const { return u_.size(); }
 
-void Universe::set_dt(double dt_input) { dt = dt_input; }
+void Universe::set_dt(double dt_input) { dt_ = dt_input; }
 
-void Universe::set_G(double new_G) { G = new_G; }
+void Universe::set_G(double new_G) { G_ = new_G; }
 
 void Universe::set_scale(double new_scale) { scale_ = new_scale; }
 
@@ -70,12 +70,14 @@ void Universe::add(Body &b) {
   u_.push_back(b);
   u_.back().add_id(u_.size() - 1);
 
-  sf::CircleShape circle(b.get_k() / scale_);
+  sf::CircleShape circle(static_cast<float>(b.get_k() / scale_));
 
-  circle.setOrigin(b.get_k() / scale_, b.get_k() / scale_);
-  circle.setPosition(b.get_r().get_x() / scale_, b.get_r().get_y() / scale_);
+  circle.setOrigin(static_cast<float>(b.get_k() / scale_),
+                   static_cast<float>(b.get_k() / scale_));
+  circle.setPosition(static_cast<float>(b.get_r().get_x() / scale_),
+                     static_cast<float>(b.get_r().get_y() / scale_));
 
-  int color_id;
+  std::size_t color_id;
 
   if (u_.back().get_id() <= this->n_colors() - 1) {
     color_id = u_.back().get_id();
@@ -92,11 +94,11 @@ void Universe::add(Body &b) {
 
 std::vector<sf::CircleShape> &Universe::get_circles() { return circles_; }
 
-Body Universe::get_body(int id) const { return u_[id]; }
+Body Universe::get_body(std::size_t id) const { return u_[id]; }
 
 // double get_eps() const { return eps; }
-double Universe::get_G() const { return G; }
-double Universe::get_dt() const { return dt; }
+double Universe::get_G() const { return G_; }
+double Universe::get_dt() const { return dt_; }
 double Universe::get_scale() const { return scale_; }
 
 double Universe::get_K_0() const { return K_0; }
@@ -111,7 +113,7 @@ double Universe::get_E_() const { return E_; }
 Vector Universe::get_P_() const { return P_; }
 double Universe::get_L_() const { return L_; }
 
-int Universe::n_colors() const { return colors_.size(); }
+std::size_t Universe::n_colors() const { return colors_.size(); }
 
 void Universe::u_a_t(Body &b) {
   double a_t_x = 0.0;
@@ -237,8 +239,8 @@ void Universe::check_collisions() {
                   m_n;
           k_n = u_[i].get_k() + u_[j].get_k();
 
-          u_.erase(u_.begin() + j);
-          circles_.erase(circles_.begin() + j);
+          u_.erase(u_.begin() + static_cast<int>(j));
+          circles_.erase(circles_.begin() + static_cast<int>(j));
           // erase necessita di un iteratore, non un indice
 
           n = 1;
@@ -246,8 +248,8 @@ void Universe::check_collisions() {
         }
       }
       if (n == 1) {
-        u_.erase(u_.begin() + i);
-        circles_.erase(circles_.begin() + i);
+        u_.erase(u_.begin() + static_cast<int>(i));
+        circles_.erase(circles_.begin() + static_cast<int>(i));
         break;
       }
     }
@@ -308,7 +310,7 @@ void Universe::set_a_0() {
 
 void Universe::simulation_steps(int steps) {
   for (std::size_t j{0}; j < u_.size(); ++j) {
-    u_[j].set_dt(dt);
+    u_[j].set_dt(dt_);
   }
   for (int i{0}; i < steps; ++i) {
     this->r_t_complete();  // non mi ricordo assolutamente se si fa così...
@@ -329,7 +331,7 @@ void Universe::simulation_steps(int steps) {
 
 void Universe::single_simulation_step() {
   for (std::size_t j{0}; j < u_.size(); ++j) {
-    u_[j].set_dt(dt);
+    u_[j].set_dt(dt_);
   }
   this->check_collisions();
   this->r_t_complete();  // non mi ricordo assolutamente se si fa così...
@@ -350,9 +352,9 @@ void Universe::single_simulation_step() {
 }
 
 void Universe::single_simulation_step_back() {
-  dt = -dt;
+  dt_ = -dt_;
   this->single_simulation_step();
-  dt = -dt;
+  dt_ = -dt_;
 }
 
 void Universe::new_config(double new_G, double new_dt, double new_scale) {
@@ -371,16 +373,16 @@ void Universe::new_config(double new_G, double new_dt, double new_scale) {
 
 void Universe::update_graphics() {
   for (std::size_t j{0}; j < u_.size(); ++j) {
-    circles_[j].setPosition(u_[j].get_r().get_x() / scale_,
-                            -u_[j].get_r().get_y() / scale_);
+    circles_[j].setPosition(static_cast<float>(u_[j].get_r().get_x() / scale_),
+                            static_cast<float>(-u_[j].get_r().get_y() / scale_));
   }
 }
 
 sf::Text space_instructions(sf::Font const &times) {
   sf::Text instructions{"Press SPACE to start / stop the simulation", times};
   sf::FloatRect bounds = instructions.getLocalBounds();
-  instructions.setOrigin((bounds.left + bounds.width) / 2.,
-                         (bounds.top + bounds.height) / 2.);
+  instructions.setOrigin((bounds.left + bounds.width) / 2.f,
+                         (bounds.top + bounds.height) / 2.f);
   instructions.setPosition(0, -340.);
 
   return instructions;
@@ -391,8 +393,8 @@ sf::Text ctrlE_instructions(sf::Font const &times) {
       "Press ctrl + E to reset the simulation to its starting configuration",
       times, 20};
   sf::FloatRect bounds = instructions.getLocalBounds();
-  instructions.setOrigin((bounds.left + bounds.width) / 2.,
-                         (bounds.top + bounds.height) / 2.);
+  instructions.setOrigin((bounds.left + bounds.width) / 2.f,
+                         (bounds.top + bounds.height) / 2.f);
   instructions.setPosition(0, 340.);
 
   return instructions;
@@ -403,82 +405,87 @@ sf::Text arrows_instructions(sf::Font const &times) {
       "Press --> to move forward in the simulation, press <-- to move back",
       times, 20};
   sf::FloatRect bounds = instructions.getLocalBounds();
-  instructions.setOrigin((bounds.left + bounds.width) / 2.,
-                         (bounds.top + bounds.height) / 2.);
+  instructions.setOrigin((bounds.left + bounds.width) / 2.f,
+                         (bounds.top + bounds.height) / 2.f);
   instructions.setPosition(0, -310.);
 
   return instructions;
 }
 
-std::vector<sf::Text> intial_legend_setting(double w, double h,
+std::vector<sf::Text> intial_legend_setting(unsigned int w, unsigned int h,
                                             sf::Font const &times,
                                             Universe const &u) {
   std::vector<sf::Text> text;
 
+  float wf = static_cast<float>(w);
+  float hf = static_cast<float>(h);
+
   sf::Text legend_0_title{"Intial universe conditions", times, 20};
-  legend_0_title.setPosition(-w / 2 + 10., -h / 2 + 5.);
+  legend_0_title.setPosition(-wf / 2.f + 10.f, -hf / 2.f + 5.f);
   text.push_back(legend_0_title);
 
   sf::Text K_0{"K = " + std::to_string(u.get_K_0()) + " J", times, 16};
-  K_0.setPosition(-w / 2 + 10., -h / 2 + 35.);
+  K_0.setPosition(-wf / 2.f + 10.f, -hf / 2.f + 35.f);
   text.push_back(K_0);
 
   sf::Text U_0{"U = " + std::to_string(u.get_U_0()) + " J", times, 16};
-  U_0.setPosition(-w / 2 + 10., -h / 2 + 55.);
+  U_0.setPosition(-wf / 2.f + 10.f, -hf / 2.f + 55.f);
   text.push_back(U_0);
 
   sf::Text E_0{"E = " + std::to_string(u.get_E_0()) + " J", times, 16};
-  E_0.setPosition(-w / 2 + 10., -h / 2 + 75.);
+  E_0.setPosition(-wf / 2.f + 10.f, -hf / 2.f + 75.f);
   text.push_back(E_0);
 
   sf::Text P_0{"P = (" + std::to_string(u.get_P_0().get_x()) + ", " +
                    std::to_string(u.get_P_0().get_y()) + " ) kg m s^-1",
                times, 16};
-  P_0.setPosition(-w / 2 + 10., -h / 2 + 95.);
+  P_0.setPosition(-wf / 2.f + 10.f, -hf / 2.f + 95.f);
   text.push_back(P_0);
 
   sf::Text L_0{"L = " + std::to_string(u.get_L_0()) + " kg m^2 s^-1", times,
                16};
-  L_0.setPosition(-w / 2 + 10., -h / 2 + 115.);
+  L_0.setPosition(-wf / 2.f + 10.f, -hf / 2.f + 115.f);
   text.push_back(L_0);
 
   return text;
 }
 
-std::vector<sf::Text> current_legend_setting(double w, double h,
+std::vector<sf::Text> current_legend_setting(unsigned int w, unsigned int h,
                                              sf::Font const &times,
                                              Universe const &u) {
   std::vector<sf::Text> text;
+  float wf = static_cast<float>(w);
+  float hf = static_cast<float>(h);
 
   sf::Text legend_title{"Current universe conditions", times, 20};
-  legend_title.setPosition(-w / 2 + 10., -h / 2 + 150.);
+  legend_title.setPosition(-wf / 2.f + 10.f, -hf / 2.f + 150.f);
   text.push_back(legend_title);
 
   sf::Text K{"K = " + std::to_string(u.get_K_()) + " J", times, 16};
-  K.setPosition(-w / 2 + 10., -h / 2 + 180.);
+  K.setPosition(-wf / 2.f + 10.f, -hf / 2.f + 180.f);
   text.push_back(K);
 
   sf::Text U{"U = " + std::to_string(u.get_U_()) + " J", times, 16};
-  U.setPosition(-w / 2 + 10., -h / 2 + 200.);
+  U.setPosition(-wf / 2.f + 10.f, -hf / 2.f + 200.f);
   text.push_back(U);
 
   sf::Text E{"E = " + std::to_string(u.get_E_()) + " J", times, 16};
-  E.setPosition(-w / 2 + 10., -h / 2 + 220.);
+  E.setPosition(-wf / 2.f + 10.f, -hf / 2.f + 220.f);
   text.push_back(E);
 
   sf::Text P{"P = (" + std::to_string(u.get_P_0().get_x()) + ", " +
                  std::to_string(u.get_P_0().get_y()) + " ) kg m s^-1",
              times, 16};
-  P.setPosition(-w / 2 + 10., -h / 2 + 240.);
+  P.setPosition(-wf / 2.f + 10.f, -hf / 2.f + 240.f);
   text.push_back(P);
 
   sf::Text L{"L = " + std::to_string(u.get_L_()) + " kg m^2 s^-1", times, 16};
-  L.setPosition(-w / 2 + 10., -h / 2 + 260.);
+  L.setPosition(-wf / 2.f + 10.f, -hf / 2.f + 260.f);
   text.push_back(L);
 
   sf::Text dE{"E_0 - E = " + std::to_string(u.get_E_0() - u.get_E_()) + " J",
               times, 16};
-  dE.setPosition(-w / 2 + 10., -h / 2 + 300.);
+  dE.setPosition(-wf / 2.f + 10.f, -hf / 2.f + 300.f);
   text.push_back(dE);
 
   sf::Text dP{"P_0 - P = (" +
@@ -486,40 +493,43 @@ std::vector<sf::Text> current_legend_setting(double w, double h,
                   std::to_string((u.get_P_0() - u.get_P_()).get_y()) +
                   ") kg m s^-1",
               times, 16};
-  dP.setPosition(-w / 2 + 10., -h / 2 + 320.);
+  dP.setPosition(-wf / 2.f + 10.f, -hf / 2.f + 320.f);
   text.push_back(dP);
 
   sf::Text dL{
       "L_0 - L = " + std::to_string(u.get_L_0() - u.get_L_()) + " kg m^2 s^-1",
       times, 16};
-  dL.setPosition(-w / 2 + 10., -h / 2 + 340.);
+  dL.setPosition(-wf / 2.f + 10.f, -hf / 2.f + 340.f);
   text.push_back(dL);
 
   return text;
 }
 
-std::vector<sf::Text> u_informations(double w, double h, sf::Font const &times,
-                                     int n_iterations, Universe const &u) {
+std::vector<sf::Text> u_informations(unsigned int w, unsigned int h,
+                                     sf::Font const &times, int n_iterations,
+                                     Universe const &u) {
   std::vector<sf::Text> info;
+  float wf = static_cast<float>(w);
+  float hf = static_cast<float>(h);
 
   sf::Text iterations{"Iterations: " + std::to_string(n_iterations), times, 16};
-  iterations.setPosition(w / 2 - 120., -h / 2 + 5.);
+  iterations.setPosition(wf / 2.f - 120.f, -hf / 2.f + 5.f);
   info.push_back(iterations);
 
   sf::Text G{"G = " + std::to_string(u.get_G()), times, 16};
-  G.setPosition(w / 2 - 120., -h / 2 + 25.);
+  G.setPosition(wf / 2.f - 120.f, -hf / 2.f + 25.f);
   info.push_back(G);
 
   sf::Text dt{"dt = " + std::to_string(u.get_dt()), times, 16};
-  dt.setPosition(w / 2 - 120., -h / 2 + 45.);
+  dt.setPosition(wf / 2.f - 120.f, -hf / 2.f + 45.f);
   info.push_back(dt);
 
   sf::Text scale{"scale = " + std::to_string(u.get_scale()), times, 16};
-  scale.setPosition(w / 2 - 120., -h / 2 + 65.);
+  scale.setPosition(wf / 2.f - 120.f, -hf / 2.f + 65.f);
   info.push_back(scale);
 
   sf::Text bodies{"# bodies = " + std::to_string(u.size()), times, 16};
-  bodies.setPosition(w / 2 - 120., -h / 2 + 85.);
+  bodies.setPosition(wf / 2.f - 120.f, -hf / 2.f + 85.f);
   info.push_back(bodies);
 
   return info;
@@ -551,7 +561,7 @@ std::vector<sf::Text> configuration_text_setting(
   sf::Text conf7{conf_titles[6], times, 20};
   confs_text.push_back(conf7);
 
-  for (int i{0}; i < 7; ++i) {
+  for (std::size_t i{0}; i < 7; ++i) {
     sf::FloatRect tbounds = confs_text[i].getLocalBounds();
 
     // 2. Imposta l'origine al centro del testo (tenendo conto di left/top)
@@ -573,43 +583,43 @@ std::vector<sf::RectangleShape> configuration_button_setting() {
   sf::RectangleShape b1;
   b1.setSize(sf::Vector2f(200.f, 40.f));
   b1.setFillColor(sf::Color::Blue);
-  b1.setPosition(-790., 50.);
+  b1.setPosition(-790.f, 50.f);
   conf_buttons.push_back(b1);
 
   sf::RectangleShape b2;
   b2.setSize(sf::Vector2f(200.f, 40.f));
   b2.setFillColor(sf::Color::Blue);
-  b2.setPosition(-790., 100.);
+  b2.setPosition(-790.f, 100.f);
   conf_buttons.push_back(b2);
 
   sf::RectangleShape b3;
   b3.setSize(sf::Vector2f(200.f, 40.f));
   b3.setFillColor(sf::Color::Blue);
-  b3.setPosition(-790., 150.);
+  b3.setPosition(-790.f, 150.f);
   conf_buttons.push_back(b3);
 
   sf::RectangleShape b4;
   b4.setSize(sf::Vector2f(200.f, 40.f));
   b4.setFillColor(sf::Color::Blue);
-  b4.setPosition(-790., 200.);
+  b4.setPosition(-790.f, 200.f);
   conf_buttons.push_back(b4);
 
   sf::RectangleShape b5;
   b5.setSize(sf::Vector2f(200.f, 40.f));
   b5.setFillColor(sf::Color::Blue);
-  b5.setPosition(-790., 250.);
+  b5.setPosition(-790.f, 250.f);
   conf_buttons.push_back(b5);
 
   sf::RectangleShape b6;
   b6.setSize(sf::Vector2f(200.f, 40.f));
   b6.setFillColor(sf::Color::Blue);
-  b6.setPosition(-790., 300.);
+  b6.setPosition(-790.f, 300.f);
   conf_buttons.push_back(b6);
 
   sf::RectangleShape b7;
   b7.setSize(sf::Vector2f(200.f, 40.f));
   b7.setFillColor(sf::Color::Blue);
-  b7.setPosition(-790., 350.);
+  b7.setPosition(-790.f, 350.f);
   conf_buttons.push_back(b7);
 
   return conf_buttons;

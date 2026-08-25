@@ -1,22 +1,23 @@
+#include "n_bodies.hpp"
+
 #include <SFML/Graphics.hpp>
 #include <cmath>
 #include <fstream>
 #include <iostream>
 #include <vector>
-
-#include "n_bodies.hpp"
 // #include "graphic_setting.cpp"
 
 int main() {
   // Costruzione del canvas e posizionamento di (0,0) nel centro del canvas
-  double w{1600.};
-  double h{800.};
+  unsigned int w{1600};
+  unsigned int h{800};
 
   int iterations{0};
 
   sf::RenderWindow window(sf::VideoMode(w, h), "Universe");
 
-  sf::View view(sf::Vector2f(0.f, 0.f), sf::Vector2f(w, h));
+  sf::View view(sf::Vector2f(0.f, 0.f),
+                sf::Vector2f(static_cast<float>(w), static_cast<float>(h)));
 
   window.setView(view);
 
@@ -38,10 +39,12 @@ int main() {
 
   nb::Universe u{1., 0.005, 5.e-3};
 
-  nb::Body b0({-0.97000436, 0.24308753}, {0.4662036850, 0.4323657300}, 1., 0.05);
+  nb::Body b0({-0.97000436, 0.24308753}, {0.4662036850, 0.4323657300}, 1.,
+              0.05);
   u.add(b0);
 
-  nb::Body b1({0.97000436, -0.24308753}, {0.4662036850, 0.4323657300}, 1., 0.05);
+  nb::Body b1({0.97000436, -0.24308753}, {0.4662036850, 0.4323657300}, 1.,
+              0.05);
   u.add(b1);
 
   nb::Body b2({0., 0.}, {-0.93240737, -0.86473146}, 1., 0.05);
@@ -62,7 +65,7 @@ int main() {
 
   // Apertura del canvas e setting per l'utilizzo dei tasti
   bool running{false};
-  int clicked{0};
+  std::size_t clicked{0};
   std::vector<double> pars;
 
   while (window.isOpen()) {
@@ -76,7 +79,7 @@ int main() {
             sf::Vector2i(event.mouseButton.x, event.mouseButton.y));
 
         if (event.mouseButton.button == sf::Mouse::Left) {
-          for (int i{0}; i < 7; ++i) {
+          for (std::size_t i{0}; i < 7; ++i) {
             if (buttons[i].getGlobalBounds().contains(mouseWorld) &&
                 clicked != i) {
               clicked = i;
@@ -88,8 +91,8 @@ int main() {
 
               for (std::size_t j{0}; j < n_bodies; ++j) {
                 nb::Body b({pars[3 + 6 * j], pars[4 + 6 * j]},
-                       {pars[5 + 6 * j], pars[6 + 6 * j]}, pars[7 + 6 * j],
-                       pars[8 + 6 * j]);
+                           {pars[5 + 6 * j], pars[6 + 6 * j]}, pars[7 + 6 * j],
+                           pars[8 + 6 * j]);
 
                 u.add(b);
               }
@@ -125,7 +128,7 @@ int main() {
             u.single_simulation_step();
             iterations += 1;
 
-            for (int i{0}; i < u.size(); ++i) {
+            for (std::size_t i{0}; i < u.size(); ++i) {
               window.draw(u.get_circles()[i]);
             }
           }
@@ -134,7 +137,7 @@ int main() {
             u.single_simulation_step_back();
             iterations -= 1;
 
-            for (int i{0}; i < u.size(); ++i) {
+            for (std::size_t i{0}; i < u.size(); ++i) {
               window.draw(u.get_circles()[i]);
             }
           }
@@ -148,8 +151,8 @@ int main() {
 
           for (std::size_t j{0}; j < n_bodies; ++j) {
             nb::Body b({pars[3 + 6 * j], pars[4 + 6 * j]},
-                   {pars[5 + 6 * j], pars[6 + 6 * j]}, pars[7 + 6 * j],
-                   pars[8 + 6 * j]);
+                       {pars[5 + 6 * j], pars[6 + 6 * j]}, pars[7 + 6 * j],
+                       pars[8 + 6 * j]);
 
             u.add(b);
           }
@@ -212,7 +215,7 @@ int main() {
     buttons[clicked].setFillColor(sf::Color::Yellow);
     conf_text[clicked].setFillColor(sf::Color::Black);
 
-    for (int i{0}; i < 7; ++i) {
+    for (std::size_t i{0}; i < 7; ++i) {
       if (clicked != i) {
         buttons[i].setFillColor(sf::Color::Blue);
         conf_text[i].setFillColor(sf::Color::White);
@@ -232,7 +235,7 @@ int main() {
 
     u.update_graphics();
 
-    for (int i{0}; i < u.size(); ++i) {
+    for (std::size_t i{0}; i < u.size(); ++i) {
       window.draw(u.get_circles()[i]);
     }
 

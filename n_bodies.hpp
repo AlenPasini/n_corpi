@@ -47,8 +47,8 @@ namespace nb
     Vector a_fut_{0., 0.};
     double m_;
     double k_;
-    int id_{-1};
-    double dt{0.005};
+    std::size_t id_;
+    double dt_{0.005};
 
   public:
     Body(Vector r, Vector v, double m, double k) : r_{r}, v_{v}, m_{m}, k_{k} {}
@@ -58,7 +58,7 @@ namespace nb
     Vector get_a() const;
     Vector get_a_fut() const;
     double get_m() const;
-    int get_id() const;
+    std::size_t get_id() const;
     // deve essere const perché altrimenti non me la fa paragonare
     // nell'operatore ==
 
@@ -66,7 +66,7 @@ namespace nb
 
     void v_t();
 
-    void add_id(int id);
+    void add_id(std::size_t id);
 
     void a_t(double a_t_x, double a_t_y);
 
@@ -98,16 +98,16 @@ namespace nb
     Vector P_;
     double L_;
 
-    double G;
-    double dt;
+    double G_;
+    double dt_;
     // double eps{pow(10., -12.)};
     // double eps{0.};
     double scale_;
 
   public:
-    Universe(double G, double dt, double scale) : G{G}, dt{dt}, scale_{scale} {}
+    Universe(double G, double dt, double scale) : G_{G}, dt_{dt}, scale_{scale} {}
 
-    int size() const;
+    std::size_t size() const;
 
     void set_dt(double dt_input);
 
@@ -119,7 +119,7 @@ namespace nb
 
     std::vector<sf::CircleShape> &get_circles();
 
-    Body get_body(int id) const;
+    Body get_body(std::size_t id) const;
 
     // double get_eps() const { return eps; }
     double get_G() const;
@@ -138,7 +138,7 @@ namespace nb
     Vector get_P_() const;
     double get_L_() const;
 
-    int n_colors() const;
+    std::size_t n_colors() const;
 
     void u_a_t(Body &b);
 
@@ -183,15 +183,15 @@ namespace nb
 
   sf::Text arrows_instructions(sf::Font const &times);
 
-  std::vector<sf::Text> intial_legend_setting(double w, double h,
+  std::vector<sf::Text> intial_legend_setting(unsigned int w, unsigned int h,
                                               sf::Font const &times,
                                               Universe const &u);
 
-  std::vector<sf::Text> current_legend_setting(double w, double h,
+  std::vector<sf::Text> current_legend_setting(unsigned int w, unsigned int h,
                                                sf::Font const &times,
                                                Universe const &u);
 
-  std::vector<sf::Text> u_informations(double w, double h, sf::Font const &times,
+  std::vector<sf::Text> u_informations(unsigned int w, unsigned int h, sf::Font const &times,
                                        int n_iterations, Universe const &u);
 
   std::vector<sf::Text> configuration_text_setting(

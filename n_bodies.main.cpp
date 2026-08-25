@@ -24,7 +24,7 @@ int main() {
 
   std::vector<std::string> conf_titles{
       "Figure-8",           "Pulsating Hexagon",
-      "CollisioneL",        "Fourth configuration",
+      "Yarn Configuration",        "Fourth configuration",
       "Inner Solar System", "Sixth configuration",
       "Earth & Moon"};
 

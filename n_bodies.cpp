@@ -299,7 +299,7 @@ void Universe::set_energies() {
 void Universe::set_differences() {
   dE_ = (this->E_0 - this->E_) / this->E_0;
 
-  double denom_dP;
+  double denom_dP{0.};
 
   for (std::size_t j{0}; j < u_.size(); ++j) {
     denom_dP += u_[j].get_m() * u_[j].get_v().norm();

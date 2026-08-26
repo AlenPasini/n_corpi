@@ -425,9 +425,9 @@ sf::Text space_instructions(sf::Font const &times) {
   return instructions;
 }
 
-sf::Text ctrlE_instructions(sf::Font const &times) {
+sf::Text altR_instructions(sf::Font const &times) {
   sf::Text instructions{
-      "Press ctrl + E to reset the simulation to its starting configuration",
+      "Press alt + R to reset the simulation to its starting configuration",
       times, 20};
   sf::FloatRect bounds = instructions.getLocalBounds();
   instructions.setOrigin((bounds.left + bounds.width) / 2.f,

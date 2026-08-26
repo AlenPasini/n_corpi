@@ -142,7 +142,7 @@ int main() {
             }
           }
         }
-        if (event.key.code == sf::Keyboard::E && event.key.control) {
+        if (event.key.code == sf::Keyboard::R && event.key.alt) {
           pars = nb::run_conf(conf_titles[clicked]);
 
           u.new_config(pars[0], pars[1], pars[2]);
@@ -174,7 +174,7 @@ int main() {
     window.clear();
 
     window.draw(nb::space_instructions(times));
-    window.draw(nb::ctrlE_instructions(times));
+    window.draw(nb::altR_instructions(times));
 
     info[0].setString("Iterations: " + std::to_string(iterations));
     info[4].setString("# bodies: " + std::to_string(u.size()));

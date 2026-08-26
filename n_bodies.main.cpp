@@ -6,10 +6,8 @@
 #include <iomanip>
 #include <iostream>
 #include <vector>
-// #include "graphic_setting.cpp"
 
 int main() {
-  // Costruzione del canvas e posizionamento di (0,0) nel centro del canvas
   unsigned int w{1600};
   unsigned int h{800};
 
@@ -28,7 +26,6 @@ int main() {
       "The Chase", "Earth & Moon",
       "Inner Solar System"};
 
-  // Caricamento del font da file
   sf::Font times;
 
   times.loadFromFile("times.ttf");
@@ -48,11 +45,7 @@ int main() {
 
   nb::Body b2({0., 0.}, {-0.93240737, -0.86473146}, 1., 0.05);
   u.add(b2);
-  /*
-  u.set_U_0();
-  u.set_a_0();
-  u.set_energies();
-  */
+
   u.set_universe_0();
   u.set_a_0();
 
@@ -63,7 +56,6 @@ int main() {
   auto conf_text = nb::configuration_text_setting(times, buttons, conf_titles);
   auto info = nb::u_informations(w, h, times, 0, u);
 
-  // Apertura del canvas e setting per l'utilizzo dei tasti
   bool running{false};
   std::size_t clicked{0};
   std::vector<double> pars;
@@ -87,7 +79,7 @@ int main() {
 
               u.new_config(pars[0], pars[1], pars[2]);
 
-              std::size_t n_bodies{(pars.size() - 3) / 6};
+              auto n_bodies{(pars.size() - 3) / 6};
 
               for (std::size_t j{0}; j < n_bodies; ++j) {
                 nb::Body b({pars[3 + 6 * j], pars[4 + 6 * j]},
@@ -96,11 +88,7 @@ int main() {
 
                 u.add(b);
               }
-              /*
-              u.set_U_0();
-              u.set_a_0();
-              u.set_energies();
-              */
+
               u.set_universe_0();
               u.set_a_0();
               iterations = 0;
@@ -147,7 +135,7 @@ int main() {
 
           u.new_config(pars[0], pars[1], pars[2]);
 
-          std::size_t n_bodies{(pars.size() - 3) / 6};
+          auto n_bodies{(pars.size() - 3) / 6};
 
           for (std::size_t j{0}; j < n_bodies; ++j) {
             nb::Body b({pars[3 + 6 * j], pars[4 + 6 * j]},
@@ -157,11 +145,6 @@ int main() {
             u.add(b);
           }
 
-          /*
-          u.set_U_0();
-          u.set_a_0();
-          u.set_energies();
-          */
           u.set_universe_0();
           u.set_a_0();
           iterations = 0;
@@ -178,7 +161,8 @@ int main() {
 
     info[0].setString("Iterations: " + std::to_string(iterations));
     info[4].setString("# bodies: " + std::to_string(u.size()));
-    for (size_t i{0}; i < info.size(); ++i) {
+
+    for (std::size_t i{0}; i < info.size(); ++i) {
       window.draw(info[i]);
     }
 
@@ -186,7 +170,7 @@ int main() {
       window.draw(nb::arrows_instructions(times));
     }
 
-    for (size_t i{0}; i < legend.size(); ++i) {
+    for (std::size_t i{0}; i < legend.size(); ++i) {
       window.draw(legend[i]);
     }
 
@@ -205,7 +189,7 @@ int main() {
     legend_current[8].setString("(L_0 - L) % = " + nb::scient(u.get_dL_()) +
                                 " kg m^2 s^-1");
 
-    for (size_t i{0}; i < legend_current.size(); ++i) {
+    for (std::size_t i{0}; i < legend_current.size(); ++i) {
       window.draw(legend_current[i]);
     }
 
@@ -219,18 +203,17 @@ int main() {
       }
     }
 
-    for (size_t i{0}; i < buttons.size(); ++i) {
+    for (std::size_t i{0}; i < buttons.size(); ++i) {
       window.draw(buttons[i]);
       window.draw(conf_text[i]);
     }
 
     if (clicked == 4) {
-      for (size_t i{0}; i < disclamer.size(); ++i) {
+      for (std::size_t i{0}; i < disclamer.size(); ++i) {
         window.draw(disclamer[i]);
       }
     }
 
-    // Calcolo di una simulazione, aggiornamento grafica e disegno corpi
     if (running == true) {
       u.single_simulation_step();
       iterations += 1;

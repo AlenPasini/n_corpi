@@ -66,7 +66,7 @@ class Body {
 
   void a_t(double a_t_x, double a_t_y);
 
-  void set_a_(Vector a_t_fut);
+  void set_a_(Vector const& a_t_fut);
 
   void set_dt(double new_dt);
 };
@@ -151,13 +151,13 @@ class Universe {
 
   void u_a_v_complete();
 
-  double K_t();
+  double K_t() const;
 
-  double U_t();
+  double U_t() const;
 
-  Vector P_t();
+  Vector P_t() const;
 
-  double L_t();
+  double L_t() const;
 
   void set_differences();
 
@@ -172,8 +172,6 @@ class Universe {
   void update_variables();
 
   void set_a_0();
-
-  void simulation_steps(int steps);
 
   void single_simulation_step();
 

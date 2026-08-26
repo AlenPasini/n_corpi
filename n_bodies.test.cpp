@@ -113,7 +113,7 @@ TEST_CASE("Testing an entire simulation") {
     nb::Body b1({2. * pow(10, 7), 0.}, {0., 0.}, 3. * pow(10, 24), 1.);
     u.add(b1);
     u.set_a_0();
-    u.simulation_steps(1);
+    u.single_simulation_step();
 
     CHECK(u.get_body(0).get_r().get_x() ==
           doctest::Approx(6.253125 * pow(10, -6)));
@@ -139,7 +139,10 @@ TEST_CASE("Testing an entire simulation") {
     nb::Body b2({2 * pow(10, 7), 0.}, {0., 0.}, 1. * pow(10, 20), 1.);
     u.add(b2);
     u.set_a_0();
-    u.simulation_steps(10);
+
+    for (auto i{0}; i < 10; ++i) {
+      u.single_simulation_step();
+    }
 
     CHECK(u.get_body(0).get_r().get_x() ==
           doctest::Approx(8.35834 * pow(10, -6)));
@@ -173,7 +176,10 @@ TEST_CASE("Testing a simulation with many iterations") {
     nb::Body b2({2 * pow(10, 7), 0.}, {0., 0.}, 1. * pow(10, 20), 1.);
     u.add(b2);
     u.set_a_0();
-    u.simulation_steps(1000);
+
+    for (auto i{0}; i < 1000; ++i) {
+      u.single_simulation_step();
+    }
 
     CHECK(u.get_body(0).get_r().get_x() ==
           doctest::Approx(8.3583461 * pow(10, -2)));
@@ -197,7 +203,10 @@ TEST_CASE("Testing the y component") {
     u.add(b1);
 
     u.set_a_0();
-    u.simulation_steps(100);
+
+    for (auto i{0}; i < 100; ++i) {
+      u.single_simulation_step();
+    }
 
     CHECK(u.get_body(0).get_r().get_y() == doctest::Approx(34.138356));
     CHECK(u.get_body(0).get_v().get_y() == doctest::Approx(139.8771175));
@@ -214,11 +223,14 @@ TEST_CASE("Testing a system with velocities on x and y") {
     nb::Body b0({0., 0.}, {10., -5.}, 1. * pow(10, 24), 1.);
     u.add(b0);
 
-    nb::Body b1({1. * pow(10, 7), 5. * pow(10, 6)}, {-20., 300.}, 1. * pow(10, 22),
-            1.);
+    nb::Body b1({1. * pow(10, 7), 5. * pow(10, 6)}, {-20., 300.},
+                1. * pow(10, 22), 1.);
     u.add(b1);
     u.set_a_0();
-    u.simulation_steps(10);
+
+    for (auto i{0}; i < 10; ++i) {
+      u.single_simulation_step();
+    }
 
     CHECK(u.get_body(0).get_r().get_x() ==
           doctest::Approx(5.00005966 * pow(10, -1)));

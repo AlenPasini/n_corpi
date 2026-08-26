@@ -34,8 +34,6 @@ Vector Body::get_a() const { return a_; }
 Vector Body::get_a_fut() const { return a_fut_; }
 double Body::get_m() const { return m_; }
 std::size_t Body::get_id() const { return id_; }
-// deve essere const perché altrimenti non me la fa paragonare
-// nell'operatore ==
 
 void Body::r_t() {
   r_.x += v_.x * dt_ + 0.5 * a_.x * dt_ * dt_;
@@ -51,7 +49,7 @@ void Body::add_id(std::size_t id) { id_ = id; }
 
 void Body::a_t(double a_t_x, double a_t_y) { a_fut_ = {a_t_x, a_t_y}; }
 
-void Body::set_a_(Vector a_t_fut) { a_ = a_t_fut; }
+void Body::set_a_(Vector const& a_t_fut) { a_ = a_t_fut; }
 
 void Body::set_dt(double new_dt) { dt_ = new_dt; }
 
@@ -165,7 +163,7 @@ void Universe::u_a_v_complete() {
   }
 }
 
-double Universe::K_t() {
+double Universe::K_t() const {
   double K{0.};
   for (std::size_t j{0}; j < u_.size(); ++j) {
     K += 0.5 * u_[j].get_m() *
@@ -175,7 +173,7 @@ double Universe::K_t() {
   return K;
 }
 
-double Universe::U_t() {
+double Universe::U_t() const {
   double U{0.};
   for (std::size_t i{0}; i + 1 < u_.size(); ++i) {
     for (std::size_t j{i + 1}; j < u_.size(); ++j) {
@@ -193,7 +191,7 @@ double Universe::U_t() {
   return U;
 }
 
-Vector Universe::P_t() {
+Vector Universe::P_t() const{
   double p_x{0.};
   double p_y{0.};
   for (std::size_t j{0}; j < u_.size(); ++j) {
@@ -203,7 +201,7 @@ Vector Universe::P_t() {
   return {p_x, p_y};
 }
 
-double Universe::L_t() {
+double Universe::L_t() const{
   double L{0.};
   for (std::size_t j{0}; j < u_.size(); ++j) {
     L += u_[j].get_m() * (u_[j].get_v().get_y() * u_[j].get_r().get_x() -
@@ -331,42 +329,14 @@ void Universe::set_a_0() {
   }
 }
 
-void Universe::simulation_steps(int steps) {
-  for (std::size_t j{0}; j < u_.size(); ++j) {
-    u_[j].set_dt(dt_);
-  }
-  for (int i{0}; i < steps; ++i) {
-    this->r_t_complete();  // non mi ricordo assolutamente se si fa così...
-    this->u_a_t_complete();
-    this->u_a_v_complete();
-    /*
-    this->K_t();
-    U_ = this->U_t();
-    E_ = K_ + U_;
-    */
-    this->update_variables();
-
-    for (std::size_t j{0}; j < u_.size(); ++j) {
-      u_[j].set_a_(u_[j].get_a_fut());
-    }
-  }
-}
-
 void Universe::single_simulation_step() {
   for (std::size_t j{0}; j < u_.size(); ++j) {
     u_[j].set_dt(dt_);
   }
   this->check_collisions();
-  this->r_t_complete();  // non mi ricordo assolutamente se si fa così...
+  this->r_t_complete(); 
   this->u_a_t_complete();
   this->u_a_v_complete();
-  /*
-  this->K_t();
-  U_ = this->U_t();
-  this->P_t();
-  this->L_t();
-  E_ = K_ + U_;
-  */
   this->update_variables();
   this->set_differences();
 
@@ -406,7 +376,7 @@ void Universe::update_graphics() {
 std::string scient(double value) {
   std::ostringstream stream;
 
-  if (value != 0.0 && (std::fabs(value) > 1.e5 || std::fabs(value) < 1.e-10)) {
+  if (value != 0.0 && std::fabs(value) > 1.e5) {
     stream << std::scientific << std::setprecision(5) << value;
   } else {
     stream << value;

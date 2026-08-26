@@ -1,10 +1,10 @@
-Start testing: Aug 26 11:33 CEST
+Start testing: Aug 26 23:17 CEST
 ----------------------------------------------------------
 1/1 Testing: n_bodies_simulation.t
 1/1 Test: n_bodies_simulation.t
 Command: "/home/gregorio-montroni/n_bodies/build/Release/n_bodies_simulation.t"
 Directory: /home/gregorio-montroni/n_bodies/build
-"n_bodies_simulation.t" start time: Aug 26 11:33 CEST
+"n_bodies_simulation.t" start time: Aug 26 23:17 CEST
 Output:
 ----------------------------------------------------------
 [doctest] doctest version is "2.5.0"
@@ -17,8 +17,8 @@ Output:
 Test time =   0.00 sec
 ----------------------------------------------------------
 Test Passed.
-"n_bodies_simulation.t" end time: Aug 26 11:33 CEST
+"n_bodies_simulation.t" end time: Aug 26 23:17 CEST
 "n_bodies_simulation.t" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-End testing: Aug 26 11:33 CEST
+End testing: Aug 26 23:17 CEST

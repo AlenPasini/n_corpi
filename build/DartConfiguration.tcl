@@ -4,8 +4,8 @@
 
 
 # Configuration directories and files
-SourceDirectory: /home/gregorio-montroni/n_corpi
-BuildDirectory: /home/gregorio-montroni/n_corpi/build
+SourceDirectory: /home/gregorio-montroni/n_bodies
+BuildDirectory: /home/gregorio-montroni/n_bodies/build
 
 # Where to place the cost data store
 CostDataFile: 
@@ -27,7 +27,7 @@ SubmitInactivityTimeout:
 NightlyStartTime: 00:00:00 EDT
 
 # Commands for the build/test/submit cycle
-ConfigureCommand: "/usr/bin/cmake" "/home/gregorio-montroni/n_corpi"
+ConfigureCommand: "/usr/bin/cmake" "/home/gregorio-montroni/n_bodies"
 MakeCommand: /usr/bin/cmake --build . --config "${CTEST_CONFIGURATION_TYPE}"
 DefaultCTestConfigurationType: Release
 

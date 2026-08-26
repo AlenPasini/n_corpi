@@ -71,7 +71,7 @@ build n_bodies_simulation.t: phony Debug/n_bodies_simulation.t
 
 
 #############################################
-# Folder: /home/gregorio-montroni/n_corpi/build
+# Folder: /home/gregorio-montroni/n_bodies/build
 
 build all: phony all$:Debug
 

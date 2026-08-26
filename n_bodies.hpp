@@ -191,6 +191,8 @@ sf::Text ctrlE_instructions(sf::Font const &times);
 
 sf::Text arrows_instructions(sf::Font const &times);
 
+std::vector<sf::Text> radii_disclaimer(sf::Font const &times);
+
 std::vector<sf::Text> intial_legend_setting(unsigned int w, unsigned int h,
                                             sf::Font const &times,
                                             Universe const &u);

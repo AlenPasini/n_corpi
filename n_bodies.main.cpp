@@ -24,9 +24,9 @@ int main() {
 
   std::vector<std::string> conf_titles{
       "Figure-8",           "Pulsating Hexagon",
-      "Yarn Configuration",        "Fourth configuration",
-      "Inner Solar System", "Sixth configuration",
-      "Earth & Moon"};
+      "Yarn Configuration", "Henon Configuration",
+      "The Chase", "Earth & Moon",
+      "Inner Solar System"};
 
   // Caricamento del font da file
   sf::Font times;
@@ -56,11 +56,12 @@ int main() {
   u.set_universe_0();
   u.set_a_0();
 
-  auto legend = intial_legend_setting(w, h, times, u);
-  auto legend_current = current_legend_setting(w, h, times, u);
+  auto disclamer = nb::radii_disclaimer(times);
+  auto legend = nb::intial_legend_setting(w, h, times, u);
+  auto legend_current = nb::current_legend_setting(w, h, times, u);
   auto buttons = nb::configuration_button_setting();
   auto conf_text = nb::configuration_text_setting(times, buttons, conf_titles);
-  auto info = u_informations(w, h, times, 0, u);
+  auto info = nb::u_informations(w, h, times, 0, u);
 
   // Apertura del canvas e setting per l'utilizzo dei tasti
   bool running{false};
@@ -197,11 +198,10 @@ int main() {
                                 " ) kg m s^-1");
     legend_current[5].setString("L = " + nb::scient(u.get_L_()) +
                                 " kg m^2 s^-1");
-    legend_current[6].setString(
-        "(E_0 - E) % = " +
-        nb::scient(u.get_dE_()) + " J");
-    legend_current[7].setString(
-        "|P_0 - P| % = " + nb::scient(u.get_dP_()) + " kg m s^-1");
+    legend_current[6].setString("(E_0 - E) % = " + nb::scient(u.get_dE_()) +
+                                " J");
+    legend_current[7].setString("|P_0 - P| % = " + nb::scient(u.get_dP_()) +
+                                " kg m s^-1");
     legend_current[8].setString("(L_0 - L) % = " + nb::scient(u.get_dL_()) +
                                 " kg m^2 s^-1");
 
@@ -222,6 +222,12 @@ int main() {
     for (size_t i{0}; i < buttons.size(); ++i) {
       window.draw(buttons[i]);
       window.draw(conf_text[i]);
+    }
+
+    if (clicked == 4) {
+      for (size_t i{0}; i < disclamer.size(); ++i) {
+        window.draw(disclamer[i]);
+      }
     }
 
     // Calcolo di una simulazione, aggiornamento grafica e disegno corpi

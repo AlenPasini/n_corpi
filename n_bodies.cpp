@@ -447,6 +447,32 @@ sf::Text arrows_instructions(sf::Font const &times) {
   return instructions;
 }
 
+std::vector<sf::Text> radii_disclaimer(sf::Font const &times) {
+  std::vector<sf::Text> text;
+
+  sf::Text title{"DISCLAIMER!", times, 20};
+  title.setOrigin(title.getLocalBounds().width / 2.f, 0.f);
+  title.setPosition(650, 280);
+  text.push_back(title);
+
+  sf::Text s1{"Planetary and solar radii not to scale!", times, 16};
+  s1.setOrigin(s1.getLocalBounds().width / 2.f, 0);
+  s1.setPosition(title.getPosition().x, title.getPosition().y + 30.f);
+  text.push_back(s1);
+
+  sf::Text s2{"Sun's radius 14 times too big", times, 16};
+  s2.setOrigin(s2.getLocalBounds().width / 2.f, 0);
+  s2.setPosition(s1.getPosition().x, s1.getPosition().y + 25.f);
+  text.push_back(s2);
+
+  sf::Text s3{"Planets' radius 614 times too big", times, 16};
+  s3.setOrigin(s3.getLocalBounds().width / 2.f, 0);
+  s3.setPosition(s2.getPosition().x, s2.getPosition().y + 25.f);
+  text.push_back(s3);
+
+  return text;
+}
+
 std::vector<sf::Text> intial_legend_setting(unsigned int w, unsigned int h,
                                             sf::Font const &times,
                                             Universe const &u) {

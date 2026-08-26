@@ -46,7 +46,8 @@ class Body {
   double dt_{0.005};
 
  public:
-  Body(Vector r, Vector v, double m, double k) : r_{r}, v_{v}, m_{m}, k_{k} {}
+  Body(Vector r, Vector v, double m, double k) : r_{r}, v_{v}, m_{m}, k_{k} {};
+
   Vector get_r() const;
   double get_k() const;
   Vector get_v() const;

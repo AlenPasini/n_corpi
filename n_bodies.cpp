@@ -297,7 +297,7 @@ void Universe::set_energies() {
 }
 
 void Universe::set_differences() {
-  dE_ = (this->E_0 - this->E_) / this->E_0;
+  dE_ = (this->E_ - this->E_0) / this->E_0;
 
   double denom_dP{0.};
 
@@ -305,13 +305,15 @@ void Universe::set_differences() {
     denom_dP += u_[j].get_m() * u_[j].get_v().norm();
   }
 
-  dP_ = (this->P_0 - this->P_).norm() / denom_dP;
+  dP_ = (this->P_ - this->P_0).norm() / denom_dP;
 
-  if (L_0 != 0.0) {
-    dL_ = (this->L_0 - this->L_) / this->L_0;
-  } else {
-    dL_ = (this->L_0 - this->L_);
+  double denom_dL{0.};
+
+  for (std::size_t j{0}; j < u_.size(); ++j) {
+    denom_dL += u_[j].get_m() * u_[j].get_v().norm() * u_[j].get_r().norm();
   }
+
+  dL_ = (this->L_ - this->L_0) / denom_dL;
 }
 
 void Universe::update_variables() {

@@ -45,6 +45,10 @@ class Body {
   std::size_t id_;
   double dt_{0.005};
 
+  sf::VertexArray trail;
+
+  int steps{0};
+
  public:
   Body(Vector r, Vector v, double m, double k) : r_{r}, v_{v}, m_{m}, k_{k} {}
 
@@ -55,8 +59,8 @@ class Body {
   Vector get_a_fut() const;
   double get_m() const;
   std::size_t get_id() const;
-  // deve essere const perché altrimenti non me la fa paragonare
-  // nell'operatore ==
+
+  sf::VertexArray &get_trail();
 
   void r_t();
 
@@ -66,9 +70,11 @@ class Body {
 
   void a_t(double a_t_x, double a_t_y);
 
-  void set_a_(Vector const& a_t_fut);
+  void set_a_(Vector const &a_t_fut);
 
   void set_dt(double new_dt);
+
+  void update_trail(sf::CircleShape circle);
 };
 
 bool operator==(Body const &b1, Body const &b2);
@@ -99,8 +105,6 @@ class Universe {
 
   double G_;
   double dt_;
-  // double eps{pow(10., -12.)};
-  // double eps{0.};
   double scale_;
 
  public:
@@ -120,7 +124,6 @@ class Universe {
 
   Body get_body(std::size_t id) const;
 
-  // double get_eps() const { return eps; }
   double get_G() const;
   double get_dt() const;
   double get_scale() const;

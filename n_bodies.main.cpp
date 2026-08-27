@@ -23,7 +23,7 @@ int main() {
   std::vector<std::string> conf_titles{
       "Figure-8",           "Pulsating Hexagon",
       "Yarn Configuration", "Henon Configuration",
-      "The Chase", "Earth & Moon",
+      "The Chase",          "Earth & Moon",
       "Inner Solar System"};
 
   sf::Font times;
@@ -222,7 +222,12 @@ int main() {
     u.update_graphics();
 
     for (std::size_t i{0}; i < u.size(); ++i) {
-      window.draw(u.get_circles()[i]);
+      window.draw(u.get_body(i).get_trail());   
+    }
+
+    for (std::size_t i{0}; i < u.size(); ++i) {
+      window.draw(u.get_body(i).get_trail());
+      window.draw(u.get_circles()[i]);      
     }
 
     window.display();

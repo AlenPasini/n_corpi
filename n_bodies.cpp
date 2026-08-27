@@ -1,6 +1,6 @@
 #include "n_bodies.hpp"
 
-#ifndef PF_N_CORPI_HPP  // provvisorio
+#ifndef PF_N_CORPI_HPP  
 #define PF_N_CORPI_HPP
 
 #include <SFML/Graphics.hpp>
@@ -35,6 +35,8 @@ Vector Body::get_a_fut() const { return a_fut_; }
 double Body::get_m() const { return m_; }
 std::size_t Body::get_id() const { return id_; }
 
+sf::VertexArray &Body::get_trail() { return trail; }
+
 void Body::r_t() {
   r_.x += v_.x * dt_ + 0.5 * a_.x * dt_ * dt_;
   r_.y += v_.y * dt_ + 0.5 * a_.y * dt_ * dt_;
@@ -49,9 +51,33 @@ void Body::add_id(std::size_t id) { id_ = id; }
 
 void Body::a_t(double a_t_x, double a_t_y) { a_fut_ = {a_t_x, a_t_y}; }
 
-void Body::set_a_(Vector const& a_t_fut) { a_ = a_t_fut; }
+void Body::set_a_(Vector const &a_t_fut) { a_ = a_t_fut; }
 
 void Body::set_dt(double new_dt) { dt_ = new_dt; }
+
+void Body::update_trail(sf::CircleShape circle) {
+  steps += 1;
+
+  if (steps % 5 == 0) {
+
+    if (trail.getVertexCount() >= 100) {
+      sf::VertexArray t_new;
+
+      for (std::size_t i{1}; i < trail.getVertexCount(); ++i){
+        t_new.append(trail[i]);
+      }
+
+      trail = t_new;
+    }
+
+    sf::Vertex v;
+
+    v.color = circle.getFillColor();
+    v.position = circle.getPosition();
+
+    trail.append(v);
+  }
+}
 
 bool operator==(Body const &b1, Body const &b2) {
   return b1.get_id() == b2.get_id();
@@ -191,7 +217,7 @@ double Universe::U_t() const {
   return U;
 }
 
-Vector Universe::P_t() const{
+Vector Universe::P_t() const {
   double p_x{0.};
   double p_y{0.};
   for (std::size_t j{0}; j < u_.size(); ++j) {
@@ -201,7 +227,7 @@ Vector Universe::P_t() const{
   return {p_x, p_y};
 }
 
-double Universe::L_t() const{
+double Universe::L_t() const {
   double L{0.};
   for (std::size_t j{0}; j < u_.size(); ++j) {
     L += u_[j].get_m() * (u_[j].get_v().get_y() * u_[j].get_r().get_x() -
@@ -334,7 +360,7 @@ void Universe::single_simulation_step() {
     u_[j].set_dt(dt_);
   }
   this->check_collisions();
-  this->r_t_complete(); 
+  this->r_t_complete();
   this->u_a_t_complete();
   this->u_a_v_complete();
   this->update_variables();
@@ -342,6 +368,8 @@ void Universe::single_simulation_step() {
 
   for (std::size_t j{0}; j < u_.size(); ++j) {
     u_[j].set_a_(u_[j].get_a_fut());
+
+    u_[j].update_trail(this->get_circles()[j]);
   }
 }
 

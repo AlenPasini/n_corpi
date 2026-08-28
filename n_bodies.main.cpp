@@ -208,7 +208,7 @@ int main() {
       window.draw(conf_text[i]);
     }
 
-    if (clicked == 4) {
+    if (clicked == 6) {
       for (std::size_t i{0}; i < disclamer.size(); ++i) {
         window.draw(disclamer[i]);
       }

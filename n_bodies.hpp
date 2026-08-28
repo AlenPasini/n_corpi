@@ -46,7 +46,6 @@ class Body {
   double dt_{0.005};
 
   sf::VertexArray trail;
-
   int steps{0};
 
  public:
@@ -163,8 +162,6 @@ class Universe {
   double L_t() const;
 
   void set_differences();
-
-  void set_om();
 
   void check_collisions();
 

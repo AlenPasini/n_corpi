@@ -93,8 +93,8 @@ int main() {
               u.set_a_0();
               iterations = 0;
 
-              legend = intial_legend_setting(w, h, times, u);
-              legend_current = current_legend_setting(w, h, times, u);
+              legend = nb::intial_legend_setting(w, h, times, u);
+              legend_current = nb::current_legend_setting(w, h, times, u);
             }
           }
         }
@@ -149,7 +149,7 @@ int main() {
           u.set_a_0();
           iterations = 0;
 
-          legend_current = current_legend_setting(w, h, times, u);
+          legend_current = nb::current_legend_setting(w, h, times, u);
         }
       }
     }
@@ -222,12 +222,12 @@ int main() {
     u.update_graphics();
 
     for (std::size_t i{0}; i < u.size(); ++i) {
-      window.draw(u.get_body(i).get_trail());   
+      window.draw(u.get_body(i).get_trail());
     }
 
     for (std::size_t i{0}; i < u.size(); ++i) {
       window.draw(u.get_body(i).get_trail());
-      window.draw(u.get_circles()[i]);      
+      window.draw(u.get_circles()[i]);
     }
 
     window.display();

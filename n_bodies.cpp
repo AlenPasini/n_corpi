@@ -121,7 +121,6 @@ std::vector<sf::CircleShape> &Universe::get_circles() { return circles_; }
 
 Body Universe::get_body(std::size_t id) const { return u_[id]; }
 
-// double get_eps() const { return eps; }
 double Universe::get_G() const { return G_; }
 double Universe::get_dt() const { return dt_; }
 double Universe::get_scale() const { return scale_; }

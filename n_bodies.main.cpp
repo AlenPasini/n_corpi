@@ -1,12 +1,5 @@
 #include "n_bodies.hpp"
 
-#include <SFML/Graphics.hpp>
-#include <cmath>
-#include <fstream>
-#include <iomanip>
-#include <iostream>
-#include <vector>
-
 int main() {
   unsigned int w{1600};
   unsigned int h{800};

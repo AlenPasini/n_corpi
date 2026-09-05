@@ -1,15 +1,5 @@
 #include "n_bodies.hpp"
-
-#ifndef PF_N_CORPI_HPP  
-#define PF_N_CORPI_HPP
-
-#include <SFML/Graphics.hpp>
-#include <cmath>
-#include <fstream>
 #include <iomanip>
-#include <iostream>
-#include <sstream>
-#include <vector>
 
 namespace nb {
 
@@ -155,11 +145,6 @@ void Universe::u_a_t(Body &b) {
       double num_x{get_G() * u_[j].get_m() * distance.get_x()};
       double num_y{get_G() * u_[j].get_m() * distance.get_y()};
 
-      /*
-      double denom{pow(
-          distance.norm() * distance.norm() + get_eps() * get_eps(), 1.5)};
-      */
-
       double denom{pow(distance.norm() * distance.norm(), 1.5)};
 
       a_t_x -= num_x / denom;
@@ -269,7 +254,6 @@ void Universe::check_collisions() {
 
           u_.erase(u_.begin() + static_cast<int>(j));
           circles_.erase(circles_.begin() + static_cast<int>(j));
-          // erase necessita di un iteratore, non un indice
 
           n = 1;
           break;
@@ -320,7 +304,7 @@ void Universe::set_energies() {
 }
 
 void Universe::set_differences() {
-  dE_ = (this->E_ - this->E_0) / this->E_0;
+  dE_ = (E_ - E_0) / E_0;
 
   double denom_dP{0.};
 
@@ -328,7 +312,7 @@ void Universe::set_differences() {
     denom_dP += u_[j].get_m() * u_[j].get_v().norm();
   }
 
-  dP_ = (this->P_ - this->P_0).norm() / denom_dP;
+  dP_ = (P_ - P_0).norm() / denom_dP;
 
   double denom_dL{0.};
 
@@ -336,7 +320,7 @@ void Universe::set_differences() {
     denom_dL += u_[j].get_m() * u_[j].get_v().norm() * u_[j].get_r().norm();
   }
 
-  dL_ = (this->L_ - this->L_0) / denom_dL;
+  dL_ = (L_ - L_0) / denom_dL;
 }
 
 void Universe::update_variables() {
@@ -358,6 +342,7 @@ void Universe::single_simulation_step() {
   for (std::size_t j{0}; j < u_.size(); ++j) {
     u_[j].set_dt(dt_);
   }
+  
   this->check_collisions();
   this->r_t_complete();
   this->u_a_t_complete();
@@ -618,11 +603,9 @@ std::vector<sf::Text> configuration_text_setting(
   for (std::size_t i{0}; i < 7; ++i) {
     sf::FloatRect tbounds = confs_text[i].getLocalBounds();
 
-    // 2. Imposta l'origine al centro del testo (tenendo conto di left/top)
     confs_text[i].setOrigin(tbounds.left + tbounds.width / 2.f,
                             tbounds.top + tbounds.height / 2.f);
 
-    // 3. Posiziona il testo al centro del rettangolo
     sf::FloatRect rectBounds = buttons[i].getGlobalBounds();
     confs_text[i].setPosition(rectBounds.left + rectBounds.width / 2.f,
                               rectBounds.top + rectBounds.height / 2.f);
@@ -690,8 +673,7 @@ std::vector<double> run_conf(std::string conf_title) {
     while (getline(file, line)) {
       if (line == conf_title) {
         check = true;
-        continue;  // salta il resto di questa iterazione, passa direttamente
-                   // alla successiva
+        continue;
       }
 
       if (check == true) {
@@ -718,5 +700,4 @@ std::vector<double> run_conf(std::string conf_title) {
   return all_parameters;
 }
 
-}  // namespace nb
-#endif
+} 

@@ -1,3 +1,6 @@
+#ifndef PF_N_BODIES_HPP
+#define PF_N_BODIES_HPP
+
 #include <SFML/Graphics.hpp>
 #include <cmath>
 #include <fstream>
@@ -212,4 +215,5 @@ std::vector<sf::RectangleShape> configuration_button_setting();
 
 std::vector<double> run_conf(std::string conf_title);
 
-}  // namespace nb
+} 
+#endif

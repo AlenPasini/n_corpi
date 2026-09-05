@@ -25,9 +25,6 @@ struct Vector {
     return *this;
   }
 
-  double get_x() const { return x; }
-  double get_y() const { return y; }
-
   double norm() const { return sqrt(x * x + y * y); }
 };
 

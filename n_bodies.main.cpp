@@ -170,8 +170,8 @@ int main() {
     legend_current[1].setString("K = " + nb::scient(u.get_K_()) + " J");
     legend_current[2].setString("U = " + nb::scient(u.get_U_()) + " J");
     legend_current[3].setString("E = " + nb::scient(u.get_E_()) + " J");
-    legend_current[4].setString("P = (" + nb::scient(u.get_P_0().get_x()) +
-                                ", " + nb::scient(u.get_P_0().get_y()) +
+    legend_current[4].setString("P = (" + nb::scient(u.get_P_0().x) +
+                                ", " + nb::scient(u.get_P_0().y) +
                                 " ) kg m s^-1");
     legend_current[5].setString("L = " + nb::scient(u.get_L_()) +
                                 " kg m^2 s^-1");

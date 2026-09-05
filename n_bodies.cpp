@@ -89,8 +89,8 @@ void Universe::add(Body &b) {
 
   circle.setOrigin(static_cast<float>(b.get_k() / scale_),
                    static_cast<float>(b.get_k() / scale_));
-  circle.setPosition(static_cast<float>(b.get_r().get_x() / scale_),
-                     static_cast<float>(b.get_r().get_y() / scale_));
+  circle.setPosition(static_cast<float>(b.get_r().x / scale_),
+                     static_cast<float>(b.get_r().y / scale_));
 
   std::size_t color_id;
 
@@ -142,8 +142,8 @@ void Universe::u_a_t(Body &b) {
     } else {
       Vector distance{b.get_r() - u_[j].get_r()};
 
-      double num_x{get_G() * u_[j].get_m() * distance.get_x()};
-      double num_y{get_G() * u_[j].get_m() * distance.get_y()};
+      double num_x{get_G() * u_[j].get_m() * distance.x};
+      double num_y{get_G() * u_[j].get_m() * distance.y};
 
       double denom{pow(distance.norm() * distance.norm(), 1.5)};
 
@@ -177,7 +177,7 @@ double Universe::K_t() const {
   double K{0.};
   for (std::size_t j{0}; j < u_.size(); ++j) {
     K += 0.5 * u_[j].get_m() *
-         (pow(u_[j].get_v().get_x(), 2) + pow(u_[j].get_v().get_y(), 2));
+         (pow(u_[j].get_v().x, 2) + pow(u_[j].get_v().y, 2));
   }
 
   return K;
@@ -192,9 +192,6 @@ double Universe::U_t() const {
       auto distance = u_[i].get_r() - u_[j].get_r();
 
       double denom = distance.norm();
-          // (u_[i].get_r() - u_[j].get_r()).norm();
-          //std::sqrt(pow(u_[i].get_r().get_x() - u_[j].get_r().get_x(), 2.) +
-          //         pow(u_[i].get_r().get_y() - u_[j].get_r().get_y(), 2.));
 
       U -= num / denom;
     }
@@ -207,8 +204,8 @@ Vector Universe::P_t() const {
   double p_x{0.};
   double p_y{0.};
   for (std::size_t j{0}; j < u_.size(); ++j) {
-    p_x += u_[j].get_m() * u_[j].get_v().get_x();
-    p_y += u_[j].get_m() * u_[j].get_v().get_y();
+    p_x += u_[j].get_m() * u_[j].get_v().x;
+    p_y += u_[j].get_m() * u_[j].get_v().y;
   }
   return {p_x, p_y};
 }
@@ -216,8 +213,8 @@ Vector Universe::P_t() const {
 double Universe::L_t() const {
   double L{0.};
   for (std::size_t j{0}; j < u_.size(); ++j) {
-    L += u_[j].get_m() * (u_[j].get_v().get_y() * u_[j].get_r().get_x() -
-                          u_[j].get_v().get_x() * u_[j].get_r().get_y());
+    L += u_[j].get_m() * (u_[j].get_v().y * u_[j].get_r().x -
+                          u_[j].get_v().x * u_[j].get_r().y);
   }
   return L;
 }
@@ -240,17 +237,17 @@ void Universe::check_collisions() {
           c_2 = j - 1;
           m_n = u_[i].get_m() + u_[j].get_m();
 
-          r_n.x = (u_[i].get_m() * u_[i].get_r().get_x() +
-                   u_[j].get_m() * u_[j].get_r().get_x()) /
+          r_n.x = (u_[i].get_m() * u_[i].get_r().x +
+                   u_[j].get_m() * u_[j].get_r().x) /
                   m_n;
-          r_n.y = (u_[i].get_m() * u_[i].get_r().get_y() +
-                   u_[j].get_m() * u_[j].get_r().get_y()) /
+          r_n.y = (u_[i].get_m() * u_[i].get_r().y +
+                   u_[j].get_m() * u_[j].get_r().y) /
                   m_n;
-          v_n.x = (u_[i].get_m() * u_[i].get_v().get_x() +
-                   u_[j].get_m() * u_[j].get_v().get_x()) /
+          v_n.x = (u_[i].get_m() * u_[i].get_v().x +
+                   u_[j].get_m() * u_[j].get_v().x) /
                   m_n;
-          v_n.y = (u_[i].get_m() * u_[i].get_v().get_y() +
-                   u_[j].get_m() * u_[j].get_v().get_y()) /
+          v_n.y = (u_[i].get_m() * u_[i].get_v().y +
+                   u_[j].get_m() * u_[j].get_v().y) /
                   m_n;
           k_n = u_[i].get_k() + u_[j].get_k();
 
@@ -382,8 +379,8 @@ void Universe::new_config(double new_G, double new_dt, double new_scale) {
 void Universe::update_graphics() {
   for (std::size_t j{0}; j < u_.size(); ++j) {
     circles_[j].setPosition(
-        static_cast<float>(u_[j].get_r().get_x() / scale_),
-        static_cast<float>(-u_[j].get_r().get_y() / scale_));
+        static_cast<float>(u_[j].get_r().x / scale_),
+        static_cast<float>(-u_[j].get_r().y / scale_));
   }
 }
 
@@ -483,8 +480,8 @@ std::vector<sf::Text> intial_legend_setting(unsigned int w, unsigned int h,
   E_0.setPosition(-wf / 2.f + 10.f, -hf / 2.f + 75.f);
   text.push_back(E_0);
 
-  sf::Text P_0{"P = (" + scient(u.get_P_0().get_x()) + ", " +
-                   scient(u.get_P_0().get_y()) + " ) kg m s^-1",
+  sf::Text P_0{"P = (" + scient(u.get_P_0().x) + ", " +
+                   scient(u.get_P_0().y) + " ) kg m s^-1",
                times, 16};
   P_0.setPosition(-wf / 2.f + 10.f, -hf / 2.f + 95.f);
   text.push_back(P_0);
@@ -520,8 +517,8 @@ std::vector<sf::Text> current_legend_setting(unsigned int w, unsigned int h,
   E.setPosition(-wf / 2.f + 10.f, -hf / 2.f + 220.f);
   text.push_back(E);
 
-  sf::Text P{"P = (" + scient(u.get_P_0().get_x()) + ", " +
-                 scient(u.get_P_0().get_y()) + " ) kg m s^-1",
+  sf::Text P{"P = (" + scient(u.get_P_0().x) + ", " +
+                 scient(u.get_P_0().y) + " ) kg m s^-1",
              times, 16};
   P.setPosition(-wf / 2.f + 10.f, -hf / 2.f + 240.f);
   text.push_back(P);

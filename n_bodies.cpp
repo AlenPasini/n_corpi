@@ -94,7 +94,7 @@ void Universe::add(Body &b) {
 
   std::size_t color_id;
 
-  if (u_.back().get_id() <= this->n_colors() - 1) {
+  if (u_.back().get_id() <= n_colors() - 1) {
     color_id = u_.back().get_id();
   }
 
@@ -268,7 +268,7 @@ void Universe::check_collisions() {
 
     if (n == 1) {
       Body d{r_n, v_n, m_n, k_n};
-      this->add(d);  // da controllare
+      add(d);  // da controllare
 
       for (std::size_t i{c_1}; i < c_2; ++i) {
         u_[i].add_id(u_[i].get_id() - 1);
@@ -278,21 +278,21 @@ void Universe::check_collisions() {
       }
       u_[u_.size() - 1].add_id(u_.size() - 1);
 
-      this->set_a_0();
+      set_a_0();
     }
   }
 }
 
 void Universe::set_universe_0() {
-  K_0 = this->K_t();
-  U_0 = this->U_t();
+  K_0 = K_t();
+  U_0 = U_t();
   E_0 = K_0 + U_0;
-  P_0 = this->P_t();
-  L_0 = this->L_t();
+  P_0 = P_t();
+  L_0 = L_t();
 
-  this->set_energies();
+  set_energies();
 
-  this->set_differences();
+  set_differences();
 }
 
 void Universe::set_energies() {
@@ -324,15 +324,15 @@ void Universe::set_differences() {
 }
 
 void Universe::update_variables() {
-  K_ = this->K_t();
-  U_ = this->U_t();
+  K_ = K_t();
+  U_ = U_t();
   E_ = K_ + U_;
-  P_ = this->P_t();
-  L_ = this->L_t();
+  P_ = P_t();
+  L_ = L_t();
 }
 
 void Universe::set_a_0() {
-  this->u_a_t_complete();
+  u_a_t_complete();
   for (std::size_t j{0}; j < u_.size(); ++j) {
     u_[j].set_a_(u_[j].get_a_fut());
   }
@@ -343,30 +343,30 @@ void Universe::single_simulation_step() {
     u_[j].set_dt(dt_);
   }
   
-  this->check_collisions();
-  this->r_t_complete();
-  this->u_a_t_complete();
-  this->u_a_v_complete();
-  this->update_variables();
-  this->set_differences();
+  check_collisions();
+  r_t_complete();
+  u_a_t_complete();
+  u_a_v_complete();
+  update_variables();
+  set_differences();
 
   for (std::size_t j{0}; j < u_.size(); ++j) {
     u_[j].set_a_(u_[j].get_a_fut());
 
-    u_[j].update_trail(this->get_circles()[j]);
+    u_[j].update_trail(get_circles()[j]);
   }
 }
 
 void Universe::single_simulation_step_back() {
   dt_ = -dt_;
-  this->single_simulation_step();
+  single_simulation_step();
   dt_ = -dt_;
 }
 
 void Universe::new_config(double new_G, double new_dt, double new_scale) {
-  this->set_G(new_G);
-  this->set_dt(new_dt);
-  this->set_scale(new_scale);
+  set_G(new_G);
+  set_dt(new_dt);
+  set_scale(new_scale);
   K_0 = 0.;
   U_0 = 0.;
   E_0 = 0.;

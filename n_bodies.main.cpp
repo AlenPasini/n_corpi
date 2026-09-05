@@ -1,5 +1,7 @@
 #include "n_bodies.hpp"
 
+#include "iostream"
+
 int main() {
   unsigned int w{1600};
   unsigned int h{800};

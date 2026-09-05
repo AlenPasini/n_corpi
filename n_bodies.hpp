@@ -3,9 +3,6 @@
 
 #include <SFML/Graphics.hpp>
 #include <cmath>
-#include <fstream>
-#include <iostream>
-#include <sstream>
 #include <vector>
 
 namespace nb {
@@ -25,7 +22,7 @@ struct Vector {
     return *this;
   }
 
-  double norm() const { return sqrt(x * x + y * y); }
+  double norm() const { return std::sqrt(x * x + y * y); }
 };
 
 Vector operator+(Vector const &v1, Vector const &v2);

@@ -1,4 +1,8 @@
 #include "n_bodies.hpp"
+
+#include <iostream>
+#include <fstream>
+#include <sstream>
 #include <iomanip>
 
 namespace nb {

@@ -1,7 +1,6 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 
 #include "n_bodies.hpp"
-
 #include "doctest.h"
 
 TEST_CASE("Testing the norm function for vector") {

@@ -217,8 +217,6 @@ build CMakeFiles/n_bodies_simulation.dir/Release/n_bodies.main.cpp.o: CXX_COMPIL
   FLAGS = -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Wshadow -Wimplicit-fallthrough -Wextra-semi -Wold-style-cast -fno-omit-frame-pointer -D_GLIBCXX_ASSERTIONS -D_GLIBCXX_SANITIZE_STD_ALLOCATOR -O3 -DNDEBUG -std=c++20
   OBJECT_DIR = CMakeFiles/n_bodies_simulation.dir/Release
   OBJECT_FILE_DIR = CMakeFiles/n_bodies_simulation.dir/Release
-  TARGET_COMPILE_PDB = CMakeFiles/n_bodies_simulation.dir/Release/
-  TARGET_PDB = Release/n_bodies_simulation.pdb
 
 build CMakeFiles/n_bodies_simulation.dir/Release/n_bodies.cpp.o: CXX_COMPILER__n_bodies_simulation_unscanned_Release /home/gregorio-montroni/n_bodies/n_bodies.cpp || cmake_object_order_depends_target_n_bodies_simulation_RELEASE
   DEFINES = -DCMAKE_INTDIR=\"Release\"
@@ -226,8 +224,6 @@ build CMakeFiles/n_bodies_simulation.dir/Release/n_bodies.cpp.o: CXX_COMPILER__n
   FLAGS = -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Wshadow -Wimplicit-fallthrough -Wextra-semi -Wold-style-cast -fno-omit-frame-pointer -D_GLIBCXX_ASSERTIONS -D_GLIBCXX_SANITIZE_STD_ALLOCATOR -O3 -DNDEBUG -std=c++20
   OBJECT_DIR = CMakeFiles/n_bodies_simulation.dir/Release
   OBJECT_FILE_DIR = CMakeFiles/n_bodies_simulation.dir/Release
-  TARGET_COMPILE_PDB = CMakeFiles/n_bodies_simulation.dir/Release/
-  TARGET_PDB = Release/n_bodies_simulation.pdb
 
 
 # =============================================================================
@@ -243,9 +239,8 @@ build Release/n_bodies_simulation: CXX_EXECUTABLE_LINKER__n_bodies_simulation_Re
   OBJECT_DIR = CMakeFiles/n_bodies_simulation.dir/Release
   POST_BUILD = :
   PRE_LINK = :
-  TARGET_COMPILE_PDB = CMakeFiles/n_bodies_simulation.dir/Release/
   TARGET_FILE = Release/n_bodies_simulation
-  TARGET_PDB = Release/n_bodies_simulation.pdb
+  TARGET_PDB = n_bodies_simulation.dbg
 
 # =============================================================================
 # Object build statements for EXECUTABLE target n_bodies_simulation.t
@@ -262,8 +257,6 @@ build CMakeFiles/n_bodies_simulation.t.dir/Release/n_bodies.test.cpp.o: CXX_COMP
   FLAGS = -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Wshadow -Wimplicit-fallthrough -Wextra-semi -Wold-style-cast -fno-omit-frame-pointer -D_GLIBCXX_ASSERTIONS -D_GLIBCXX_SANITIZE_STD_ALLOCATOR -O3 -DNDEBUG -std=c++20
   OBJECT_DIR = CMakeFiles/n_bodies_simulation.t.dir/Release
   OBJECT_FILE_DIR = CMakeFiles/n_bodies_simulation.t.dir/Release
-  TARGET_COMPILE_PDB = CMakeFiles/n_bodies_simulation.t.dir/Release/
-  TARGET_PDB = Release/n_bodies_simulation.t.pdb
 
 build CMakeFiles/n_bodies_simulation.t.dir/Release/n_bodies.cpp.o: CXX_COMPILER__n_bodies_simulation.2et_unscanned_Release /home/gregorio-montroni/n_bodies/n_bodies.cpp || cmake_object_order_depends_target_n_bodies_simulation.t_RELEASE
   DEFINES = -DCMAKE_INTDIR=\"Release\"
@@ -271,8 +264,6 @@ build CMakeFiles/n_bodies_simulation.t.dir/Release/n_bodies.cpp.o: CXX_COMPILER_
   FLAGS = -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Wshadow -Wimplicit-fallthrough -Wextra-semi -Wold-style-cast -fno-omit-frame-pointer -D_GLIBCXX_ASSERTIONS -D_GLIBCXX_SANITIZE_STD_ALLOCATOR -O3 -DNDEBUG -std=c++20
   OBJECT_DIR = CMakeFiles/n_bodies_simulation.t.dir/Release
   OBJECT_FILE_DIR = CMakeFiles/n_bodies_simulation.t.dir/Release
-  TARGET_COMPILE_PDB = CMakeFiles/n_bodies_simulation.t.dir/Release/
-  TARGET_PDB = Release/n_bodies_simulation.t.pdb
 
 
 # =============================================================================
@@ -288,9 +279,8 @@ build Release/n_bodies_simulation.t: CXX_EXECUTABLE_LINKER__n_bodies_simulation.
   OBJECT_DIR = CMakeFiles/n_bodies_simulation.t.dir/Release
   POST_BUILD = :
   PRE_LINK = :
-  TARGET_COMPILE_PDB = CMakeFiles/n_bodies_simulation.t.dir/Release/
   TARGET_FILE = Release/n_bodies_simulation.t
-  TARGET_PDB = Release/n_bodies_simulation.t.pdb
+  TARGET_PDB = n_bodies_simulation.t.dbg
 
 
 #############################################

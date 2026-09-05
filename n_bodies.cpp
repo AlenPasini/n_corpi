@@ -189,10 +189,12 @@ double Universe::U_t() const {
     for (std::size_t j{i + 1}; j < u_.size(); ++j) {
       double num = get_G() * u_[i].get_m() * u_[j].get_m();
 
-      double denom =
+      auto distance = u_[i].get_r() - u_[j].get_r();
+
+      double denom = distance.norm();
           // (u_[i].get_r() - u_[j].get_r()).norm();
-          std::sqrt(pow(u_[i].get_r().get_x() - u_[j].get_r().get_x(), 2.) +
-                    pow(u_[i].get_r().get_y() - u_[j].get_r().get_y(), 2.));
+          //std::sqrt(pow(u_[i].get_r().get_x() - u_[j].get_r().get_x(), 2.) +
+          //         pow(u_[i].get_r().get_y() - u_[j].get_r().get_y(), 2.));
 
       U -= num / denom;
     }
@@ -268,7 +270,7 @@ void Universe::check_collisions() {
 
     if (n == 1) {
       Body d{r_n, v_n, m_n, k_n};
-      add(d);  // da controllare
+      add(d);
 
       for (std::size_t i{c_1}; i < c_2; ++i) {
         u_[i].add_id(u_[i].get_id() - 1);
